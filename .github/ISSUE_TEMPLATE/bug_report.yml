@@ -1,0 +1,59 @@
+name: Bug report
+description: Something in the Breeze Android app isn't working
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for the report! Don't include your access key or server address if you'd rather keep them private."
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you expected vs. what actually happened.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: input
+    id: appver
+    attributes:
+      label: App version / commit
+      placeholder: "e.g. 1.0.0 or main @ abc1234"
+    validations:
+      required: true
+  - type: input
+    id: android
+    attributes:
+      label: Android version and device
+      placeholder: "e.g. Android 15, Pixel 8"
+    validations:
+      required: true
+  - type: input
+    id: server
+    attributes:
+      label: Breeze Core server version
+      placeholder: "e.g. main @ def5678 (or 'unknown')"
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where?
+      options:
+        - Pairing / onboarding
+        - Unit control (home screen)
+        - Programs (favourites/schedule/curve)
+        - Diagnostics
+        - Settings / server switching
+        - Theming (Material You / dark mode)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (optional)
+      description: "`flutter logs` or `adb logcat` output, if you have it. Redact secrets."
+      render: text

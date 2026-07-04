@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/monikapurpl3/breeze/security/advisories/new
+    about: Please report vulnerabilities privately (see SECURITY.md) — not as public issues.
+  - name: Breeze Core (server / API) issues
+    url: https://github.com/monikapurpl3/breeze-core/issues
+    about: Bugs or requests for the server/API belong in the breeze-core repo.

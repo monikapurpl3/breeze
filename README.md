@@ -10,6 +10,7 @@ A native **Flutter (Android)** client for a [**Breeze Core**](https://github.com
 
 - **Units** — a live control card per unit: power, a temperature dial + stepper, mode (auto/cool/dry/heat/fan), fan speed, eco, turbo, and two independent flaps (↕ / ↔). Polls every 5 s; pull to refresh.
 - **Manage units** — **add a unit by its LAN IP** (the server discovers it and updates its config) and **rename units**, right from the app. *(Requires Breeze Core ≥ 2.2.0.)*
+- **Home-screen widgets** — place a resizable widget per unit showing its temperature, mode, and power, with **power / temp − / temp +** buttons that control the unit **without opening the app** (each tap runs a headless background task using your stored credentials, then refreshes the widget). Tap the body to open Breeze; a placement dialog picks which unit each widget controls. Material You themed on Android 12+.
 - **Pairing** — a device-grant handshake: enter the server URL + access key, get a one-time code, an admin approves it on the LAN, and the app stores a per-device token.
 - **Programs** — favourites (saved scenes), schedules (day/time triggers), and a **time-temperature curve** builder with a live preview chart. Stored and executed **server-side**, so they run even when the phone is off.
 - **Diagnostics** — in-app reachability, scheduler status, and per-unit state/latency/enum checks.
@@ -72,9 +73,14 @@ lib/
     ├── secure_store.dart        encrypted credential storage
     ├── app_controller.dart      app state + pairing flow
     ├── app_scope.dart           InheritedNotifier exposing the controller
+    ├── home_widget_service.dart home-screen widget sync + headless control callback
     ├── theme.dart / util.dart   Material You accents, time helpers
     ├── screens/                 onboarding, pairing, home, diagnostics, programs, program_edit, settings
     └── widgets/                 dial, unit_card, curve_painter, climate_settings_editor
+
+android/app/src/main/
+├── kotlin/app/breeze/breeze/   BreezeUnitWidgetProvider + UnitConfigActivity (App Widget)
+└── res/                        layout/breeze_widget*, xml/breeze_widget_info, widget drawables + colours
 ```
 
 ## License

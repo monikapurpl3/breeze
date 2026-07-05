@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home-screen widget (dark fallback, <API 31). -->
+    <color name="widget_background">#FF11181C</color>
+    <color name="widget_text_primary">#FFF2F6F8</color>
+    <color name="widget_text_secondary">#FFA5B4BC</color>
+    <color name="widget_button_bg">#FF243036</color>
+    <color name="widget_icon">#FF8FD9E0</color>
+    <color name="widget_accent">#FF4FD1C5</color>
+</resources>

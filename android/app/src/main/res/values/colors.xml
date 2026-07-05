@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#11586E</color>
+
+    <!-- Home-screen widget (light fallback, <API 31). Material You dynamic
+         colours override these on API 31+ via values-v31 / values-night-v31. -->
+    <color name="widget_background">#FFF1F5F7</color>
+    <color name="widget_text_primary">#FF0B1B24</color>
+    <color name="widget_text_secondary">#FF4B5A63</color>
+    <color name="widget_button_bg">#FFDCE6EA</color>
+    <color name="widget_icon">#FF0E6E7A</color>
+    <color name="widget_accent">#FF0E7C86</color>
 </resources>

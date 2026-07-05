@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'src/app_controller.dart';
 import 'src/app_scope.dart';
+import 'src/home_widget_service.dart';
 import 'src/screens/home_screen.dart';
 import 'src/screens/onboarding_screen.dart';
 import 'src/screens/pairing_screen.dart';
@@ -10,6 +11,9 @@ import 'src/secure_store.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // Register the home-screen widget's interactive background callback so its
+  // buttons can control units without opening the app. Best-effort.
+  HomeWidgetService.init();
   final controller = AppController(SecureStore());
   controller.init();
   runApp(BreezeApp(controller: controller));

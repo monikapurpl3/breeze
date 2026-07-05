@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../api_client.dart';
 import '../app_scope.dart';
+import '../home_widget_service.dart';
 import '../models.dart';
 import '../widgets/unit_card.dart';
 import 'diagnostics_screen.dart';
@@ -73,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (!ok && _states.isEmpty) _error = 'Could not load your units.';
       });
     }
+    _syncWidgets();
   }
 
   Future<void> _refreshStates() async {
@@ -85,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       if (_reauthing) return;
     }
+    _syncWidgets();
   }
 
   Future<void> _control(String id, ClimateSettings delta) async {
@@ -94,6 +97,17 @@ class _HomeScreenState extends State<HomeScreen> {
       if (mounted) setState(() => _states[id] = s);
     });
     if (mounted) setState(() => _busy.remove(id));
+    _syncWidgets();
+  }
+
+  /// Mirror the current units + states to the home-screen widgets (best-effort).
+  void _syncWidgets() {
+    if (_units.isEmpty) return;
+    HomeWidgetService.sync(
+      units: _units,
+      states: _states,
+      paired: _api.deviceToken != null,
+    );
   }
 
   Future<void> _rename(String id, String current) async {

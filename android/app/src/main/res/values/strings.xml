@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label">Breeze AC</string>
+    <string name="widget_description">Control one air-conditioner from your home screen.</string>
+    <string name="widget_configure_title">Choose a unit for this widget</string>
+    <string name="widget_configure_empty">Open Breeze first so it can load your units, then add the widget again.</string>
+    <string name="widget_not_configured">Tap to choose a unit</string>
+    <string name="widget_open_app">Open Breeze to sign in</string>
+    <string name="widget_dash">—</string>
+</resources>

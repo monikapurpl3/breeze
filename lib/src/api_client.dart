@@ -88,6 +88,9 @@ class ApiClient {
         case 'PUT':
           r = await _http.put(uri, headers: headers, body: encoded).timeout(timeout);
           break;
+        case 'PATCH':
+          r = await _http.patch(uri, headers: headers, body: encoded).timeout(timeout);
+          break;
         case 'DELETE':
           r = await _http.delete(uri, headers: headers, body: encoded).timeout(timeout);
           break;
@@ -146,6 +149,18 @@ class ApiClient {
 
   Future<UnitState> control(String id, ClimateSettings s) async => UnitState.fromJson(
       await _send('POST', '/api/units/$id/control', body: s.toJson()) as Map<String, dynamic>);
+
+  /// Rename a unit (server persists it to config.json).
+  Future<void> renameUnit(String id, String name) =>
+      _send('PATCH', '/api/units/$id', body: {'name': name});
+
+  /// Add a unit by its LAN IP — the server discovers it and writes config.
+  /// Returns the created unit view {id, name, ip, port, has_v3_credentials}.
+  Future<Map<String, dynamic>> addUnitByIp(String ip, String? name) async =>
+      (await _send('POST', '/api/units', body: {
+        'ip': ip,
+        if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
+      })) as Map<String, dynamic>;
 
   // --- programs ---
   Future<List<Program>> listPrograms() async {

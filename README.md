@@ -9,6 +9,7 @@ A native **Flutter (Android)** client for a [**Breeze Core**](https://github.com
 ## Features
 
 - **Units** — a live control card per unit: power, a temperature dial + stepper, mode (auto/cool/dry/heat/fan), fan speed, eco, turbo, and two independent flaps (↕ / ↔). Polls every 5 s; pull to refresh.
+- **Manage units** — **add a unit by its LAN IP** (the server discovers it and updates its config) and **rename units**, right from the app. *(Requires Breeze Core ≥ 2.2.0.)*
 - **Pairing** — a device-grant handshake: enter the server URL + access key, get a one-time code, an admin approves it on the LAN, and the app stores a per-device token.
 - **Programs** — favourites (saved scenes), schedules (day/time triggers), and a **time-temperature curve** builder with a live preview chart. Stored and executed **server-side**, so they run even when the phone is off.
 - **Diagnostics** — in-app reachability, scheduler status, and per-unit state/latency/enum checks.

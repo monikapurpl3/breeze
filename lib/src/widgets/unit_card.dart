@@ -9,7 +9,14 @@ class UnitCard extends StatelessWidget {
   final UnitState state;
   final bool busy;
   final ValueChanged<ClimateSettings> onControl;
-  const UnitCard({super.key, required this.state, required this.busy, required this.onControl});
+  final VoidCallback? onRename;
+  const UnitCard({
+    super.key,
+    required this.state,
+    required this.busy,
+    required this.onControl,
+    this.onRename,
+  });
 
   String _nextSwing(String current, String axis) {
     var v = current == 'VERTICAL' || current == 'BOTH';
@@ -52,6 +59,16 @@ class UnitCard extends StatelessWidget {
                     padding: EdgeInsets.only(right: 8),
                     child: SizedBox(
                         width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                  ),
+                if (onRename != null)
+                  PopupMenuButton<String>(
+                    tooltip: 'Unit options',
+                    onSelected: (v) {
+                      if (v == 'rename') onRename!();
+                    },
+                    itemBuilder: (_) => const [
+                      PopupMenuItem(value: 'rename', child: Text('Rename')),
+                    ],
                   ),
                 Switch(
                   value: state.powerState,

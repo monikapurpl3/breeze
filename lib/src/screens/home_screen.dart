@@ -96,6 +96,72 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) setState(() => _busy.remove(id));
   }
 
+  Future<void> _rename(String id, String current) async {
+    final ctrl = TextEditingController(text: current);
+    final name = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Rename unit'),
+        content: TextField(
+          controller: ctrl,
+          autofocus: true,
+          maxLength: 64,
+          decoration: const InputDecoration(labelText: 'Name'),
+          onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, ctrl.text.trim()), child: const Text('Save')),
+        ],
+      ),
+    );
+    if (name == null || name.isEmpty || name == current) return;
+    final ok = await _guard(() => _api.renameUnit(id, name));
+    if (ok && mounted) await _loadAll();
+  }
+
+  Future<void> _addByIp() async {
+    final ipC = TextEditingController();
+    final nameC = TextEditingController();
+    final go = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Add unit by IP'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: ipC,
+              autofocus: true,
+              keyboardType: TextInputType.visiblePassword, // shows digits+dots, no autocorrect
+              decoration: const InputDecoration(labelText: 'Unit IP address', hintText: '192.168.1.73'),
+            ),
+            TextField(
+              controller: nameC,
+              maxLength: 64,
+              decoration: const InputDecoration(labelText: 'Name (optional)'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Add')),
+        ],
+      ),
+    );
+    if (go != true) return;
+    final ip = ipC.text.trim();
+    if (ip.isEmpty || !mounted) return;
+    final name = nameC.text.trim();
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(const SnackBar(content: Text('Discovering unit…')));
+    final ok = await _guard(() async {
+      final u = await _api.addUnitByIp(ip, name.isEmpty ? null : name);
+      messenger.showSnackBar(SnackBar(content: Text('Added "${u['name']}"')));
+    });
+    if (ok && mounted) await _loadAll();
+  }
+
   void _open(Widget screen) {
     _poll?.cancel(); // pause polling while away; resume on return
     Navigator.of(context)
@@ -114,6 +180,11 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Breeze'),
         actions: [
+          IconButton(
+            tooltip: 'Add unit by IP',
+            icon: const Icon(Icons.add),
+            onPressed: _addByIp,
+          ),
           IconButton(
             tooltip: 'Programs',
             icon: const Icon(Icons.schedule),
@@ -180,6 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       state: s,
                       busy: _busy.contains(u.id),
                       onControl: (delta) => _control(u.id, delta),
+                      onRename: () => _rename(u.id, s.name),
                     ),
             ),
           ),

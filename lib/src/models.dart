@@ -75,6 +75,69 @@ class UnitState {
         eco: j['eco'] as bool,
         turbo: j['turbo'] as bool,
       );
+
+  /// A placeholder state for a unit that couldn't be reached at all.
+  factory UnitState.offline({required String id, required String name, required String ip}) =>
+      UnitState(
+        id: id, name: name, ip: ip, online: false, powerState: false,
+        operationalMode: 'AUTO', targetTemperature: 22.0, indoorTemperature: null,
+        outdoorTemperature: null, fanSpeed: 102, swingMode: 'OFF', eco: false, turbo: false,
+      );
+
+  UnitState copyWith({
+    bool? online,
+    bool? powerState,
+    String? operationalMode,
+    double? targetTemperature,
+    int? fanSpeed,
+    String? swingMode,
+    bool? eco,
+    bool? turbo,
+  }) =>
+      UnitState(
+        id: id,
+        name: name,
+        ip: ip,
+        online: online ?? this.online,
+        powerState: powerState ?? this.powerState,
+        operationalMode: operationalMode ?? this.operationalMode,
+        targetTemperature: targetTemperature ?? this.targetTemperature,
+        indoorTemperature: indoorTemperature,
+        outdoorTemperature: outdoorTemperature,
+        fanSpeed: fanSpeed ?? this.fanSpeed,
+        swingMode: swingMode ?? this.swingMode,
+        eco: eco ?? this.eco,
+        turbo: turbo ?? this.turbo,
+      );
+
+  /// Predict the state after applying a partial control delta — used for
+  /// optimistic UI so a tap reflects immediately, before the round-trip.
+  UnitState withDelta(ClimateSettings d) => copyWith(
+        powerState: d.powerState,
+        operationalMode: d.operationalMode,
+        targetTemperature: d.targetTemperature,
+        fanSpeed: d.fanSpeed,
+        swingMode: d.swingMode,
+        eco: d.eco,
+        turbo: d.turbo,
+      );
+}
+
+/// Result of the batch state endpoint: reachable units in [states], the
+/// rest (couldn't be reached at all) in [errors] as {id,name,ip,detail}.
+class BatchStates {
+  final List<UnitState> states;
+  final List<Map<String, dynamic>> errors;
+  BatchStates(this.states, this.errors);
+
+  factory BatchStates.fromJson(Map<String, dynamic> j) => BatchStates(
+        (j['states'] as List? ?? [])
+            .map((e) => UnitState.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        (j['errors'] as List? ?? [])
+            .map((e) => (e as Map).cast<String, dynamic>())
+            .toList(),
+      );
 }
 
 /// A partial control payload — only non-null fields are sent/applied.

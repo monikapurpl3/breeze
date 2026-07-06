@@ -8,14 +8,14 @@ A native **Flutter (Android)** client for a [**Breeze Core**](https://github.com
 
 ## Features
 
-- **Units** — a live control card per unit: power, a temperature dial + stepper, mode (auto/cool/dry/heat/fan), fan speed, eco, turbo, and two independent flaps (↕ / ↔). Polls every 5 s; pull to refresh.
-- **Manage units** — **add a unit by its LAN IP** (the server discovers it and updates its config) and **rename units**, right from the app. *(Requires Breeze Core ≥ 2.2.0.)*
-- **Home-screen widgets** — place a resizable widget per unit showing its temperature, mode, and power, with **power / temp − / temp +** buttons that control the unit **without opening the app** (each tap runs a headless background task using your stored credentials, then refreshes the widget). Tap the body to open Breeze; a placement dialog picks which unit each widget controls. Material You themed on Android 12+.
+- **Units** — a live control card per unit: power, a temperature dial + stepper, mode (auto/cool/dry/heat/fan), fan speed, eco, turbo, and two independent flaps (↕ / ↔). Controls are **optimistic with haptic feedback** — a tap reflects instantly and reconciles on the server reply. Polls every 5 s (one batched request on Breeze Core ≥ 2.4.0); pull to refresh. An **offline banner** appears and polling backs off when the server is unreachable, instead of error spam.
+- **Manage units** — **add a unit by its LAN IP** (the server discovers it and updates its config), **rename**, and **remove** units right from the app. *(Add/rename require Breeze Core ≥ 2.2.0; remove ≥ 2.4.0.)*
+- **Home-screen widgets** — place a resizable widget per unit showing its temperature, mode, and power, with **power / temp − / temp +** buttons that control the unit **without opening the app** (each tap runs a headless background task using your stored credentials, then refreshes the widget). Widgets also **auto-refresh periodically** in the background. Tap the body to open Breeze; a placement dialog picks which unit each widget controls. Material You themed on Android 12+.
 - **Pairing** — a device-grant handshake: enter the server URL + access key, get a one-time code, an admin approves it on the LAN, and the app stores a per-device token.
 - **Programs** — favourites (saved scenes), schedules (day/time triggers), and a **time-temperature curve** builder with a live preview chart. Stored and executed **server-side**, so they run even when the phone is off.
 - **Diagnostics** — in-app reachability, scheduler status, and per-unit state/latency/enum checks.
-- **Settings** — change server, re-pair this device, about.
-- **Material You** — fully dynamic colour from the system wallpaper (Android 12+), light/dark following the system, with a seeded fallback on older devices.
+- **Settings** — change server, re-pair this device, **display options** (°C/°F, and a light / dark / system theme override), about.
+- **Material You** — fully dynamic colour from the system wallpaper (Android 12+); light/dark follows the system by default, or force one in Settings. Seeded fallback on older devices.
 
 ## Security
 

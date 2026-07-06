@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../models.dart';
+import '../util.dart';
 
 /// The circular temperature gauge: a ring filled proportionally to the
 /// target (16–30°) in the mode accent, with the indoor reading centered.
@@ -10,12 +11,14 @@ class Dial extends StatelessWidget {
   final double target;
   final Color accent;
   final bool online;
+  final String tempUnit;
   const Dial({
     super.key,
     required this.indoor,
     required this.target,
     required this.accent,
     required this.online,
+    this.tempUnit = 'C',
   });
 
   @override
@@ -36,7 +39,7 @@ class Dial extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                indoor == null ? '--°' : '${indoor!.toStringAsFixed(1)}°',
+                indoor == null ? '--°' : fmtTemp(indoor!, tempUnit, showUnit: false),
                 style: Theme.of(context)
                     .textTheme
                     .displaySmall
@@ -46,7 +49,7 @@ class Dial extends StatelessWidget {
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: scheme.onSurfaceVariant, letterSpacing: 1.2)),
               const SizedBox(height: 4),
-              Text('target ${target.toStringAsFixed(1)}°',
+              Text('target ${fmtTemp(target, tempUnit)}',
                   style: Theme.of(context)
                       .textTheme
                       .bodySmall

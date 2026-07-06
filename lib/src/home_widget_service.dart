@@ -14,10 +14,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:home_widget/home_widget.dart';
+import 'package:workmanager/workmanager.dart';
 
 import 'api_client.dart';
 import 'models.dart';
 import 'secure_store.dart';
+
+const String _kRefreshTask = 'breeze-widget-refresh';
 
 /// Fully-qualified name of the Android AppWidgetProvider we update.
 const String kWidgetProvider = 'app.breeze.breeze.BreezeUnitWidgetProvider';
@@ -33,6 +36,21 @@ class HomeWidgetService {
     try {
       await HomeWidget.registerInteractivityCallback(interactiveCallback);
     } catch (_) {/* widgets are optional */}
+  }
+
+  /// Register a periodic background task (min 15 min on Android) that
+  /// refreshes widget data even while the app is closed. Best-effort.
+  static Future<void> registerBackgroundRefresh() async {
+    try {
+      await Workmanager().initialize(workmanagerDispatcher);
+      await Workmanager().registerPeriodicTask(
+        _kRefreshTask,
+        _kRefreshTask,
+        frequency: const Duration(minutes: 15),
+        constraints: Constraints(networkType: NetworkType.connected),
+        existingWorkPolicy: ExistingPeriodicWorkPolicy.update,
+      );
+    } catch (_) {/* periodic refresh is a nicety; ignore if unavailable */}
   }
 
   /// Push the current unit list + per-unit state to the widgets and redraw.
@@ -121,5 +139,53 @@ Future<void> interactiveCallback(Uri? uri) async {
   } finally {
     api.close();
     await HomeWidget.updateWidget(qualifiedAndroidName: kWidgetProvider);
+  }
+}
+
+/// WorkManager entry point — runs in a headless isolate on a schedule.
+@pragma('vm:entry-point')
+void workmanagerDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    await _refreshAllWidgets();
+    return true;
+  });
+}
+
+/// Refresh every unit's cached widget state (used by the periodic task).
+/// Prefers the batch endpoint; falls back to per-unit on older servers.
+Future<void> _refreshAllWidgets() async {
+  final store = SecureStore();
+  final url = await store.serverUrl;
+  final key = await store.apiKey;
+  final token = await store.deviceToken;
+  if (url == null || key == null || token == null) {
+    await HomeWidget.saveWidgetData<String>(_kPaired, '0');
+    await HomeWidget.updateWidget(qualifiedAndroidName: kWidgetProvider);
+    return;
+  }
+  final api = ApiClient(baseUrl: url, apiKey: key, deviceToken: token);
+  try {
+    final units = await api.listUnits();
+    final states = <String, UnitState>{};
+    try {
+      final b = await api.listStates();
+      for (final s in b.states) {
+        states[s.id] = s;
+      }
+    } on ApiException {
+      for (final u in units) {
+        try {
+          states[u.id] = await api.getState(u.id);
+        } catch (_) {/* skip a unit we can't reach */}
+      }
+    }
+    await HomeWidgetService.sync(units: units, states: states, paired: true);
+  } on ApiException catch (e) {
+    if (e.unauthorized) {
+      await HomeWidget.saveWidgetData<String>(_kPaired, '0');
+      await HomeWidget.updateWidget(qualifiedAndroidName: kWidgetProvider);
+    }
+  } finally {
+    api.close();
   }
 }

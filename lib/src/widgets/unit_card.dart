@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../app_scope.dart';
 import '../models.dart';
 import '../theme.dart';
+import '../util.dart';
 import 'dial.dart';
 
 /// One unit's live control surface — mirrors the web UI panel.
@@ -10,12 +12,14 @@ class UnitCard extends StatelessWidget {
   final bool busy;
   final ValueChanged<ClimateSettings> onControl;
   final VoidCallback? onRename;
+  final VoidCallback? onRemove;
   const UnitCard({
     super.key,
     required this.state,
     required this.busy,
     required this.onControl,
     this.onRename,
+    this.onRemove,
   });
 
   String _nextSwing(String current, String axis) {
@@ -33,6 +37,7 @@ class UnitCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final accent = accentForMode(state.operationalMode, scheme);
+    final tempUnit = AppScope.of(context).tempUnit;
     final vOn = state.swingMode == 'VERTICAL' || state.swingMode == 'BOTH';
     final hOn = state.swingMode == 'HORIZONTAL' || state.swingMode == 'BOTH';
 
@@ -60,14 +65,18 @@ class UnitCard extends StatelessWidget {
                     child: SizedBox(
                         width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
                   ),
-                if (onRename != null)
+                if (onRename != null || onRemove != null)
                   PopupMenuButton<String>(
                     tooltip: 'Unit options',
                     onSelected: (v) {
-                      if (v == 'rename') onRename!();
+                      if (v == 'rename') onRename?.call();
+                      if (v == 'remove') onRemove?.call();
                     },
-                    itemBuilder: (_) => const [
-                      PopupMenuItem(value: 'rename', child: Text('Rename')),
+                    itemBuilder: (_) => [
+                      if (onRename != null)
+                        const PopupMenuItem(value: 'rename', child: Text('Rename')),
+                      if (onRemove != null)
+                        const PopupMenuItem(value: 'remove', child: Text('Remove unit')),
                     ],
                   ),
                 Switch(
@@ -83,6 +92,7 @@ class UnitCard extends StatelessWidget {
                 target: state.targetTemperature,
                 accent: accent,
                 online: state.online,
+                tempUnit: tempUnit,
               ),
             ),
             const SizedBox(height: 12),
@@ -99,7 +109,7 @@ class UnitCard extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text('${state.targetTemperature.toStringAsFixed(1)}°',
+                  child: Text(fmtTemp(state.targetTemperature, tempUnit),
                       style: Theme.of(context).textTheme.titleLarge),
                 ),
                 IconButton.filledTonal(

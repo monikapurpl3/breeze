@@ -1,7 +1,8 @@
 // App-wide state: which stage we're in, the API client, and the units.
 // A ChangeNotifier exposed via AppScope (InheritedNotifier).
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_client.dart';
 import 'models.dart';
@@ -17,6 +18,37 @@ class AppController extends ChangeNotifier {
   ApiClient? api;
   String? error;
 
+  // --- display preferences (persisted, non-secret) ---
+  static const _kTheme = 'pref_theme_mode'; // 'system' | 'light' | 'dark'
+  static const _kUnit = 'pref_temp_unit';   // 'C' | 'F'
+  ThemeMode themeMode = ThemeMode.system;
+  String tempUnit = 'C';
+
+  Future<void> _loadPrefs() async {
+    final p = await SharedPreferences.getInstance();
+    final t = p.getString(_kTheme);
+    themeMode = t == 'light'
+        ? ThemeMode.light
+        : t == 'dark'
+            ? ThemeMode.dark
+            : ThemeMode.system;
+    tempUnit = p.getString(_kUnit) == 'F' ? 'F' : 'C';
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    themeMode = mode;
+    notifyListeners();
+    final p = await SharedPreferences.getInstance();
+    await p.setString(_kTheme, mode.name); // 'system' | 'light' | 'dark'
+  }
+
+  Future<void> setTempUnit(String unit) async {
+    tempUnit = unit == 'F' ? 'F' : 'C';
+    notifyListeners();
+    final p = await SharedPreferences.getInstance();
+    await p.setString(_kUnit, tempUnit);
+  }
+
   // pairing transient state
   String? sessionId;
   String? userCode;
@@ -26,6 +58,7 @@ class AppController extends ChangeNotifier {
   List<UnitSummary> units = [];
 
   Future<void> init() async {
+    await _loadPrefs();
     final url = await store.serverUrl;
     final key = await store.apiKey;
     final token = await store.deviceToken;

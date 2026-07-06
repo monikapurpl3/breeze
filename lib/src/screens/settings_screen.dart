@@ -42,6 +42,43 @@ class SettingsScreen extends StatelessWidget {
             subtitle: Text(c.deviceLabel),
           ),
           const Divider(),
+          // --- Display preferences ---
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Text('Display', style: Theme.of(context).textTheme.labelLarge
+                ?.copyWith(color: scheme.primary)),
+          ),
+          ListTile(
+            leading: const Icon(Icons.brightness_6_outlined),
+            title: const Text('Theme'),
+            subtitle: const Text('Follow system, or force light / dark'),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: SegmentedButton<ThemeMode>(
+              segments: const [
+                ButtonSegment(value: ThemeMode.system, label: Text('System'), icon: Icon(Icons.phone_android)),
+                ButtonSegment(value: ThemeMode.light, label: Text('Light'), icon: Icon(Icons.light_mode)),
+                ButtonSegment(value: ThemeMode.dark, label: Text('Dark'), icon: Icon(Icons.dark_mode)),
+              ],
+              selected: {c.themeMode},
+              onSelectionChanged: (s) => c.setThemeMode(s.first),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.thermostat_outlined),
+            title: const Text('Temperature unit'),
+            subtitle: const Text('Display only — the server always uses Celsius'),
+            trailing: SegmentedButton<String>(
+              segments: const [
+                ButtonSegment(value: 'C', label: Text('°C')),
+                ButtonSegment(value: 'F', label: Text('°F')),
+              ],
+              selected: {c.tempUnit},
+              onSelectionChanged: (s) => c.setTempUnit(s.first),
+            ),
+          ),
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.refresh),
             title: const Text('Re-pair this device'),
@@ -74,11 +111,12 @@ class SettingsScreen extends StatelessWidget {
           const AboutListTile(
             icon: Icon(Icons.info_outline),
             applicationName: 'Breeze',
-            applicationVersion: '1.0.0',
+            applicationVersion: '1.3.0',
             aboutBoxChildren: [
-              Text('A climate control client. Theme follows your system '
-                  '(Material You dynamic colour, light or dark). Access key '
-                  'and device token are stored encrypted; traffic is over HTTPS.'),
+              Text('A climate control client. Material You dynamic colour, '
+                  'light/dark following your system (or forced in Settings). '
+                  'Access key and device token are stored encrypted; traffic '
+                  'is over HTTPS.'),
             ],
           ),
         ],

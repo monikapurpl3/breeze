@@ -11,9 +11,12 @@ import 'src/secure_store.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Register the home-screen widget's interactive background callback so its
-  // buttons can control units without opening the app. Best-effort.
+  // Register the home-screen widget's interactive background callback (so its
+  // buttons can control units without opening the app) and a periodic
+  // background refresh (so widgets update while the app is closed). Both
+  // best-effort — never block startup on them.
   HomeWidgetService.init();
+  HomeWidgetService.registerBackgroundRefresh();
   final controller = AppController(SecureStore());
   controller.init();
   runApp(BreezeApp(controller: controller));
@@ -35,13 +38,17 @@ class BreezeApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: _fallbackSeed, brightness: Brightness.dark);
         return AppScope(
           controller: controller,
-          child: MaterialApp(
-            title: 'Breeze',
-            debugShowCheckedModeBanner: false,
-            themeMode: ThemeMode.system, // dynamic dark/light per system
-            theme: ThemeData(colorScheme: light, useMaterial3: true),
-            darkTheme: ThemeData(colorScheme: dark, useMaterial3: true),
-            home: const _Gate(),
+          // Rebuild MaterialApp when the theme-mode preference changes.
+          child: ListenableBuilder(
+            listenable: controller,
+            builder: (context, _) => MaterialApp(
+              title: 'Breeze',
+              debugShowCheckedModeBanner: false,
+              themeMode: controller.themeMode, // system / light / dark (Settings)
+              theme: ThemeData(colorScheme: light, useMaterial3: true),
+              darkTheme: ThemeData(colorScheme: dark, useMaterial3: true),
+              home: const _Gate(),
+            ),
           ),
         );
       },

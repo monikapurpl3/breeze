@@ -147,6 +147,19 @@ class ApiClient {
   Future<UnitState> getState(String id) async =>
       UnitState.fromJson(await _send('GET', '/api/units/$id/state') as Map<String, dynamic>);
 
+  /// All units' states in one call (Breeze Core >= 2.4.0). Throws
+  /// ApiException(404) on older servers — callers fall back to per-unit.
+  Future<BatchStates> listStates() async =>
+      BatchStates.fromJson(await _send('GET', '/api/units/state') as Map<String, dynamic>);
+
+  /// Server metadata for feature-detection (Breeze Core >= 2.4.0):
+  /// {name, version, features[], units}. Needs only the API key.
+  Future<Map<String, dynamic>> serverInfo() async =>
+      (await _send('GET', '/api/version', withToken: false)) as Map<String, dynamic>;
+
+  /// Remove a unit from the server's config (Breeze Core >= 2.4.0).
+  Future<void> deleteUnit(String id) => _send('DELETE', '/api/units/$id');
+
   Future<UnitState> control(String id, ClimateSettings s) async => UnitState.fromJson(
       await _send('POST', '/api/units/$id/control', body: s.toJson()) as Map<String, dynamic>);
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../api_client.dart';
 import '../app_scope.dart';
@@ -23,8 +24,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final Set<String> _busy = {};
   bool _loading = true;
   bool _reauthing = false;
+  bool _offline = false;     // server unreachable — show a banner, back off polling
+  bool _noBatch = false;     // server predates /api/units/state — fall back to per-unit
   String? _error;
   Timer? _poll;
+
+  static const _fastPoll = Duration(seconds: 5);
+  static const _slowPoll = Duration(seconds: 20); // when offline
 
   ApiClient get _api => AppScope.of(context).api!;
 
@@ -32,13 +38,23 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadAll());
-    _poll = Timer.periodic(const Duration(seconds: 5), (_) => _refreshStates());
+    _scheduleNext();
   }
 
   @override
   void dispose() {
     _poll?.cancel();
     super.dispose();
+  }
+
+  /// Self-rescheduling poll: fast normally, slow while the server is
+  /// unreachable, so a down server doesn't hammer the radio every 5 s.
+  void _scheduleNext() {
+    _poll?.cancel();
+    _poll = Timer(_offline ? _slowPoll : _fastPoll, () async {
+      await _refreshStates();
+      if (mounted) _scheduleNext();
+    });
   }
 
   Future<bool> _guard(Future<void> Function() body) async {
@@ -60,43 +76,118 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  /// Centralized error handling: re-pair on 401, flip the offline banner on
+  /// a transport error, snackbar only for real errors the user triggered.
+  Future<void> _handleErr(ApiException e, {bool silent = false}) async {
+    if (!mounted) return;
+    final controller = AppScope.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    if (e.unauthorized && !_reauthing) {
+      _reauthing = true;
+      await controller.handleUnauthorized();
+      return;
+    }
+    if (e.status == 0) {
+      if (mounted) setState(() => _offline = true);
+      return;
+    }
+    if (!silent) messenger.showSnackBar(SnackBar(content: Text(e.message)));
+  }
+
+  /// Pull every unit's state. Prefers the one-shot batch endpoint; falls
+  /// back to per-unit on servers older than 2.4.0. Returns true if the
+  /// server was reachable (individual units may still be offline).
+  /// Rethrows ApiException(401) so the caller re-pairs.
+  Future<bool> _pullStates() async {
+    if (!_noBatch) {
+      try {
+        final b = await _api.listStates();
+        if (!mounted) return true;
+        setState(() {
+          for (final s in b.states) {
+            _states[s.id] = s;
+          }
+          for (final e in b.errors) {
+            final id = e['id'] as String;
+            final prev = _states[id];
+            _states[id] = prev != null
+                ? prev.copyWith(online: false)
+                : UnitState.offline(
+                    id: id, name: (e['name'] ?? id) as String, ip: (e['ip'] ?? '') as String);
+          }
+        });
+        return true;
+      } on ApiException catch (e) {
+        if (e.unauthorized) rethrow;
+        if (e.status == 0) return false; // network
+        if (e.status == 404) {
+          _noBatch = true; // old server — fall through to per-unit
+        } else {
+          return false;
+        }
+      }
+    }
+    // Per-unit fallback (Breeze Core < 2.4.0).
+    var reached = false;
+    for (final u in _units) {
+      if (_busy.contains(u.id)) continue;
+      try {
+        final s = await _api.getState(u.id);
+        reached = true;
+        if (mounted) setState(() => _states[u.id] = s);
+      } on ApiException catch (e) {
+        if (e.unauthorized) rethrow;
+        if (e.status == 0) return reached;
+      }
+    }
+    return reached || _units.isEmpty;
+  }
+
   Future<void> _loadAll() async {
     setState(() { _loading = true; _error = null; });
-    final ok = await _guard(() async {
+    try {
       _units = await _api.listUnits();
-      for (final u in _units) {
-        _states[u.id] = await _api.getState(u.id);
+      final ok = await _pullStates();
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _offline = !ok;
+          _error = (!ok && _states.isEmpty) ? 'Could not load your units.' : null;
+        });
       }
-    });
-    if (mounted) {
-      setState(() {
-        _loading = false;
-        if (!ok && _states.isEmpty) _error = 'Could not load your units.';
-      });
+    } on ApiException catch (e) {
+      await _handleErr(e);
+      if (mounted) setState(() => _loading = false);
     }
     _syncWidgets();
   }
 
   Future<void> _refreshStates() async {
     if (_loading || _reauthing || !mounted) return;
-    for (final u in _units) {
-      if (_busy.contains(u.id)) continue;
-      await _guard(() async {
-        final s = await _api.getState(u.id);
-        if (mounted) setState(() => _states[u.id] = s);
-      });
-      if (_reauthing) return;
+    try {
+      final ok = await _pullStates();
+      if (mounted) setState(() => _offline = !ok);
+    } on ApiException catch (e) {
+      await _handleErr(e, silent: true); // background: banner only, no snackbar spam
     }
     _syncWidgets();
   }
 
   Future<void> _control(String id, ClimateSettings delta) async {
+    final prev = _states[id];
+    HapticFeedback.selectionClick();
+    // Optimistic: reflect the change instantly, reconcile on the reply.
+    if (prev != null) setState(() => _states[id] = prev.withDelta(delta));
     setState(() => _busy.add(id));
-    await _guard(() async {
+    try {
       final s = await _api.control(id, delta);
       if (mounted) setState(() => _states[id] = s);
-    });
-    if (mounted) setState(() => _busy.remove(id));
+    } on ApiException catch (e) {
+      if (prev != null && mounted) setState(() => _states[id] = prev); // revert
+      await _handleErr(e);
+    } finally {
+      if (mounted) setState(() => _busy.remove(id));
+    }
     _syncWidgets();
   }
 
@@ -132,6 +223,26 @@ class _HomeScreenState extends State<HomeScreen> {
     if (name == null || name.isEmpty || name == current) return;
     final ok = await _guard(() => _api.renameUnit(id, name));
     if (ok && mounted) await _loadAll();
+  }
+
+  Future<void> _removeUnit(String id, String name) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Remove unit'),
+        content: Text('Remove "$name" from the server? You can add it back later by IP.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Remove')),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    final done = await _guard(() => _api.deleteUnit(id));
+    if (done && mounted) {
+      setState(() => _states.remove(id));
+      await _loadAll();
+    }
   }
 
   Future<void> _addByIp() async {
@@ -182,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .push(MaterialPageRoute(builder: (_) => screen))
         .then((_) {
       if (mounted) {
-        _poll = Timer.periodic(const Duration(seconds: 5), (_) => _refreshStates());
+        _scheduleNext();
         _loadAll();
       }
     });
@@ -216,9 +327,34 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadAll,
-        child: _buildBody(),
+      body: Column(
+        children: [
+          if (_offline) _offlineBar(context),
+          Expanded(
+            child: RefreshIndicator(onRefresh: _loadAll, child: _buildBody()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _offlineBar(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Material(
+      color: scheme.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            Icon(Icons.cloud_off, size: 18, color: scheme.onErrorContainer),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text('Can’t reach the server — retrying…',
+                  style: TextStyle(color: scheme.onErrorContainer)),
+            ),
+            TextButton(onPressed: _loadAll, child: const Text('Retry')),
+          ],
+        ),
       ),
     );
   }
@@ -266,6 +402,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       busy: _busy.contains(u.id),
                       onControl: (delta) => _control(u.id, delta),
                       onRename: () => _rename(u.id, s.name),
+                      onRemove: () => _removeUnit(u.id, s.name),
                     ),
             ),
           ),

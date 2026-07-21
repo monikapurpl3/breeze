@@ -12,9 +12,9 @@ Please allow a reasonable window to fix before public disclosure. No bounty (hob
 
 ## What the app does with secrets
 
-- The access key and per-device token are stored via `flutter_secure_storage` (Android Keystore-backed, encrypted at rest).
+- The access key and the per-device credential — an **Ed25519 private-key seed** (Breeze Core ≥ 3.0.0) or a bearer token (older servers) — are stored via `flutter_secure_storage` (Android Keystore-backed, encrypted at rest). The Ed25519 private key never leaves the device; the server holds only the public key.
 - `android:allowBackup="false"` keeps them out of device/cloud backups.
-- Every request carries both credentials over HTTPS (cleartext is refused for non-private hosts, and Android blocks it by default).
+- Requests go over HTTPS (cleartext is refused for non-private hosts, and Android blocks it by default). Under Ed25519 auth the device credential is **never transmitted** — each request is signed (method + path + timestamp + nonce + SHA3-512 body digest) so it can't be replayed or tampered with; the bearer fallback sends the token as before.
 - The app never performs pairing **approval** — that's LAN-only and enforced by the server.
 
 ## Scope

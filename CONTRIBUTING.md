@@ -24,8 +24,8 @@ You'll need a running Breeze Core server (real or a local dev instance) to log i
 
 ## Conventions (please match these)
 
-- **All network calls go through `lib/src/api_client.dart`** — the single client that attaches the API key + device token and enforces HTTPS. Don't call `http` directly elsewhere.
-- **Secrets** (key, device token) live only in `flutter_secure_storage` — never in plain prefs, logs, or the widget tree.
+- **All network calls go through `lib/src/api_client.dart`** — the single client that attaches the API key and either signs the request (Ed25519, via `device_signer.dart`) or attaches the bearer token, and enforces HTTPS. Don't call `http` directly elsewhere.
+- **Secrets** (key, Ed25519 private-key seed / bearer token) live only in `flutter_secure_storage` — never in plain prefs, logs, or the widget tree.
 - **Colours come from the Material You scheme** (`lib/src/theme.dart`) — no hard-coded brand colours; use `scheme.*` / `harmonizeWith`.
 - Preserve the server wire contract in `lib/src/models.dart` (snake_case JSON).
 - No new heavyweight dependencies without discussion; keep it building without a bundler/extra tooling.

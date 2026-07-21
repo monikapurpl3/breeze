@@ -69,6 +69,12 @@ class _HomeScreenState extends State<HomeScreen> {
       if (e.unauthorized && !_reauthing) {
         _reauthing = true;
         await controller.handleUnauthorized();
+      } else if (e.upgradeRequired) {
+        // Server refuses this device's auth version — upgrade in place and
+        // let the user retry. Only surface the message if the upgrade fails.
+        if (!await controller.attemptUpgrade()) {
+          messenger.showSnackBar(SnackBar(content: Text(e.message)));
+        }
       } else {
         messenger.showSnackBar(SnackBar(content: Text(e.message)));
       }
@@ -85,6 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (e.unauthorized && !_reauthing) {
       _reauthing = true;
       await controller.handleUnauthorized();
+      return;
+    }
+    if (e.upgradeRequired) {
+      final ok = await controller.attemptUpgrade();
+      if (!ok && !silent) messenger.showSnackBar(SnackBar(content: Text(e.message)));
       return;
     }
     if (e.status == 0) {

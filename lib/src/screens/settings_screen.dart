@@ -111,12 +111,13 @@ class SettingsScreen extends StatelessWidget {
           const AboutListTile(
             icon: Icon(Icons.info_outline),
             applicationName: 'Breeze',
-            applicationVersion: '1.3.0',
+            applicationVersion: '1.4.0',
             aboutBoxChildren: [
               Text('A climate control client. Material You dynamic colour, '
                   'light/dark following your system (or forced in Settings). '
-                  'Access key and device token are stored encrypted; traffic '
-                  'is over HTTPS.'),
+                  'Requests are signed per-device with an Ed25519 key that '
+                  'never leaves the phone; the access key and key material are '
+                  'stored encrypted and traffic is over HTTPS.'),
             ],
           ),
         ],

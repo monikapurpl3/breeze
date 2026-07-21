@@ -24,8 +24,10 @@ class AppController extends ChangeNotifier {
   // --- display preferences (persisted, non-secret) ---
   static const _kTheme = 'pref_theme_mode'; // 'system' | 'light' | 'dark'
   static const _kUnit = 'pref_temp_unit';   // 'C' | 'F'
+  static const _kBeep = 'pref_beep';        // whether commands make the unit chirp
   ThemeMode themeMode = ThemeMode.system;
   String tempUnit = 'C';
+  bool beep = false;
 
   Future<void> _loadPrefs() async {
     final p = await SharedPreferences.getInstance();
@@ -36,6 +38,14 @@ class AppController extends ChangeNotifier {
             ? ThemeMode.dark
             : ThemeMode.system;
     tempUnit = p.getString(_kUnit) == 'F' ? 'F' : 'C';
+    beep = p.getBool(_kBeep) ?? false;
+  }
+
+  Future<void> setBeep(bool value) async {
+    beep = value;
+    notifyListeners();
+    final p = await SharedPreferences.getInstance();
+    await p.setBool(_kBeep, value);
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {

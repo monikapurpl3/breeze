@@ -259,6 +259,19 @@ class ApiClient {
         if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
       })) as Map<String, dynamic>;
 
+  /// Scan the LAN for units (Breeze Core >= 3.0.0). Returns the candidate
+  /// list [{ip, port, known}]. `subnet` overrides the server's autodetected
+  /// /24. Throws ApiException(404) on older servers → the UI hides scanning.
+  Future<List<Map<String, dynamic>>> scanUnits({String? subnet}) async {
+    final q = (subnet != null && subnet.isNotEmpty)
+        ? '?subnet=${Uri.encodeQueryComponent(subnet)}'
+        : '';
+    final r = await _send('GET', '/api/units/scan$q') as Map<String, dynamic>;
+    return ((r['candidates'] as List?) ?? const [])
+        .map((e) => (e as Map).cast<String, dynamic>())
+        .toList();
+  }
+
   // --- programs ---
   Future<List<Program>> listPrograms() async {
     final j = await _send('GET', '/api/programs') as List;

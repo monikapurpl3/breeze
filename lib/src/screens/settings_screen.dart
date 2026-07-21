@@ -79,6 +79,20 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           const Divider(),
+          // --- Behaviour ---
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Text('Behaviour', style: Theme.of(context).textTheme.labelLarge
+                ?.copyWith(color: scheme.primary)),
+          ),
+          SwitchListTile(
+            secondary: const Icon(Icons.volume_up_outlined),
+            title: const Text('Beep on control'),
+            subtitle: const Text('Make the unit chirp when it accepts a command'),
+            value: c.beep,
+            onChanged: c.setBeep,
+          ),
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.refresh),
             title: const Text('Re-pair this device'),
@@ -111,7 +125,7 @@ class SettingsScreen extends StatelessWidget {
           const AboutListTile(
             icon: Icon(Icons.info_outline),
             applicationName: 'Breeze',
-            applicationVersion: '1.4.0',
+            applicationVersion: '2.0.0',
             aboutBoxChildren: [
               Text('A climate control client. Material You dynamic colour, '
                   'light/dark following your system (or forced in Settings). '

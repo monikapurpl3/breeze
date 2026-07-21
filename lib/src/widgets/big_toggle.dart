@@ -48,20 +48,32 @@ class BigToggle extends StatelessWidget {
           borderRadius: BorderRadius.circular(22),
           onTap: enabled ? () => onChanged(!value) : null,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 10, 12),
-            child: Row(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            // Vertical layout: the label gets the full card width, so short
+            // words like "Turbo" never wrap even at half-screen or large font
+            // scales. Reads as a big tappable switch.
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, color: fg, size: 26),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: fg,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, color: fg, size: 24),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: fg,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
                 Switch(
                   value: value,

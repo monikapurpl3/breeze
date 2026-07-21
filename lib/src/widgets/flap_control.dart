@@ -23,7 +23,7 @@ class FlapControl extends StatefulWidget {
 
 class _FlapControlState extends State<FlapControl> {
   static const _positions = ['VERTICAL', 'BOTH', 'HORIZONTAL'];
-  int? _dragIdx;
+  double? _dragValue; // continuous while dragging; snaps to a position on release
 
   bool get _on => widget.value != 'OFF';
 
@@ -32,7 +32,7 @@ class _FlapControlState extends State<FlapControl> {
     return i < 0 ? 1 : i; // default BOTH
   }
 
-  int get _shownIdx => _dragIdx ?? _committedIdx;
+  double get _shownValue => _dragValue ?? _committedIdx.toDouble();
 
   @override
   Widget build(BuildContext context) {
@@ -74,15 +74,17 @@ class _FlapControlState extends State<FlapControl> {
                     overlayColor: accent.withValues(alpha: 0.15),
                     thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
                   ),
+                  // No `divisions`: the thumb glides freely (no tick marks or
+                  // min/max stops), then snaps to the nearest of the three
+                  // positions when released.
                   child: Slider(
                     min: 0,
                     max: 2,
-                    divisions: 2,
-                    value: _shownIdx.toDouble(),
-                    onChanged: (v) => setState(() => _dragIdx = v.round()),
+                    value: _shownValue,
+                    onChanged: (v) => setState(() => _dragValue = v),
                     onChangeEnd: (v) {
                       final idx = v.round();
-                      setState(() => _dragIdx = null);
+                      setState(() => _dragValue = null);
                       widget.onChanged(_positions[idx]);
                     },
                   ),

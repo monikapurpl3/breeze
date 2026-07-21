@@ -24,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final Set<String> _busy = {};
   bool _loading = true;
   bool _reauthing = false;
-  bool _refreshing = false;  // a background poll is in flight — discreet spinner
   bool _offline = false;     // server unreachable — show a banner, back off polling
   bool _noBatch = false;     // server predates /api/units/state — fall back to per-unit
   String? _error;
@@ -176,14 +175,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _refreshStates() async {
     if (_loading || _reauthing || !mounted) return;
-    setState(() => _refreshing = true);
+    // Silent background poll — no visible spinner (states just update in
+    // place). The discreet indicator is reserved for user-initiated actions.
     try {
       final ok = await _pullStates();
       if (mounted) setState(() => _offline = !ok);
     } on ApiException catch (e) {
       await _handleErr(e, silent: true); // background: banner only, no snackbar spam
-    } finally {
-      if (mounted) setState(() => _refreshing = false);
     }
     _syncWidgets();
   }
@@ -470,7 +468,9 @@ class _HomeScreenState extends State<HomeScreen> {
               return UnitPage(
                 key: ValueKey(u.id),
                 state: s,
-                refreshing: _refreshing || _busy.contains(u.id),
+                // Discreet indicator only while a user-initiated command for
+                // this unit is in flight — never during idle background polls.
+                refreshing: _busy.contains(u.id),
                 onControl: (delta) => _control(u.id, delta),
                 onRename: () => _rename(u.id, s.name),
                 onRemove: () => _removeUnit(u.id, s.name),

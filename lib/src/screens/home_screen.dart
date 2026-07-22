@@ -37,7 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
   StreamSubscription<UnitState>? _stateSub;
   Timer? _streamRetry;
 
-  final PageController _pageController = PageController();
+  // Created lazily once units are known, positioned on the last-viewed unit
+  // (see _initialPageIndex) so a relaunch reopens where the user left off.
+  PageController? _pageController;
   int _page = 0;
 
   static const _fastPoll = Duration(seconds: 5);
@@ -57,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _poll?.cancel();
     _streamRetry?.cancel();
     _stateSub?.cancel();
-    _pageController.dispose();
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -216,6 +218,10 @@ class _HomeScreenState extends State<HomeScreen> {
           _error = (!ok && _states.isEmpty) ? 'Could not load your units.' : null;
           if (_page >= _units.length) _page = _units.isEmpty ? 0 : _units.length - 1;
         });
+        // The unit list may have changed (added/removed/reordered) — snap the
+        // pager back onto the unit the user last viewed, or the first one if
+        // it's gone. Post-frame so the PageView has rebuilt with the new count.
+        WidgetsBinding.instance.addPostFrameCallback((_) => _reconcilePage());
       }
     } on ApiException catch (e) {
       await _handleErr(e);
@@ -425,6 +431,32 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// Index of the unit to open on, resolved by the persisted last-viewed unit
+  /// id. Failsafe: if nothing is remembered, or that unit no longer exists
+  /// (removed/re-added with a new id), fall back to the first page.
+  int _initialPageIndex() {
+    final lastId = AppScope.of(context).lastUnitId;
+    if (lastId == null || _units.isEmpty) return 0;
+    final i = _units.indexWhere((u) => u.id == lastId);
+    return i < 0 ? 0 : i;
+  }
+
+  /// After the unit list changes, keep the pager on the unit the user was
+  /// viewing (found by id, so it rides through reorders/renames) — or the
+  /// first unit if it's gone. Clamped so a removal never leaves a dangling
+  /// page. No-op when the position is already correct.
+  void _reconcilePage() {
+    if (!mounted) return;
+    final c = _pageController;
+    if (c == null || !c.hasClients || _units.isEmpty) return;
+    final target = _initialPageIndex().clamp(0, _units.length - 1);
+    final current = (c.page ?? c.initialPage.toDouble()).round();
+    if (current != target || current >= _units.length) {
+      c.jumpToPage(target);
+      if (mounted) setState(() => _page = target);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -505,13 +537,26 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     }
+    // Position the pager on the last-viewed unit the first time we build it,
+    // so it opens already on the right page (constructing with initialPage =
+    // no flicker). Resolved once; later changes go through _reconcilePage.
+    if (_pageController == null) {
+      _page = _initialPageIndex();
+      _pageController = PageController(initialPage: _page);
+    }
     return Column(
       children: [
         Expanded(
           child: PageView.builder(
             controller: _pageController,
             itemCount: _units.length,
-            onPageChanged: (i) => setState(() => _page = i),
+            onPageChanged: (i) {
+              setState(() => _page = i);
+              // Remember where we are so the next launch reopens here.
+              if (i >= 0 && i < _units.length) {
+                AppScope.of(context).setLastUnitId(_units[i].id);
+              }
+            },
             itemBuilder: (context, i) {
               final u = _units[i];
               final s = _states[u.id];

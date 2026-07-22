@@ -25,9 +25,14 @@ class AppController extends ChangeNotifier {
   static const _kTheme = 'pref_theme_mode'; // 'system' | 'light' | 'dark'
   static const _kUnit = 'pref_temp_unit';   // 'C' | 'F'
   static const _kBeep = 'pref_beep';        // whether commands make the unit chirp
+  static const _kLastUnit = 'pref_last_unit_id'; // last unit page the user was on
   ThemeMode themeMode = ThemeMode.system;
   String tempUnit = 'C';
   bool beep = false;
+  // Which unit page to restore on launch (by unit id, so it survives
+  // reordering; the home screen falls back gracefully if it's gone). Null =
+  // no preference yet → start on the first unit.
+  String? lastUnitId;
 
   Future<void> _loadPrefs() async {
     final p = await SharedPreferences.getInstance();
@@ -39,6 +44,20 @@ class AppController extends ChangeNotifier {
             : ThemeMode.system;
     tempUnit = p.getString(_kUnit) == 'F' ? 'F' : 'C';
     beep = p.getBool(_kBeep) ?? false;
+    lastUnitId = p.getString(_kLastUnit);
+  }
+
+  /// Remember the unit page the user last viewed. Purely persistence — no
+  /// [notifyListeners], so swiping between units never rebuilds the app tree.
+  Future<void> setLastUnitId(String? id) async {
+    if (id == lastUnitId) return;
+    lastUnitId = id;
+    final p = await SharedPreferences.getInstance();
+    if (id == null) {
+      await p.remove(_kLastUnit);
+    } else {
+      await p.setString(_kLastUnit, id);
+    }
   }
 
   Future<void> setBeep(bool value) async {

@@ -305,6 +305,71 @@ class ApiClient {
         .toList();
   }
 
+  // --- diagnostics helpers ------------------------------------------------
+
+  /// Public health probe (no auth): {status: "ok"} on a healthy server.
+  Future<Map<String, dynamic>> health() async =>
+      (await _send('GET', '/api/health', withToken: false)) as Map<String, dynamic>;
+
+  /// This device's own server-side record (Breeze Core >= 3.0.0):
+  /// {token_id, label, auth_version, created_at, expires_at, last_used}.
+  /// Not LAN-gated — a device may always ask about itself.
+  Future<Map<String, dynamic>> whoami() async =>
+      (await _send('GET', '/api/auth/whoami')) as Map<String, dynamic>;
+
+  /// What a unit's hardware actually supports (Breeze Core >= 3.0.0).
+  Future<Map<String, dynamic>> capabilities(String id) async =>
+      (await _send('GET', '/api/units/$id/capabilities')) as Map<String, dynamic>;
+
+  /// The sanitised server config (Breeze Core >= 2.2.0), for the diagnostics
+  /// leak check. Returns the decoded body (shape varies by version).
+  Future<dynamic> fetchConfig() => _send('GET', '/api/config');
+
+  /// Enrolled device tokens (admin, LAN-gated). May 403/401 off-LAN.
+  Future<List<dynamic>> listDevices() async =>
+      (await _send('GET', '/api/auth/devices')) as List<dynamic>;
+
+  /// Diagnostic probe: run [method] [path] and return ONLY the HTTP status
+  /// (0 on transport error, -1 on an unsupported method), never throwing.
+  /// Lets the diagnostics screen verify the server's rejection behaviour
+  /// (401/404/422) and auth posture by choosing exactly which credentials to
+  /// send — without mutating this live client's own credentials.
+  Future<int> probe(
+    String method,
+    String path, {
+    Object? body,
+    bool sendKey = true,
+    String? keyOverride,
+    bool sendToken = true,
+  }) async {
+    try {
+      final headers = <String, String>{};
+      final key = keyOverride ?? (sendKey ? apiKey : null);
+      if (key != null) headers['X-API-Key'] = key;
+      final encoded = body == null ? null : jsonEncode(body);
+      if (encoded != null) headers['Content-Type'] = 'application/json';
+      if (sendToken) {
+        await _authenticate(
+            headers, method, path, encoded == null ? const [] : utf8.encode(encoded));
+      }
+      final uri = _uri(path);
+      final http.Response r;
+      switch (method) {
+        case 'GET':
+          r = await _http.get(uri, headers: headers).timeout(timeout);
+          break;
+        case 'POST':
+          r = await _http.post(uri, headers: headers, body: encoded).timeout(timeout);
+          break;
+        default:
+          return -1;
+      }
+      return r.statusCode;
+    } catch (_) {
+      return 0;
+    }
+  }
+
   // --- programs ---
   Future<List<Program>> listPrograms() async {
     final j = await _send('GET', '/api/programs') as List;

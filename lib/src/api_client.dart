@@ -236,6 +236,39 @@ class ApiClient {
   Future<BatchStates> listStates() async =>
       BatchStates.fromJson(await _send('GET', '/api/units/state') as Map<String, dynamic>);
 
+  /// Live state stream over SSE (Breeze Core >= 3.0.0): emits a [UnitState]
+  /// per `event: state` frame as the server pushes changes. The stream errors
+  /// or closes on disconnect — the caller reconnects. `Accept-Encoding:
+  /// identity` disables compression (Dart's http can't decode brotli); the
+  /// GET is signed like any other request.
+  Stream<UnitState> streamStates() async* {
+    final req = http.Request('GET', _uri('/api/units/stream'));
+    req.headers['X-API-Key'] = apiKey;
+    req.headers['Accept-Encoding'] = 'identity';
+    await _authenticate(req.headers, 'GET', '/api/units/stream', const []);
+    final resp = await _http.send(req);
+    if (resp.statusCode != 200) {
+      throw ApiException(resp.statusCode, 'stream failed (${resp.statusCode})');
+    }
+    var buf = '';
+    await for (final chunk in resp.stream.transform(utf8.decoder)) {
+      buf += chunk.replaceAll('\r', '');       // normalise CRLF → LF
+      int i;
+      while ((i = buf.indexOf('\n\n')) >= 0) {  // one SSE frame
+        final frame = buf.substring(0, i);
+        buf = buf.substring(i + 2);
+        final data = StringBuffer();
+        for (final line in frame.split('\n')) {
+          if (line.startsWith('data:')) data.write(line.substring(5).trim());
+        }
+        if (data.isEmpty) continue;             // `: connected` / keepalive
+        try {
+          yield UnitState.fromJson(jsonDecode(data.toString()) as Map<String, dynamic>);
+        } catch (_) {/* skip a malformed frame */}
+      }
+    }
+  }
+
   /// Server metadata for feature-detection (Breeze Core >= 2.4.0):
   /// {name, version, features[], units}. Needs only the API key.
   Future<Map<String, dynamic>> serverInfo() async =>

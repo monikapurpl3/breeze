@@ -48,11 +48,13 @@ screen (no scrolling), tinted to the active mode:
 - **Eco / Turbo** — large, colourful switches. **Power** — front and centre.
 
 Every change is **optimistic with haptic feedback** (it reflects instantly,
-then reconciles with the server), the screen **never flickers** while
+then reconciles with the server), and the screen **never flickers** while
 refreshing (state merges in place; a tiny indicator shows only while *you*
-trigger a command), it **polls every 5 s** (one batched request on Breeze
-Core ≥ 2.4.0), and an **offline banner** appears with backed-off polling when
-the server is unreachable.
+trigger a command). On Breeze Core ≥ 3.0.0 it receives **live updates over
+SSE** — the server pushes changes (including ones made by a schedule or
+another client) so the phone stops polling; against older servers, or if the
+stream drops, it falls back to a 5 s poll. An **offline banner** appears with
+backed-off polling when the server is unreachable.
 
 ---
 

@@ -29,6 +29,14 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _error;
   Timer? _poll;
 
+  // Live updates (SSE, Breeze Core >= 3.0.0). When available we stream and
+  // pause polling; on any drop we fall back to polling and retry the stream.
+  bool _liveChecked = false;
+  bool _liveSupported = false;
+  bool _streaming = false;
+  StreamSubscription<UnitState>? _stateSub;
+  Timer? _streamRetry;
+
   final PageController _pageController = PageController();
   int _page = 0;
 
@@ -47,8 +55,51 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _poll?.cancel();
+    _streamRetry?.cancel();
+    _stateSub?.cancel();
     _pageController.dispose();
     super.dispose();
+  }
+
+  // --- live stream (SSE) ---------------------------------------------------
+
+  void _startStream() {
+    if (!_liveSupported || _streaming || !mounted) return;
+    _streaming = true;
+    _poll?.cancel();  // the stream is our source of truth now
+    _stateSub = _api.streamStates().listen(
+      (s) {
+        if (!mounted) return;
+        setState(() {
+          _states[s.id] = s;
+          _offline = false;
+        });
+        _syncWidgets();
+      },
+      onError: (_) => _onStreamDown(),
+      onDone: _onStreamDown,
+      cancelOnError: true,
+    );
+  }
+
+  void _onStreamDown() {
+    if (!_streaming && _stateSub == null) return;  // idempotent
+    _stateSub?.cancel();
+    _stateSub = null;
+    _streaming = false;
+    if (!mounted) return;
+    _scheduleNext();  // resume polling while the stream is down
+    _streamRetry?.cancel();
+    _streamRetry = Timer(const Duration(seconds: 8), () {
+      if (mounted) _startStream();
+    });
+  }
+
+  void _stopStream() {
+    _streamRetry?.cancel();
+    _stateSub?.cancel();
+    _stateSub = null;
+    _streaming = false;
   }
 
   /// Self-rescheduling poll: fast normally, slow while the server is
@@ -170,11 +221,21 @@ class _HomeScreenState extends State<HomeScreen> {
       await _handleErr(e);
       if (mounted) setState(() => _loading = false);
     }
+    // Detect live-stream support once, then switch from polling to SSE.
+    if (!_liveChecked) {
+      try {
+        final info = await _api.serverInfo();
+        final feats = (info['features'] as List?)?.cast<String>() ?? const [];
+        _liveSupported = feats.contains('live_stream');
+        _liveChecked = true;
+      } catch (_) {/* old server / offline — re-probe next time, keep polling */}
+    }
+    if (_liveSupported) _startStream();
     _syncWidgets();
   }
 
   Future<void> _refreshStates() async {
-    if (_loading || _reauthing || !mounted) return;
+    if (_loading || _reauthing || _streaming || !mounted) return;
     // Silent background poll — no visible spinner (states just update in
     // place). The discreet indicator is reserved for user-initiated actions.
     try {
@@ -354,7 +415,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _open(Widget screen) {
-    _poll?.cancel(); // pause polling while away; resume on return
+    _poll?.cancel();   // pause polling while away…
+    _stopStream();     // …and the live stream; both resume via _loadAll on return
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen)).then((_) {
       if (mounted) {
         _scheduleNext();

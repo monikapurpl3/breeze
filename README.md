@@ -28,7 +28,8 @@ reveals nothing about the backend.
 | ![Control screen](docs/img/control.png) | ![Scan to add](docs/img/scan.png) | ![Programs](docs/img/programs.png) |
 -->
 
-_Screenshots coming soon._
+![Uploading merged-image-1784808972415.png…]()
+
 
 ---
 

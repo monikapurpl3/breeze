@@ -1,4 +1,4 @@
-<img width="2980" height="1516" alt="merged-image-1784808972415" src="https://github.com/user-attachments/assets/cfdb3475-cf77-4fee-a5f7-ac9cfc23ea06" /># Breeze
+
 
 A native **Flutter (Android)** client for a
 [**Breeze Core**](https://github.com/monikapurpl3/breeze-core) server —

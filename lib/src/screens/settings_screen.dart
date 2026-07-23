@@ -125,7 +125,7 @@ class SettingsScreen extends StatelessWidget {
           const AboutListTile(
             icon: Icon(Icons.info_outline),
             applicationName: 'Breeze',
-            applicationVersion: '2.0.1-pre1',
+            applicationVersion: '2.0.1',
             aboutBoxChildren: [
               Text('A climate control client. Material You dynamic colour, '
                   'light/dark following your system (or forced in Settings). '

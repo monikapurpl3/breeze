@@ -1,4 +1,4 @@
-
+# Breeze
 
 A native **Flutter (Android)** client for a
 [**Breeze Core**](https://github.com/monikapurpl3/breeze-core) server —
@@ -22,13 +22,9 @@ reveals nothing about the backend.
 
 ## Screens
 
-<!-- Screenshots live in docs/img/. Drop them in and use the table below.
-| Control screen | Scan to add | Programs |
-|:--:|:--:|:--:|
-| ![Control screen](docs/img/control.png) | ![Scan to add](docs/img/scan.png) | ![Programs](docs/img/programs.png) |
--->
-
-![The Screens](https://i.imgur.com/LyieDjQ.png)
+<p align="center">
+  <img src="https://i.imgur.com/LyieDjQ.png" alt="Breeze — the control screen, network scan-to-add, and the Programs editor" width="900">
+</p>
 
 ---
 
@@ -54,7 +50,9 @@ trigger a command). On Breeze Core ≥ 3.0.0 it receives **live updates over
 SSE** — the server pushes changes (including ones made by a schedule or
 another client) so the phone stops polling; against older servers, or if the
 stream drops, it falls back to a 5 s poll. An **offline banner** appears with
-backed-off polling when the server is unreachable.
+backed-off polling when the server is unreachable. The app **reopens on the
+unit you last viewed** (it remembers by unit, so it survives adding, removing,
+or reordering units).
 
 ---
 
@@ -65,7 +63,7 @@ backed-off polling when the server is unreachable.
 | **Add units** | **Scan the network** for units (≥ 3.0.0 finds them by their open AC ports — tap to add) **or add by LAN IP**; **rename** and **remove** too. |
 | **Home-screen widgets** | A resizable widget per unit (temperature, mode, power) with **power / temp − / temp +** buttons that work **without opening the app**, plus periodic background refresh. |
 | **Programs** | Favourites (saved scenes), schedules (day/time), and a **temperature-curve** builder with a live preview — all stored and run **server-side**, so they fire even with the phone off. |
-| **Diagnostics** | In-app reachability, scheduler status, and per-unit state / latency / enum checks. |
+| **Diagnostics** | A full battery mirroring the server's `diag`: connectivity + **server build/features**, **authentication & security posture** (rejects missing/wrong keys, reports token-gating), **this device's credential** (auth version + expiry warnings), config secret-sanitisation, input-validation (unknown unit → 404, out-of-range → 422), batch state, a **live-stream check**, and per-unit state / latency / **hardware capabilities**. |
 | **Settings** | Change server, re-pair, °C/°F, light/dark/system theme, and a **beep-on-control** toggle (≥ 3.0.0). |
 | **Theming** | **Material You** dynamic colour from the wallpaper (Android 12+); light/dark follows the system, or force one. |
 

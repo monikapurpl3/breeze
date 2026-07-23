@@ -96,19 +96,18 @@ Future<void> interactiveCallback(Uri? uri) async {
   final unitId = uri.queryParameters['unit'];
   if (action == null || unitId == null) return;
 
-  final store = SecureStore();
-  final url = await store.serverUrl;
-  final key = await store.apiKey;
-  final token = await store.deviceToken;
+  // Build a client from stored credentials — this loads the v2 request
+  // signer (or the legacy bearer token) so the isolate authenticates exactly
+  // like the foreground app.
+  final api = await ApiClient.fromStore(SecureStore());
 
   // No usable credentials → tell the widget to prompt for the app.
-  if (url == null || key == null || token == null) {
+  if (api == null || !api.hasDeviceCredential) {
     await HomeWidget.saveWidgetData<String>(_kPaired, '0');
     await HomeWidget.updateWidget(qualifiedAndroidName: kWidgetProvider);
     return;
   }
 
-  final api = ApiClient(baseUrl: url, apiKey: key, deviceToken: token);
   try {
     UnitState s = await api.getState(unitId);
     ClimateSettings? delta;
@@ -154,16 +153,12 @@ void workmanagerDispatcher() {
 /// Refresh every unit's cached widget state (used by the periodic task).
 /// Prefers the batch endpoint; falls back to per-unit on older servers.
 Future<void> _refreshAllWidgets() async {
-  final store = SecureStore();
-  final url = await store.serverUrl;
-  final key = await store.apiKey;
-  final token = await store.deviceToken;
-  if (url == null || key == null || token == null) {
+  final api = await ApiClient.fromStore(SecureStore());
+  if (api == null || !api.hasDeviceCredential) {
     await HomeWidget.saveWidgetData<String>(_kPaired, '0');
     await HomeWidget.updateWidget(qualifiedAndroidName: kWidgetProvider);
     return;
   }
-  final api = ApiClient(baseUrl: url, apiKey: key, deviceToken: token);
   try {
     final units = await api.listUnits();
     final states = <String, UnitState>{};

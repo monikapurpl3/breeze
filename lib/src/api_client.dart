@@ -7,13 +7,18 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'device_signer.dart';
 import 'models.dart';
+import 'secure_store.dart';
 
 class ApiException implements Exception {
   final int status; // 0 = network/transport error
   final String message;
   ApiException(this.status, this.message);
   bool get unauthorized => status == 401;
+  // 426 Upgrade Required — the server refuses this device's (outdated) auth
+  // version. The app resolves this by upgrading its credential to v2.
+  bool get upgradeRequired => status == 426;
   @override
   String toString() => message;
 }
@@ -21,7 +26,12 @@ class ApiException implements Exception {
 class ApiClient {
   final String baseUrl; // normalized, no trailing slash
   final String apiKey;
+  // v1 credential (bearer). Null once the device is on v2.
   String? deviceToken;
+  // v2 credential (Ed25519 request signer). Null on a v1 device.
+  DeviceSigner? signer;
+  // Which auth profile this client sends: 1 = bearer, 2 = signed requests.
+  int authVersion;
   final Duration timeout;
   final http.Client _http;
 
@@ -29,9 +39,47 @@ class ApiClient {
     required this.baseUrl,
     required this.apiKey,
     this.deviceToken,
+    this.signer,
+    this.authVersion = 1,
     http.Client? client,
     this.timeout = const Duration(seconds: 15),
   }) : _http = client ?? http.Client();
+
+  /// Build a client from stored credentials, or null if server+key are
+  /// missing. Used by the foreground app and the headless widget isolate so
+  /// request signing is set up identically everywhere. A returned client may
+  /// still lack a device credential (only URL+key stored) — check
+  /// [hasDeviceCredential] before hitting authenticated routes.
+  static Future<ApiClient?> fromStore(SecureStore store) async {
+    final url = await store.serverUrl;
+    final key = await store.apiKey;
+    if (url == null || key == null) return null;
+    if (await store.authVersion >= 2) {
+      final seed = await store.deviceSeed;
+      final keyId = await store.deviceKeyId;
+      if (seed != null && keyId != null) {
+        return ApiClient(
+          baseUrl: url,
+          apiKey: key,
+          signer: await DeviceSigner.fromSeed(seed, keyId),
+          authVersion: 2,
+        );
+      }
+    }
+    return ApiClient(
+      baseUrl: url, apiKey: key, deviceToken: await store.deviceToken, authVersion: 1,
+    );
+  }
+
+  bool get hasDeviceCredential => deviceToken != null || signer != null;
+
+  /// Switch this live client to v2, dropping the bearer token. Called after a
+  /// successful enrollment or in-place upgrade.
+  void adoptSigner(DeviceSigner s) {
+    signer = s;
+    authVersion = 2;
+    deviceToken = null;
+  }
 
   /// Normalize user input into a base URL. Defaults to https; only allows
   /// http:// for private/loopback hosts (and Android blocks cleartext
@@ -58,14 +106,30 @@ class ApiClient {
         (a == 172 && b >= 16 && b <= 31);
   }
 
-  Map<String, String> _headers({bool withToken = true, bool json = false}) {
+  Map<String, String> _headers({bool json = false}) {
     final h = <String, String>{'X-API-Key': apiKey};
-    if (withToken && deviceToken != null) h['Authorization'] = 'Bearer $deviceToken';
     if (json) h['Content-Type'] = 'application/json';
     return h;
   }
 
   Uri _uri(String path) => Uri.parse('$baseUrl$path');
+
+  /// Attach the device credential. v1 adds the bearer header; v2 signs the
+  /// request (over the path + exact body bytes) via [DeviceSigner]. The
+  /// `path` signed is the leading-slash request path — exactly what the
+  /// server reconstructs from request.url.path.
+  Future<void> _authenticate(
+    Map<String, String> headers,
+    String method,
+    String path,
+    List<int> bodyBytes,
+  ) async {
+    if (authVersion >= 2 && signer != null) {
+      headers.addAll(await signer!.signHeaders(method, path, bodyBytes));
+    } else if (deviceToken != null) {
+      headers['Authorization'] = 'Bearer $deviceToken';
+    }
+  }
 
   Future<dynamic> _send(
     String method,
@@ -75,9 +139,13 @@ class ApiClient {
   }) async {
     late http.Response r;
     try {
-      final headers = _headers(withToken: withToken, json: body != null);
+      final headers = _headers(json: body != null);
       final uri = _uri(path);
       final encoded = body == null ? null : jsonEncode(body);
+      if (withToken) {
+        await _authenticate(
+          headers, method, path, encoded == null ? const [] : utf8.encode(encoded));
+      }
       switch (method) {
         case 'GET':
           r = await _http.get(uri, headers: headers).timeout(timeout);
@@ -130,13 +198,29 @@ class ApiClient {
   }
 
   // --- enrollment (needs only the access key) ---
-  Future<Map<String, dynamic>> enrollStart(String label) async =>
-      (await _send('POST', '/api/auth/enroll/start',
-          body: {'label': label}, withToken: false)) as Map<String, dynamic>;
+  /// Begin enrollment. When [publicKey] is given the device enrolls as
+  /// auth-version 2 (Ed25519); the server stores only that public key and no
+  /// secret is ever returned. Omit it for legacy v1 bearer enrollment.
+  Future<Map<String, dynamic>> enrollStart(String label, {String? publicKey}) async {
+    final body = <String, dynamic>{'label': label};
+    if (publicKey != null) {
+      body['auth_version'] = 2;
+      body['public_key'] = publicKey;
+    }
+    return (await _send('POST', '/api/auth/enroll/start', body: body, withToken: false))
+        as Map<String, dynamic>;
+  }
 
   Future<Map<String, dynamic>> enrollPoll(String sessionId) async =>
       (await _send('POST', '/api/auth/enroll/poll',
           body: {'session_id': sessionId}, withToken: false)) as Map<String, dynamic>;
+
+  /// Migrate this already-enrolled device from v1 (bearer) to v2 (Ed25519)
+  /// in place. Sent with the *current* v1 credential; the server keeps the
+  /// same token_id and returns {token_id, auth_version:2}. No re-pairing.
+  Future<Map<String, dynamic>> upgradeToV2(String publicKey) async =>
+      (await _send('POST', '/api/auth/upgrade',
+          body: {'public_key': publicKey})) as Map<String, dynamic>;
 
   // --- units ---
   Future<List<UnitSummary>> listUnits() async {
@@ -151,6 +235,39 @@ class ApiClient {
   /// ApiException(404) on older servers — callers fall back to per-unit.
   Future<BatchStates> listStates() async =>
       BatchStates.fromJson(await _send('GET', '/api/units/state') as Map<String, dynamic>);
+
+  /// Live state stream over SSE (Breeze Core >= 3.0.0): emits a [UnitState]
+  /// per `event: state` frame as the server pushes changes. The stream errors
+  /// or closes on disconnect — the caller reconnects. `Accept-Encoding:
+  /// identity` disables compression (Dart's http can't decode brotli); the
+  /// GET is signed like any other request.
+  Stream<UnitState> streamStates() async* {
+    final req = http.Request('GET', _uri('/api/units/stream'));
+    req.headers['X-API-Key'] = apiKey;
+    req.headers['Accept-Encoding'] = 'identity';
+    await _authenticate(req.headers, 'GET', '/api/units/stream', const []);
+    final resp = await _http.send(req);
+    if (resp.statusCode != 200) {
+      throw ApiException(resp.statusCode, 'stream failed (${resp.statusCode})');
+    }
+    var buf = '';
+    await for (final chunk in resp.stream.transform(utf8.decoder)) {
+      buf += chunk.replaceAll('\r', '');       // normalise CRLF → LF
+      int i;
+      while ((i = buf.indexOf('\n\n')) >= 0) {  // one SSE frame
+        final frame = buf.substring(0, i);
+        buf = buf.substring(i + 2);
+        final data = StringBuffer();
+        for (final line in frame.split('\n')) {
+          if (line.startsWith('data:')) data.write(line.substring(5).trim());
+        }
+        if (data.isEmpty) continue;             // `: connected` / keepalive
+        try {
+          yield UnitState.fromJson(jsonDecode(data.toString()) as Map<String, dynamic>);
+        } catch (_) {/* skip a malformed frame */}
+      }
+    }
+  }
 
   /// Server metadata for feature-detection (Breeze Core >= 2.4.0):
   /// {name, version, features[], units}. Needs only the API key.
@@ -174,6 +291,84 @@ class ApiClient {
         'ip': ip,
         if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
       })) as Map<String, dynamic>;
+
+  /// Scan the LAN for units (Breeze Core >= 3.0.0). Returns the candidate
+  /// list [{ip, port, known}]. `subnet` overrides the server's autodetected
+  /// /24. Throws ApiException(404) on older servers → the UI hides scanning.
+  Future<List<Map<String, dynamic>>> scanUnits({String? subnet}) async {
+    final q = (subnet != null && subnet.isNotEmpty)
+        ? '?subnet=${Uri.encodeQueryComponent(subnet)}'
+        : '';
+    final r = await _send('GET', '/api/units/scan$q') as Map<String, dynamic>;
+    return ((r['candidates'] as List?) ?? const [])
+        .map((e) => (e as Map).cast<String, dynamic>())
+        .toList();
+  }
+
+  // --- diagnostics helpers ------------------------------------------------
+
+  /// Public health probe (no auth): {status: "ok"} on a healthy server.
+  Future<Map<String, dynamic>> health() async =>
+      (await _send('GET', '/api/health', withToken: false)) as Map<String, dynamic>;
+
+  /// This device's own server-side record (Breeze Core >= 3.0.0):
+  /// {token_id, label, auth_version, created_at, expires_at, last_used}.
+  /// Not LAN-gated — a device may always ask about itself.
+  Future<Map<String, dynamic>> whoami() async =>
+      (await _send('GET', '/api/auth/whoami')) as Map<String, dynamic>;
+
+  /// What a unit's hardware actually supports (Breeze Core >= 3.0.0).
+  Future<Map<String, dynamic>> capabilities(String id) async =>
+      (await _send('GET', '/api/units/$id/capabilities')) as Map<String, dynamic>;
+
+  /// The sanitised server config (Breeze Core >= 2.2.0), for the diagnostics
+  /// leak check. Returns the decoded body (shape varies by version).
+  Future<dynamic> fetchConfig() => _send('GET', '/api/config');
+
+  /// Enrolled device tokens (admin, LAN-gated). May 403/401 off-LAN.
+  Future<List<dynamic>> listDevices() async =>
+      (await _send('GET', '/api/auth/devices')) as List<dynamic>;
+
+  /// Diagnostic probe: run [method] [path] and return ONLY the HTTP status
+  /// (0 on transport error, -1 on an unsupported method), never throwing.
+  /// Lets the diagnostics screen verify the server's rejection behaviour
+  /// (401/404/422) and auth posture by choosing exactly which credentials to
+  /// send — without mutating this live client's own credentials.
+  Future<int> probe(
+    String method,
+    String path, {
+    Object? body,
+    bool sendKey = true,
+    String? keyOverride,
+    bool sendToken = true,
+  }) async {
+    try {
+      final headers = <String, String>{};
+      final key = keyOverride ?? (sendKey ? apiKey : null);
+      if (key != null) headers['X-API-Key'] = key;
+      final encoded = body == null ? null : jsonEncode(body);
+      if (encoded != null) headers['Content-Type'] = 'application/json';
+      if (sendToken) {
+        await _authenticate(
+            headers, method, path, encoded == null ? const [] : utf8.encode(encoded));
+      }
+      final uri = _uri(path);
+      final http.Response r;
+      switch (method) {
+        case 'GET':
+          r = await _http.get(uri, headers: headers).timeout(timeout);
+          break;
+        case 'POST':
+          r = await _http.post(uri, headers: headers, body: encoded).timeout(timeout);
+          break;
+        default:
+          return -1;
+      }
+      return r.statusCode;
+    } catch (_) {
+      return 0;
+    }
+  }
 
   // --- programs ---
   Future<List<Program>> listPrograms() async {

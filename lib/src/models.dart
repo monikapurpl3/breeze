@@ -149,6 +149,9 @@ class ClimateSettings {
   String? swingMode;
   bool? eco;
   bool? turbo;
+  // Whether the unit chirps when it accepts this command. Control-only (never
+  // part of UnitState); the app sets it from the per-connection beep pref.
+  bool? beep;
 
   ClimateSettings({
     this.powerState,
@@ -158,6 +161,7 @@ class ClimateSettings {
     this.swingMode,
     this.eco,
     this.turbo,
+    this.beep,
   });
 
   factory ClimateSettings.fromJson(Map<String, dynamic> j) => ClimateSettings(
@@ -168,6 +172,7 @@ class ClimateSettings {
         swingMode: j['swing_mode'] as String?,
         eco: j['eco'] as bool?,
         turbo: j['turbo'] as bool?,
+        beep: j['beep'] as bool?,
       );
 
   Map<String, dynamic> toJson() {
@@ -179,6 +184,7 @@ class ClimateSettings {
     if (swingMode != null) m['swing_mode'] = swingMode;
     if (eco != null) m['eco'] = eco;
     if (turbo != null) m['turbo'] = turbo;
+    if (beep != null) m['beep'] = beep;
     return m;
   }
 

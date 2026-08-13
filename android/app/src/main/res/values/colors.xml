@@ -10,4 +10,15 @@
     <color name="widget_button_bg">#FFDCE6EA</color>
     <color name="widget_icon">#FF0E6E7A</color>
     <color name="widget_accent">#FF0E7C86</color>
+
+    <!-- On/off skin: the whole widget goes COLOURFUL when the unit is running
+         and COLOURLESS (neutral grey) when it's off or unreachable, so state
+         reads across the room without parsing any text. -->
+    <color name="widget_bg_on">#FFD3EFEE</color>
+    <color name="widget_bg_off">#FFEDF0F2</color>
+    <color name="widget_status_on_bg">#FF0E7C86</color>
+    <color name="widget_status_on_text">#FFFFFFFF</color>
+    <color name="widget_status_off_bg">#FFD5DBDF</color>
+    <color name="widget_status_off_text">#FF55636B</color>
+    <color name="widget_text_muted">#FF66757E</color>
 </resources>

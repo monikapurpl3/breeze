@@ -7,4 +7,8 @@
     <string name="widget_not_configured">Tap to choose a unit</string>
     <string name="widget_open_app">Open Breeze to sign in</string>
     <string name="widget_dash">—</string>
+    <!-- Status badge — short and shouty on purpose; it's what users look for. -->
+    <string name="widget_state_on">ON</string>
+    <string name="widget_state_off">OFF</string>
+    <string name="widget_state_offline">OFFLINE</string>
 </resources>

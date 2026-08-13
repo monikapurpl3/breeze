@@ -7,6 +7,7 @@ import '../widgets/big_toggle.dart';
 import '../widgets/fan_control.dart';
 import '../widgets/flap_control.dart';
 import '../widgets/mode_selector.dart';
+import '../widgets/power_switch.dart';
 import '../widgets/temp_control.dart';
 
 /// One AC unit, filling the screen (no scrolling). Composed of the modern
@@ -70,11 +71,10 @@ class UnitPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              _PowerButton(
+              PowerSwitch(
                 on: state.powerState,
-                accent: accent,
                 enabled: live,
-                onTap: () => onControl(ClimateSettings(powerState: !state.powerState)),
+                onChanged: (v) => onControl(ClimateSettings(powerState: v)),
               ),
               if (onRename != null || onRemove != null)
                 PopupMenuButton<String>(
@@ -168,40 +168,3 @@ class UnitPage extends StatelessWidget {
   }
 }
 
-class _PowerButton extends StatelessWidget {
-  const _PowerButton({
-    required this.on,
-    required this.accent,
-    required this.enabled,
-    required this.onTap,
-  });
-  final bool on;
-  final Color accent;
-  final bool enabled;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return SizedBox(
-      width: 46,
-      height: 46,
-      child: Material(
-        color: on && enabled
-            ? accent.withValues(alpha: 0.18)
-            : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        shape: const CircleBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: enabled ? onTap : null,
-          child: Icon(
-            Icons.power_settings_new,
-            color: !enabled
-                ? scheme.onSurfaceVariant.withValues(alpha: 0.4)
-                : (on ? accent : scheme.onSurfaceVariant),
-          ),
-        ),
-      ),
-    );
-  }
-}

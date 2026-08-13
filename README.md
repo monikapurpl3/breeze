@@ -39,9 +39,11 @@ screen (no scrolling), tinted to the active mode:
   current mode.
 - **Mode** — a colourful segmented picker: auto · cool · dry · heat · fan.
 - **Fan** — a Low→High slider that **detaches to Auto**.
-- **Flap** — an on/off switch plus a free-gliding slider: up-down · both ·
-  left-right.
-- **Eco / Turbo** — large, colourful switches. **Power** — front and centre.
+- **Flap** — one big pill split in two: **vertical flap** and **horizontal
+  flap**, each toggled on its own (neither, either, or both).
+- **Eco / Turbo** — large, colourful switches.
+- **Power** — a big switch in the header: **faintly red when off, faintly green
+  when on**, so the unit's state is never in doubt.
 
 Every change is **optimistic with haptic feedback** (it reflects instantly,
 then reconciles with the server), and the screen **never flickers** while
@@ -61,7 +63,7 @@ or reordering units).
 | Area | What it does |
 |---|---|
 | **Add units** | **Scan the network** for units (≥ 3.0.0 finds them by their open AC ports — tap to add) **or add by LAN IP**; **rename** and **remove** too. |
-| **Home-screen widgets** | A resizable widget per unit (temperature, mode, power) with **power / temp − / temp +** buttons that work **without opening the app**, plus periodic background refresh. |
+| **Home-screen widgets** | A resizable widget per unit showing temperature, mode and a bold **ON / OFF / OFFLINE** badge — the whole widget is **colourful while the unit runs and colourless when it's off**. **Power / temp − / temp +** buttons work **without opening the app**, plus periodic background refresh. |
 | **Programs** | Favourites (saved scenes), schedules (day/time), and a **temperature-curve** builder with a live preview — all stored and run **server-side**, so they fire even with the phone off. |
 | **Diagnostics** | A full battery mirroring the server's `diag`: connectivity + **server build/features**, **authentication & security posture** (rejects missing/wrong keys, reports token-gating), **this device's credential** (auth version + expiry warnings), config secret-sanitisation, input-validation (unknown unit → 404, out-of-range → 422), batch state, a **live-stream check**, and per-unit state / latency / **hardware capabilities**. |
 | **Settings** | Change server, re-pair, °C/°F, light/dark/system theme, and a **beep-on-control** toggle (≥ 3.0.0). |
@@ -159,7 +161,7 @@ lib/
     ├── home_widget_service.dart home-screen widget sync + headless control callback
     ├── theme.dart / util.dart   Material You accents, time helpers
     ├── screens/                 onboarding, pairing, home (swipe pager), unit_page, diagnostics, programs, program_edit, settings
-    └── widgets/                 temp_control, fan_control, flap_control, big_toggle, mode_selector, curve_painter, climate_settings_editor
+    └── widgets/                 temp_control, fan_control, flap_control, power_switch, big_toggle, mode_selector, curve_painter, climate_settings_editor
 
 android/app/src/main/
 ├── kotlin/app/breeze/breeze/   BreezeUnitWidgetProvider + UnitConfigActivity (App Widget)

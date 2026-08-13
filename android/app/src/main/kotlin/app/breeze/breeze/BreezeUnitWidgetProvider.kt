@@ -47,6 +47,9 @@ class BreezeUnitWidgetProvider : HomeWidgetProvider() {
         views.setTextViewText(R.id.widget_temp, context.getString(R.string.widget_dash))
         views.setTextViewText(R.id.widget_mode, context.getString(R.string.widget_not_configured))
         setControlsVisible(views, false)
+        // No unit, so no state to claim: hide the badge and stay colourless.
+        views.setViewVisibility(R.id.widget_status, android.view.View.GONE)
+        applySkin(context, views, on = false)
 
         val configIntent = Intent(context, UnitConfigActivity::class.java).apply {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
@@ -92,9 +95,11 @@ class BreezeUnitWidgetProvider : HomeWidgetProvider() {
         )
         setControlsVisible(views, true)
 
-        // Not paired: tell the user to open the app, and route taps there.
+        // Not paired: tell the user to open the app, and route taps there. We
+        // can't vouch for the state, so no badge and no colour.
         if (!paired) {
             views.setTextViewText(R.id.widget_mode, context.getString(R.string.widget_open_app))
+            views.setViewVisibility(R.id.widget_status, android.view.View.GONE)
             val launch = HomeWidgetLaunchIntent.getActivity(
                 context, MainActivity::class.java, Uri.parse("homeWidget://open?unit=$unitId"),
             )
@@ -104,17 +109,28 @@ class BreezeUnitWidgetProvider : HomeWidgetProvider() {
             )) {
                 views.setOnClickPendingIntent(btn, launch)
             }
-            tintPower(context, views, on = false)
+            applySkin(context, views, on = false)
             return
         }
 
-        val statusWord = if (!online) "offline" else if (power) "on" else "off"
+        // The mode line no longer repeats the state word — the badge owns that.
         val modeLabel = modeLabels[mode] ?: mode.lowercase(Locale.US)
         views.setTextViewText(
             R.id.widget_mode,
-            if (modeLabel.isEmpty()) statusWord else "$modeLabel · $statusWord",
+            if (modeLabel.isEmpty()) context.getString(R.string.widget_dash) else modeLabel,
         )
-        tintPower(context, views, on = power && online)
+        views.setViewVisibility(R.id.widget_status, android.view.View.VISIBLE)
+        views.setTextViewText(
+            R.id.widget_status,
+            context.getString(
+                when {
+                    !online -> R.string.widget_state_offline
+                    power -> R.string.widget_state_on
+                    else -> R.string.widget_state_off
+                },
+            ),
+        )
+        applySkin(context, views, on = power && online)
 
         // Buttons → headless Dart control callback (see home_widget_service.dart).
         views.setOnClickPendingIntent(R.id.widget_btn_power, control(context, unitId, "power", id))
@@ -136,9 +152,50 @@ class BreezeUnitWidgetProvider : HomeWidgetProvider() {
         return HomeWidgetBackgroundIntent.getBroadcast(context, uri)
     }
 
-    private fun tintPower(context: Context, views: RemoteViews, on: Boolean) {
-        val color = context.getColor(if (on) R.color.widget_accent else R.color.widget_icon)
-        views.setInt(R.id.widget_btn_power, "setColorFilter", color)
+    /**
+     * Paint the whole widget by state: **colourful when the unit is running,
+     * colourless when it's off or unreachable.** Users couldn't tell on from
+     * off at a glance, so state now drives the body, the badge, the text
+     * contrast and the power button — not just an icon tint.
+     *
+     * Only `@RemotableViewMethod`s are reachable from a RemoteViews, hence
+     * `setInt(..., "setBackgroundResource", ...)` rather than direct calls.
+     */
+    private fun applySkin(context: Context, views: RemoteViews, on: Boolean) {
+        views.setInt(
+            R.id.widget_root, "setBackgroundResource",
+            if (on) R.drawable.breeze_widget_bg_on else R.drawable.breeze_widget_bg_off,
+        )
+        views.setInt(
+            R.id.widget_status, "setBackgroundResource",
+            if (on) R.drawable.breeze_widget_status_on else R.drawable.breeze_widget_status_off,
+        )
+        views.setTextColor(
+            R.id.widget_status,
+            context.getColor(
+                if (on) R.color.widget_status_on_text else R.color.widget_status_off_text,
+            ),
+        )
+
+        // Full contrast while running; muted when there's nothing to control.
+        val primary =
+            context.getColor(if (on) R.color.widget_text_primary else R.color.widget_text_muted)
+        views.setTextColor(R.id.widget_name, primary)
+        views.setTextColor(R.id.widget_temp, primary)
+        views.setTextColor(
+            R.id.widget_mode,
+            context.getColor(if (on) R.color.widget_text_secondary else R.color.widget_text_muted),
+        )
+
+        // The power button doubles as a state light: filled accent vs flat neutral.
+        views.setInt(
+            R.id.widget_btn_power, "setBackgroundResource",
+            if (on) R.drawable.breeze_widget_btn_power_on else R.drawable.breeze_widget_btn_bg,
+        )
+        views.setInt(
+            R.id.widget_btn_power, "setColorFilter",
+            context.getColor(if (on) R.color.widget_status_on_text else R.color.widget_icon),
+        )
     }
 
     private fun setControlsVisible(views: RemoteViews, visible: Boolean) {

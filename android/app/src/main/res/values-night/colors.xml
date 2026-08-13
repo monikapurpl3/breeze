@@ -7,4 +7,13 @@
     <color name="widget_button_bg">#FF243036</color>
     <color name="widget_icon">#FF8FD9E0</color>
     <color name="widget_accent">#FF4FD1C5</color>
+
+    <!-- On/off skin (see values/colors.xml). -->
+    <color name="widget_bg_on">#FF10353A</color>
+    <color name="widget_bg_off">#FF161C20</color>
+    <color name="widget_status_on_bg">#FF4FD1C5</color>
+    <color name="widget_status_on_text">#FF04232A</color>
+    <color name="widget_status_off_bg">#FF2A353B</color>
+    <color name="widget_status_off_text">#FF9DABB3</color>
+    <color name="widget_text_muted">#FF85939B</color>
 </resources>

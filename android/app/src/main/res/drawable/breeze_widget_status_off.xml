@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- "OFF"/"OFFLINE" badge: flat neutral. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="@color/widget_background" />
-    <corners android:radius="24dp" />
+    <solid android:color="@color/widget_status_off_bg" />
+    <corners android:radius="13dp" />
 </shape>

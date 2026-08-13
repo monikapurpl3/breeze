@@ -48,82 +48,101 @@ class _TempControlState extends State<TempControl> {
     final accent = widget.accent;
     final shown = _shown.clamp(kMinTemp, kMaxTemp);
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Big readout.
-        FittedBox(
-          child: Text(
-            fmtTemp(shown, widget.unit, showUnit: false),
-            style: TextStyle(
-              fontSize: 88,
-              fontWeight: FontWeight.w300,
-              height: 1.0,
-              color: widget.enabled ? scheme.onSurface : scheme.onSurfaceVariant,
-              letterSpacing: -2,
-            ),
-          ),
-        ),
-        const SizedBox(height: 2),
-        if (widget.indoor != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Row(
-              children: [
-                Text(
-                  'indoor ${fmtTemp(widget.indoor!, widget.unit)}',
-                  style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
-                ),
-                const SizedBox(width: 12),
-                Expanded(child: _IndoorBar(indoor: widget.indoor!, accent: accent)),
-              ],
-            ),
-          )
-        else
-          Text('target', style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14)),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            _StepButton(
-              icon: Icons.remove,
-              accent: accent,
-              onTap: widget.enabled ? () => _step(-0.5) : null,
-            ),
-            Expanded(
-              child: SliderTheme(
-                data: SliderThemeData(
-                  trackHeight: 8,
-                  activeTrackColor: accent,
-                  inactiveTrackColor: accent.withValues(alpha: 0.18),
-                  thumbColor: accent,
-                  overlayColor: accent.withValues(alpha: 0.15),
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
-                  showValueIndicator: ShowValueIndicator.never,
-                ),
-                child: Slider(
-                  min: kMinTemp,
-                  max: kMaxTemp,
-                  divisions: ((kMaxTemp - kMinTemp) * 2).round(),
-                  value: shown.toDouble(),
-                  onChanged: widget.enabled
-                      ? (v) => setState(() => _dragging = snapHalf(v))
-                      : null,
-                  onChangeEnd: (v) {
-                    final snapped = snapHalf(v);
-                    setState(() => _dragging = null);
-                    if (snapped != widget.value) widget.onChanged(snapped);
-                  },
-                ),
+    // Sit above centre rather than dead-centre in the slack: the flap pill
+    // freed vertical space, and pure centring spent half of it above the
+    // readout, dropping the number lower than it used to sit. The fractional
+    // bias scales with the screen instead of hard-coding an offset.
+    return Align(
+      alignment: const Alignment(0, -0.4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Big readout.
+          FittedBox(
+            child: Text(
+              fmtTemp(shown, widget.unit, showUnit: false),
+              style: TextStyle(
+                fontSize: 88,
+                fontWeight: FontWeight.w300,
+                height: 1.0,
+                color: widget.enabled
+                    ? scheme.onSurface
+                    : scheme.onSurfaceVariant,
+                letterSpacing: -2,
               ),
             ),
-            _StepButton(
-              icon: Icons.add,
-              accent: accent,
-              onTap: widget.enabled ? () => _step(0.5) : null,
+          ),
+          const SizedBox(height: 2),
+          if (widget.indoor != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: [
+                  Text(
+                    'indoor ${fmtTemp(widget.indoor!, widget.unit)}',
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _IndoorBar(indoor: widget.indoor!, accent: accent),
+                  ),
+                ],
+              ),
+            )
+          else
+            Text(
+              'target',
+              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
             ),
-          ],
-        ),
-      ],
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              _StepButton(
+                icon: Icons.remove,
+                accent: accent,
+                onTap: widget.enabled ? () => _step(-0.5) : null,
+              ),
+              Expanded(
+                child: SliderTheme(
+                  data: SliderThemeData(
+                    trackHeight: 8,
+                    activeTrackColor: accent,
+                    inactiveTrackColor: accent.withValues(alpha: 0.18),
+                    thumbColor: accent,
+                    overlayColor: accent.withValues(alpha: 0.15),
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 12,
+                    ),
+                    showValueIndicator: ShowValueIndicator.never,
+                  ),
+                  child: Slider(
+                    min: kMinTemp,
+                    max: kMaxTemp,
+                    divisions: ((kMaxTemp - kMinTemp) * 2).round(),
+                    value: shown.toDouble(),
+                    onChanged: widget.enabled
+                        ? (v) => setState(() => _dragging = snapHalf(v))
+                        : null,
+                    onChangeEnd: (v) {
+                      final snapped = snapHalf(v);
+                      setState(() => _dragging = null);
+                      if (snapped != widget.value) widget.onChanged(snapped);
+                    },
+                  ),
+                ),
+              ),
+              _StepButton(
+                icon: Icons.add,
+                accent: accent,
+                onTap: widget.enabled ? () => _step(0.5) : null,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

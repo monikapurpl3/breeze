@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tells Android Auto this app provides a Car App Library *template* app
+     (as opposed to a media or messaging app). Required for the CarAppService
+     to be discovered. -->
+<automotiveApp>
+    <uses name="template" />
+</automotiveApp>

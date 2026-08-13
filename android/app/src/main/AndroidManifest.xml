@@ -2,6 +2,12 @@
     <!-- Talk to the climate server over the network (TLS; cleartext stays
          disabled by default on modern Android). -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Android Auto (projected). Not required: the phone app is the product;
+         the car surface is a bonus, and this must stay installable on phones
+         with no car software at all. -->
+    <uses-feature
+        android:name="android.hardware.type.automotive"
+        android:required="false"/>
     <application
         android:label="Breeze"
         android:name="${applicationName}"
@@ -65,6 +71,28 @@
                 <action android:name="es.antonborri.home_widget.action.BACKGROUND" />
             </intent-filter>
         </receiver>
+
+        <!-- ── Android Auto ──────────────────────────────────────────────────
+             One unit per screen, one huge power button. Registered under the
+             IOT category (controlling a device at home), NOT navigation/media.
+             Distribution note: template apps in these categories need Google
+             review for Play; for a self-hosted APK, turn on "Unknown sources"
+             in Android Auto's developer settings. -->
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+        <meta-data
+            android:name="androidx.car.app.minCarApiLevel"
+            android:value="1" />
+
+        <service
+            android:name=".car.BreezeCarAppService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.car.app.CarAppService" />
+                <category android:name="androidx.car.app.category.IOT" />
+            </intent-filter>
+        </service>
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

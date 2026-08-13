@@ -75,3 +75,15 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Android for Cars App Library — backs the Android Auto surface in
+    // kotlin/app/breeze/breeze/car/.
+    //   app            the templates/models (Screen, GridTemplate, CarIcon…)
+    //   app-projected  the phone-projected host bits (Android Auto itself)
+    // Both are needed explicitly: app-projected declares NO transitive
+    // dependency on app, so listing only the former compiles to a wall of
+    // "unresolved reference androidx.car.app.*".
+    implementation("androidx.car.app:app:1.4.0")
+    implementation("androidx.car.app:app-projected:1.4.0")
+}

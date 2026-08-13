@@ -11,4 +11,14 @@
     <string name="widget_state_on">ON</string>
     <string name="widget_state_off">OFF</string>
     <string name="widget_state_offline">OFFLINE</string>
+
+    <!-- Android Auto. Kept to a handful of words: it's read at a glance, if at all. -->
+    <string name="car_title">Breeze</string>
+    <string name="car_state_on">ON</string>
+    <string name="car_state_off">OFF</string>
+    <string name="car_offline">Not reachable</string>
+    <string name="car_tap_to_turn_on">Tap to turn on</string>
+    <string name="car_tap_to_turn_off">Tap to turn off</string>
+    <string name="car_not_paired">Open Breeze on your phone to sign in.</string>
+    <string name="car_no_units">No units yet. Add one in the Breeze app.</string>
 </resources>

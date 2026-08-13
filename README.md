@@ -14,9 +14,9 @@ reveals nothing about the backend.
 > Programs screen needs the server's scheduler feature.
 
 **Contents:** [Screens](#screens) · [The control screen](#the-control-screen)
-· [More features](#more-features) · [Security](#security) ·
-[Getting started](#getting-started) · [Project layout](#project-layout) ·
-[License](#license)
+· [More features](#more-features) · [Android Auto](#android-auto) ·
+[Security](#security) · [Getting started](#getting-started) ·
+[Project layout](#project-layout) · [License](#license)
 
 ---
 
@@ -67,6 +67,7 @@ or reordering units).
 | **Programs** | Favourites (saved scenes), schedules (day/time), and a **temperature-curve** builder with a live preview — all stored and run **server-side**, so they fire even with the phone off. |
 | **Diagnostics** | A full battery mirroring the server's `diag`: connectivity + **server build/features**, **authentication & security posture** (rejects missing/wrong keys, reports token-gating), **this device's credential** (auth version + expiry warnings), config secret-sanitisation, input-validation (unknown unit → 404, out-of-range → 422), batch state, a **live-stream check**, and per-unit state / latency / **hardware capabilities**. |
 | **Settings** | Change server, re-pair, °C/°F, light/dark/system theme, and a **beep-on-control** toggle (≥ 3.0.0). |
+| **Android Auto** | One unit per screen, one **huge power button** — see [below](#android-auto). |
 | **Theming** | **Material You** dynamic colour from the wallpaper (Android 12+); light/dark follows the system, or force one. |
 
 **Home-screen widgets, in detail:** each button tap runs a headless
@@ -78,6 +79,46 @@ controls.
 approves it on the LAN. On Breeze Core ≥ 3.0.0 the app generates an Ed25519
 keypair and registers only its public key; against older servers it falls
 back to a bearer token; either way it re-pairs automatically on a `401`.
+
+---
+
+## Android Auto
+
+A deliberately tiny car surface, built with the **Android for Cars App
+Library** (native Kotlin, in the same APK): **one AC per screen, and nothing on
+it but a huge power button**, with the unit's name in the header above it.
+Big **▲ / ▼** actions step between units, wrapping around. Everything else —
+temperature, mode, fan, programs — stays on the phone, on purpose: you should
+be able to hit this without reading it.
+
+The button is colour-coded (**green running, red stopped**) and labelled
+**ON** / **OFF**, or *Not reachable* if the unit is offline. Taps respond
+immediately — the state flips optimistically while the command flies, and
+reconciles when the real state lands.
+
+**How it authenticates:** it doesn't, itself. The car screen reads the same
+cached unit list/state the home-screen widgets use, and fires the same headless
+background callback to control a unit — so it reuses the phone's Ed25519
+signing and Keystore-held credentials rather than shipping a second API client
+and a copy of the crypto into the car process. Consequence: **open the phone
+app once** after installing, so there's something cached to show.
+
+**Installing it (why it isn't just "there"):** Android Auto only loads template
+apps in a handful of categories, and everything outside navigation/media needs
+Google review to be distributed through Play. This app registers under the
+**IOT** category, which is the right home for "control a device at my house",
+but for a self-hosted APK you enable it yourself:
+
+1. In **Android Auto** settings on the phone, tap *Version* ~10× to unlock
+   **Developer settings**.
+2. In the ⋮ menu → **Developer settings**, enable **Unknown sources**.
+3. Reconnect to the car (or the [Desktop Head Unit](https://developer.android.com/training/cars/testing/dhu)) —
+   Breeze shows up in the launcher.
+
+Because the host renders the templates, it — not the app — decides exact sizes
+and where the ▲/▼ actions sit; "huge" means the largest primitive the library
+offers (a single-item grid). Note it's **not been driven yet** — it compiles and
+the service is wired correctly, but it wants a real head unit or DHU pass.
 
 ---
 
@@ -165,7 +206,8 @@ lib/
 
 android/app/src/main/
 ├── kotlin/app/breeze/breeze/   BreezeUnitWidgetProvider + UnitConfigActivity (App Widget)
-└── res/                        layout/breeze_widget*, xml/breeze_widget_info, widget drawables + colours
+│   └── car/                    Android Auto: BreezeCarAppService, PowerScreen, CarUnitStore
+└── res/                        layout/breeze_widget*, xml/{breeze_widget_info,automotive_app_desc}, widget + car drawables, colours
 ```
 
 ## License

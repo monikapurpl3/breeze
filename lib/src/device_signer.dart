@@ -67,9 +67,18 @@ class DeviceSigner {
 
   /// Build the X-Breeze-* signature headers for one request. `path` is the
   /// request path (with query string, if any) exactly as the server sees it.
+  ///
+  /// [clockOffsetSeconds] corrects a device clock that has drifted outside the
+  /// server's accepted window — phones that sleep without a network don't sync
+  /// their time. The client learns the offset from a `clock_skew` rejection and
+  /// passes it here, so requests are stamped with *server* time. Without this,
+  /// a drifted phone fails every request and looks like a dead credential.
   Future<Map<String, String>> signHeaders(
-      String method, String path, List<int> body) async {
-    final ts = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+      String method, String path, List<int> body,
+      {int clockOffsetSeconds = 0}) async {
+    final ts =
+        (DateTime.now().millisecondsSinceEpoch ~/ 1000 + clockOffsetSeconds)
+            .toString();
     final nonce =
         _b64u(List<int>.generate(16, (_) => _rnd.nextInt(256)));
     final bodyHash = _hex(sha3_512(body));

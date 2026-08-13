@@ -14,11 +14,49 @@ import 'secure_store.dart';
 class ApiException implements Exception {
   final int status; // 0 = network/transport error
   final String message;
-  ApiException(this.status, this.message);
+
+  /// Stable machine-readable reason from the server (Breeze Core ≥ 3.0.2),
+  /// e.g. `clock_skew`, `replay`, `unknown_key`, `expired`, `bad_signature`.
+  /// Null on older servers.
+  final String? reason;
+
+  /// Server's own view: true when the credential is fine and only *this
+  /// request* was rejected. Older servers don't say, so null.
+  final bool? retryable;
+
+  ApiException(this.status, this.message, {this.reason, this.retryable});
+
   bool get unauthorized => status == 401;
+
   // 426 Upgrade Required — the server refuses this device's (outdated) auth
   // version. The app resolves this by upgrading its credential to v2.
   bool get upgradeRequired => status == 426;
+
+  /// Whether this 401 means "your credential is dead, re-pair" as opposed to
+  /// "that request was malformed/stale, fix it and retry".
+  ///
+  /// This distinction is load-bearing: re-pairing **destroys the device's
+  /// Ed25519 private key** and needs an admin on the LAN to approve a new one,
+  /// so doing it because a phone's clock drifted by 61 seconds strands the
+  /// user. When the server doesn't tell us (pre-3.0.2), we assume the
+  /// credential is *fine* and let the caller's repeat-count decide.
+  bool get credentialRejected {
+    if (!unauthorized) return false;
+    if (retryable == true) return false;
+    return const {'unknown_key', 'expired', 'no_credential', 'bad_api_key'}
+        .contains(reason);
+  }
+
+  /// True for a 401 the client should fix and retry rather than react to.
+  bool get transientAuthFailure =>
+      unauthorized && (retryable == true || _kRetryableReasons.contains(reason));
+
+  static const _kRetryableReasons = {
+    'clock_skew',
+    'replay',
+    'incomplete_signature',
+  };
+
   @override
   String toString() => message;
 }
@@ -34,6 +72,15 @@ class ApiClient {
   int authVersion;
   final Duration timeout;
   final http.Client _http;
+
+  /// server_time − device_time, learned from a `clock_skew` rejection and
+  /// applied to every later signature. Kept in memory only: it's re-learned in
+  /// one round-trip, and persisting a stale offset would be worse than none.
+  int _clockOffsetSeconds = 0;
+
+  /// Whether this client has had to correct for a drifted device clock.
+  bool get clockCorrected => _clockOffsetSeconds != 0;
+  int get clockOffsetSeconds => _clockOffsetSeconds;
 
   ApiClient({
     required this.baseUrl,
@@ -125,13 +172,34 @@ class ApiClient {
     List<int> bodyBytes,
   ) async {
     if (authVersion >= 2 && signer != null) {
-      headers.addAll(await signer!.signHeaders(method, path, bodyBytes));
+      headers.addAll(await signer!.signHeaders(method, path, bodyBytes,
+          clockOffsetSeconds: _clockOffsetSeconds));
     } else if (deviceToken != null) {
       headers['Authorization'] = 'Bearer $deviceToken';
     }
   }
 
+  /// Send a request, transparently retrying **once** on a transient auth
+  /// failure (a drifted clock or a reused nonce). By the time a caller sees a
+  /// 401 it therefore means something real — which is what lets the app stop
+  /// throwing away its credential over a recoverable hiccup.
   Future<dynamic> _send(
+    String method,
+    String path, {
+    Object? body,
+    bool withToken = true,
+  }) async {
+    try {
+      return await _sendOnce(method, path, body: body, withToken: withToken);
+    } on ApiException catch (e) {
+      if (!e.transientAuthFailure) rethrow;
+      // The clock offset (if any) was just learned in _error(); signing the
+      // retry picks it up, and a fresh nonce is generated per signature.
+      return await _sendOnce(method, path, body: body, withToken: withToken);
+    }
+  }
+
+  Future<dynamic> _sendOnce(
     String method,
     String path, {
     Object? body,
@@ -175,10 +243,36 @@ class ApiClient {
       if (r.body.isEmpty) return null;
       return jsonDecode(r.body);
     }
-    throw ApiException(r.statusCode, _errorText(r));
+    throw _error(r);
   }
 
-  String _errorText(http.Response r) {
+  /// Turn a non-2xx response into a typed error, picking up the structured
+  /// auth reason (Breeze Core ≥ 3.0.2) when present. Also *learns the clock
+  /// offset* from a `clock_skew` rejection so the retry can be stamped with
+  /// server time.
+  ApiException _error(http.Response r) {
+    String? reason;
+    bool? retryable;
+    try {
+      final j = jsonDecode(r.body);
+      final detail = (j is Map) ? j['detail'] : null;
+      if (detail is Map) {
+        reason = detail['error'] as String?;
+        retryable = detail['retryable'] as bool?;
+        final serverTime = detail['server_time'];
+        if (reason == 'clock_skew' && serverTime is num) {
+          // Offset = server − device, applied to every later signature.
+          _clockOffsetSeconds =
+              serverTime.round() - DateTime.now().millisecondsSinceEpoch ~/ 1000;
+        }
+        return ApiException(r.statusCode, (detail['detail'] ?? _fallbackText(r)).toString(),
+            reason: reason, retryable: retryable);
+      }
+    } catch (_) {/* not JSON, or an older shape — fall through */}
+    return ApiException(r.statusCode, _fallbackText(r), reason: reason, retryable: retryable);
+  }
+
+  String _fallbackText(http.Response r) {
     try {
       final j = jsonDecode(r.body);
       if (j is Map && j['detail'] != null) return j['detail'].toString();

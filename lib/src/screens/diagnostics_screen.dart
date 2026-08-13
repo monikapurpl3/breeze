@@ -44,6 +44,21 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
 
   ApiClient get _api => AppScope.of(context).api!;
 
+  /// True when the configured server is a private/loopback address, i.e. we're
+  /// on the same LAN. Used to keep LAN-only admin probes off the wire when
+  /// we're remote (a 403 there can get the client's IP banned).
+  bool get _serverIsPrivate {
+    final host = Uri.tryParse(_api.baseUrl)?.host ?? '';
+    if (host == 'localhost') return true;
+    final m = RegExp(r'^(\d+)\.(\d+)\.\d+\.\d+$').firstMatch(host);
+    if (m == null) return false;
+    final a = int.parse(m.group(1)!), b = int.parse(m.group(2)!);
+    return a == 10 ||
+        a == 127 ||
+        (a == 192 && b == 168) ||
+        (a == 172 && b >= 16 && b <= 31);
+  }
+
   void _add(_Level l, String label, String detail) {
     if (mounted) setState(() => _results.add(_Check(l, label, detail)));
   }
@@ -157,6 +172,18 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
 
   Future<void> _thisDevice() async {
     _section('This device');
+    // Device clock vs server clock. A drift past the server's window rejects
+    // every signed request — the exact failure that looked like "the app lost
+    // my login". The client corrects itself, but say so out loud.
+    final skew = _api.clockOffsetSeconds;
+    if (skew == 0) {
+      _add(_Level.ok, 'Device clock', 'in sync with the server');
+    } else {
+      _add(_Level.warn, 'Device clock',
+          'off by ${skew.abs()} s (${skew > 0 ? 'behind' : 'ahead of'} the server) '
+          '— corrected automatically; turn on automatic date & time');
+    }
+
     final v = _api.authVersion;
     _add(v >= 2 ? _Level.ok : _Level.warn, 'Auth profile',
         v >= 2
@@ -194,6 +221,16 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
 
   Future<void> _pairedDevices() async {
     _section('Paired devices');
+    // `/api/auth/devices` is admin + LAN-only, so off-LAN it returns 403 — and
+    // a server behind a fail2ban tripwire may treat a single 403 on an admin
+    // endpoint as an intrusion attempt and ban the client's IP (which, behind
+    // NAT, is shared with everyone else in the house). Never probe it unless
+    // we're plainly talking to a private address.
+    if (!_serverIsPrivate) {
+      _add(_Level.info, 'Device management',
+          'skipped — admin endpoint, only checked when connected to the LAN');
+      return;
+    }
     try {
       final devices = await _api.listDevices();
       _add(_Level.ok, 'Enrolled devices', '${devices.length} token(s)');

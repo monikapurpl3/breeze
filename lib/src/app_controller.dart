@@ -200,10 +200,50 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// A 401 anywhere means the token is gone/expired — drop it and re-pair.
-  Future<void> handleUnauthorized() async {
+  /// Consecutive 401s that weren't explicitly "your credential is dead".
+  int _unexplained401s = 0;
+
+  /// How many unexplained 401s in a row before we give up on the credential.
+  /// Re-pairing is destructive (it deletes this device's Ed25519 private key)
+  /// and needs an admin on the LAN, so it must never be the reaction to a
+  /// one-off.
+  static const _kMax401sBeforeRepair = 3;
+
+  /// React to a 401.
+  ///
+  /// This used to unconditionally wipe the credential and demand re-pairing,
+  /// which cost several users their access: a *transient* rejection (a phone
+  /// whose clock had drifted past the server's 60 s window) deleted a
+  /// perfectly good private key, and because enrolment is LAN-only, anyone
+  /// away from home then couldn't recover and landed on the onboarding screen
+  /// with the server forgotten — "the app lost my server".
+  ///
+  /// Now: the client itself retries genuinely transient failures (see
+  /// [ApiClient]), so anything arriving here is at least suspicious — but we
+  /// still only re-pair when the server *says* the credential is finished, or
+  /// after several in a row from a server too old to tell us.
+  /// Returns true if the credential was discarded.
+  Future<bool> handleUnauthorized([ApiException? e]) async {
+    final definitive = e?.credentialRejected ?? false;
+    if (!definitive) {
+      _unexplained401s++;
+      if (_unexplained401s < _kMax401sBeforeRepair) {
+        // Keep the credential and let the caller back off and retry.
+        notifyListeners();
+        return false;
+      }
+    }
+    _unexplained401s = 0;
+    await _repair();
+    return true;
+  }
+
+  /// Discard the device credential and start pairing again.
+  Future<void> _repair() async {
     await store.clearToken();
     api!.deviceToken = null;
+    api!.signer = null;
+    api!.authVersion = 1;
     try {
       await _startEnrollment();
     } catch (e) {
@@ -212,7 +252,10 @@ class AppController extends ChangeNotifier {
     }
   }
 
-  Future<void> unpair() => handleUnauthorized();
+  /// Any successful authenticated call clears the suspicion counter.
+  void noteAuthSuccess() => _unexplained401s = 0;
+
+  Future<void> unpair() => _repair();
 
   Future<void> changeServer() async {
     await store.clearAll();

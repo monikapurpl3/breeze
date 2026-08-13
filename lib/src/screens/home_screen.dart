@@ -123,7 +123,13 @@ class _HomeScreenState extends State<HomeScreen> {
     } on ApiException catch (e) {
       if (e.unauthorized && !_reauthing) {
         _reauthing = true;
-        await controller.handleUnauthorized();
+        // Only re-pairs when the credential is genuinely finished; otherwise
+        // it keeps the credential and we just report the failure.
+        final discarded = await controller.handleUnauthorized(e);
+        if (!discarded) {
+          _reauthing = false;
+          messenger.showSnackBar(SnackBar(content: Text(e.message)));
+        }
       } else if (e.upgradeRequired) {
         if (!await controller.attemptUpgrade()) {
           messenger.showSnackBar(SnackBar(content: Text(e.message)));
@@ -143,7 +149,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final messenger = ScaffoldMessenger.of(context);
     if (e.unauthorized && !_reauthing) {
       _reauthing = true;
-      await controller.handleUnauthorized();
+      final discarded = await controller.handleUnauthorized(e);
+      if (!discarded) {
+        // Credential kept — treat it like any transient failure: show the
+        // offline state and let the backed-off poll try again, rather than
+        // hammering the server (which is what tripped fail2ban and banned
+        // the whole household's shared IP).
+        _reauthing = false;
+        if (mounted) setState(() => _offline = true);
+      }
       return;
     }
     if (e.upgradeRequired) {

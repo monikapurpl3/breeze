@@ -88,9 +88,26 @@
         <service
             android:name=".car.BreezeCarAppService"
             android:exported="true">
+            <!-- IOT is the semantically correct category ("control a device at
+                 home") and Google's IoT guide recommends exactly the
+                 GridTemplate this app uses — but IOT is an **Android
+                 Automotive OS** category: Android Auto (phone projection)
+                 does not surface apps that only declare it, so the app never
+                 appeared in the car launcher. -->
             <intent-filter>
                 <action android:name="androidx.car.app.CarAppService" />
                 <category android:name="androidx.car.app.category.IOT" />
+            </intent-filter>
+            <!-- ...so also declare a category Android Auto DOES list. POI is
+                 the only Auto-supported templated category that allows this
+                 app's templates without the navigation-template permission.
+                 It's a stretch semantically (we're not a point of interest),
+                 which is fine for a self-hosted APK but would be rejected in
+                 Play review — if this ever goes to Play, drop POI and ship the
+                 car surface for Automotive OS only. -->
+            <intent-filter>
+                <action android:name="androidx.car.app.CarAppService" />
+                <category android:name="androidx.car.app.category.POI" />
             </intent-filter>
         </service>
 

@@ -105,9 +105,18 @@ app once** after installing, so there's something cached to show.
 
 **Installing it (why it isn't just "there"):** Android Auto only loads template
 apps in a handful of categories, and everything outside navigation/media needs
-Google review to be distributed through Play. This app registers under the
-**IOT** category, which is the right home for "control a device at my house",
-but for a self-hosted APK you enable it yourself:
+Google review to be distributed through Play. **Category gotcha:**
+`androidx.car.app.category.IOT` is the semantically correct home for "control a
+device at my house" — and Google's own IoT guide recommends exactly the
+`GridTemplate` used here — but IOT is an **Android Automotive OS** category:
+Android Auto's launcher does *not* list an app that only declares it. So the
+service declares **both** IOT (for Automotive OS) and **POI**, which is the only
+Auto-supported templated category that permits these templates without the
+navigation-template permission. POI is a stretch semantically and would be
+rejected in Play review; for a self-hosted APK it's the pragmatic answer. If
+this ever goes to Play, drop POI and ship the car surface for Automotive OS only.
+
+For a self-hosted APK you also enable it yourself:
 
 1. In **Android Auto** settings on the phone, tap *Version* ~10× to unlock
    **Developer settings**.

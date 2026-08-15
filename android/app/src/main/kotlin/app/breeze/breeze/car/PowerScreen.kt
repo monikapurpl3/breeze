@@ -2,6 +2,7 @@ package app.breeze.breeze.car
 
 import android.content.SharedPreferences
 import android.os.Handler
+import android.util.Log
 import android.os.Looper
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
@@ -73,6 +74,7 @@ class PowerScreen(carContext: CarContext) : Screen(carContext) {
 
     override fun onGetTemplate(): Template {
         val units = store.units()
+        Log.i(BreezeCarAppService.TAG, "onGetTemplate — paired=${store.isPaired()} units=${units.size}")
 
         if (!store.isPaired()) return message(R.string.car_not_paired)
         if (units.isEmpty()) return message(R.string.car_no_units)

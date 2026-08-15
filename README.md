@@ -13,10 +13,11 @@ reveals nothing about the backend.
 > still work (the app falls back to bearer-token auth and manual add). The
 > Programs screen needs the server's scheduler feature.
 
-**Contents:** [Screens](#screens) · [The control screen](#the-control-screen)
-· [More features](#more-features) · [Android Auto](#android-auto) ·
-[Security](#security) · [Getting started](#getting-started) ·
-[Project layout](#project-layout) · [License](#license)
+**Contents:** [Screens](#screens) · [Why not the vendor app?](#why-not-the-vendor-app)
+· [The control screen](#the-control-screen) · [More features](#more-features) ·
+[Android Auto](#android-auto) · [Security](#security) ·
+[Getting started](#getting-started) · [Project layout](#project-layout) ·
+[License](#license)
 
 ---
 
@@ -25,6 +26,50 @@ reveals nothing about the backend.
 <p align="center">
   <img src="https://i.imgur.com/LyieDjQ.png" alt="Breeze — the control screen, network scan-to-add, and the Programs editor" width="900">
 </p>
+
+---
+
+## Why not the vendor app?
+
+*NetHome Plus* talks to your air conditioner by going out to the internet,
+through Midea's cloud, and back down to a unit that's in the same room as you.
+Breeze talks to a server on your own network, which talks to the unit. That one
+difference is most of the list:
+
+- **It works when the internet doesn't.** Router still up? So is your AC.
+- **No account.** No sign-up, no e-mail, no password to share around the
+  household — pairing is a one-time code an admin approves on the LAN, and each
+  phone gets its own credential that can be revoked on its own.
+- **Two permissions, total:** internet and vibrate. No location, no contacts,
+  no ads, no analytics, no upsell, nothing to opt out of.
+- **It's simpler.** One unit per screen, everything on it, swipe for the next
+  one. No menus to dig through, no dashboard to configure.
+- **It reacts immediately** — every control is optimistic with haptic feedback,
+  and the server *pushes* state over SSE, so the screen is right without
+  waiting on a poll or a cloud round-trip.
+- **Control without opening it at all:** home-screen widgets (power, temp ±,
+  and a colour-coded on/off badge) and an [Android Auto](#android-auto) screen
+  that's one big power button.
+- **Schedules that don't need your phone.** Favourites, schedules, and
+  temperature curves live on the server and fire with the phone off.
+- **It's quiet.** Beep is off unless you turn it on — set the temperature at
+  3 a.m. without a chirp.
+- **Material You**, light/dark, °C/°F, and a real diagnostics screen when
+  something misbehaves.
+
+**What you give up:**
+
+- It **needs a [Breeze Core](https://github.com/monikapurpl3/breeze-core)
+  server** on your network — a Pi, NAS, or old laptop is plenty, but somebody
+  has to run it.
+- **Android only.** Other platforms get the server's web panel.
+- **Away from home you need a VPN** (or a reverse proxy you've secured) —
+  nothing is exposed to the internet for you.
+- **Pairing takes an admin on the LAN.** That's the point, and it's still a
+  step the cloud app doesn't have.
+- **If the server is down, the app can't do anything.** Your remote still can.
+- The units must reach Wi-Fi through the vendor app once, first — Breeze can't
+  onboard a factory-fresh unit.
 
 ---
 

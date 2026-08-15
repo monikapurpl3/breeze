@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app_info.dart';
 import '../app_scope.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -122,11 +123,11 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
           const Divider(),
-          const AboutListTile(
-            icon: Icon(Icons.info_outline),
+          AboutListTile(
+            icon: const Icon(Icons.info_outline),
             applicationName: 'Breeze',
-            applicationVersion: '2.2.0',
-            aboutBoxChildren: [
+            applicationVersion: AppInfo.version,
+            aboutBoxChildren: const [
               Text('A climate control client. Material You dynamic colour, '
                   'light/dark following your system (or forced in Settings). '
                   'Requests are signed per-device with an Ed25519 key that '

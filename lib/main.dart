@@ -2,6 +2,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 
 import 'src/app_controller.dart';
+import 'src/app_info.dart';
 import 'src/app_scope.dart';
 import 'src/home_widget_service.dart';
 import 'src/screens/home_screen.dart';
@@ -9,8 +10,11 @@ import 'src/screens/onboarding_screen.dart';
 import 'src/screens/pairing_screen.dart';
 import 'src/secure_store.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Read our own version out of the package before the first frame, so the
+  // About dialog can't disagree with what's actually installed.
+  await AppInfo.load();
   // Register the home-screen widget's interactive background callback (so its
   // buttons can control units without opening the app) and a periodic
   // background refresh (so widgets update while the app is closed). Both

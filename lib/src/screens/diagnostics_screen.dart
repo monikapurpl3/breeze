@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../app_info.dart';
 import '../api_client.dart';
 import '../app_scope.dart';
 import '../models.dart';
@@ -125,6 +126,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
       final ver = info['version'] ?? '?';
       final commit = info['commit'] ?? 'unknown';
       _add(_Level.ok, 'Server version', 'Breeze Core $ver (commit $commit)');
+      _add(_Level.info, 'App version', 'Breeze ${AppInfo.version}');
       _add(_Level.info, 'Advertised features',
           _features.isEmpty ? 'none advertised' : (_features.toList()..sort()).join(', '));
       final serverUnits = (info['units'] as num?)?.toInt();

@@ -44,6 +44,7 @@ dependencies:
   # digest. cryptography = Ed25519 (RFC 8032); pointycastle = FIPS-202 SHA3.
   cryptography: ^2.7.0
   pointycastle: ^3.9.1
+  package_info_plus: ^10.2.1
 
 dev_dependencies:
   flutter_test:

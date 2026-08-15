@@ -110,7 +110,7 @@ or reordering units).
 | **Add units** | **Scan the network** for units (≥ 3.0.0 finds them by their open AC ports — tap to add) **or add by LAN IP**; **rename** and **remove** too. |
 | **Home-screen widgets** | A resizable widget per unit showing temperature, mode and a bold **ON / OFF / OFFLINE** badge — the whole widget is **colourful while the unit runs and colourless when it's off**. **Power / temp − / temp +** buttons work **without opening the app**, plus periodic background refresh. |
 | **Programs** | Favourites (saved scenes), schedules (day/time), and a **temperature-curve** builder with a live preview — all stored and run **server-side**, so they fire even with the phone off. |
-| **Diagnostics** | A full battery mirroring the server's `diag`: connectivity + **server build/features**, **authentication & security posture** (rejects missing/wrong keys, reports token-gating), **this device's credential** (auth version + expiry warnings), config secret-sanitisation, input-validation (unknown unit → 404, out-of-range → 422), batch state, a **live-stream check**, and per-unit state / latency / **hardware capabilities**. |
+| **Diagnostics** | A full battery mirroring the server's `diag`: connectivity + **server build/features** (and the app's own version), **authentication & security posture** (rejects missing/wrong keys, reports token-gating), **this device's credential** (auth version + expiry warnings), config secret-sanitisation, input-validation (unknown unit → 404, out-of-range → 422), batch state, a **live-stream check**, and per-unit state / latency / **hardware capabilities**. |
 | **Settings** | Change server, re-pair, °C/°F, light/dark/system theme, and a **beep-on-control** toggle (≥ 3.0.0). |
 | **Android Auto** | One unit per screen, one **huge power button** — see [below](#android-auto). |
 | **Theming** | **Material You** dynamic colour from the wallpaper (Android 12+); light/dark follows the system, or force one. |
@@ -150,16 +150,23 @@ app once** after installing, so there's something cached to show.
 
 **Installing it (why it isn't just "there"):** Android Auto only loads template
 apps in a handful of categories, and everything outside navigation/media needs
-Google review to be distributed through Play. **Category gotcha:**
-`androidx.car.app.category.IOT` is the semantically correct home for "control a
-device at my house" — and Google's own IoT guide recommends exactly the
-`GridTemplate` used here — but IOT is an **Android Automotive OS** category:
-Android Auto's launcher does *not* list an app that only declares it. So the
-service declares **both** IOT (for Automotive OS) and **POI**, which is the only
-Auto-supported templated category that permits these templates without the
-navigation-template permission. POI is a stretch semantically and would be
-rejected in Play review; for a self-hosted APK it's the pragmatic answer. If
-this ever goes to Play, drop POI and ship the car surface for Automotive OS only.
+Google review to be distributed through Play.
+
+**The gotcha that cost a whole evening:** the service declares two categories —
+`androidx.car.app.category.IOT` (the semantically correct home for "control a
+device at my house", and what Google's IoT guide pairs with the `GridTemplate`
+used here) and `POI`. Through 2.2.0 it declared them as **two separate
+`<intent-filter>` blocks**, and the app never appeared in the car launcher, on a
+phone with developer mode *and* unknown sources enabled. Two filters resolve
+perfectly well in `PackageManager` — both category queries return the service —
+but the host reads the categories off the first `ResolveInfo` it gets and sees
+only one of them. **One filter carrying both categories** (2.2.1) and Auto
+picked it up immediately. If you're writing a car app and it's invisible with no
+error anywhere, check that first.
+
+POI is a stretch semantically and would be rejected in Play review; for a
+self-hosted APK it's the pragmatic answer. If this ever goes to Play, drop POI
+and ship the car surface for Automotive OS only.
 
 For a self-hosted APK you also enable it yourself:
 
@@ -167,12 +174,24 @@ For a self-hosted APK you also enable it yourself:
    **Developer settings**.
 2. In the ⋮ menu → **Developer settings**, enable **Unknown sources**.
 3. Reconnect to the car (or the [Desktop Head Unit](https://developer.android.com/training/cars/testing/dhu)) —
-   Breeze shows up in the launcher.
+   Breeze shows up in the launcher, and Auto posts a "new app" notification the
+   first time it sees it.
+
+Release builds accept any host (`HostValidator.ALLOW_ALL_HOSTS_VALIDATOR`).
+Validating against the library's sample allowlist is right for a Play app and
+wrong for a sideloaded one: the Desktop Head Unit isn't a signed host, so it
+makes the car surface untestable, and a mismatch fails silently with nothing in
+the log. What a rogue host gets here is the ability to toggle an air
+conditioner.
 
 Because the host renders the templates, it — not the app — decides exact sizes
 and where the ▲/▼ actions sit; "huge" means the largest primitive the library
-offers (a single-item grid). Note it's **not been driven yet** — it compiles and
-the service is wired correctly, but it wants a real head unit or DHU pass.
+offers (a single-item grid).
+
+**Verified** against the Desktop Head Unit on Android Auto 17.3: discovered,
+listed, bound, screen rendered. If it ever misbehaves, the car classes log
+under the tag `BreezeCar` — `adb logcat -s BreezeCar` shows the service being
+created, the session opening, and each template build with its unit count.
 
 ---
 

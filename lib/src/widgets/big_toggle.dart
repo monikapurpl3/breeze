@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../haptics.dart';
 
 /// A large, colourful on/off control for the main screen (eco, turbo, …).
 /// The whole surface is tappable; it fills with a light tint of [accent] when
@@ -46,7 +47,12 @@ class BigToggle extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(22),
-          onTap: enabled ? () => onChanged(!value) : null,
+          onTap: enabled
+              ? () {
+                  Haptics.select();
+                  onChanged(!value);
+                }
+              : null,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             // Vertical layout: the label gets the full card width, so short
@@ -78,7 +84,12 @@ class BigToggle extends StatelessWidget {
                 Switch(
                   value: value,
                   activeThumbColor: accent,
-                  onChanged: enabled ? onChanged : null,
+                  onChanged: enabled
+                      ? (v) {
+                          Haptics.select();
+                          onChanged(v);
+                        }
+                      : null,
                 ),
               ],
             ),

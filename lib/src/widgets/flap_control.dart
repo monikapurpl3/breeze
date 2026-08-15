@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../haptics.dart';
 
 /// Flap (swing) control: one big pill split into two independently-toggled
 /// halves — **vertical** (up/down) and **horizontal** (left/right) — which is
@@ -27,13 +28,14 @@ class FlapControl extends StatelessWidget {
   bool get _horizontal => value == 'HORIZONTAL' || value == 'BOTH';
 
   /// Fold the two axes back into the single wire enum.
-  static String _combine(bool vertical, bool horizontal) => vertical && horizontal
+  static String _combine(bool vertical, bool horizontal) =>
+      vertical && horizontal
       ? 'BOTH'
       : vertical
-          ? 'VERTICAL'
-          : horizontal
-              ? 'HORIZONTAL'
-              : 'OFF';
+      ? 'VERTICAL'
+      : horizontal
+      ? 'HORIZONTAL'
+      : 'OFF';
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,10 @@ class FlapControl extends StatelessWidget {
                 on: _vertical,
                 accent: accent,
                 enabled: enabled,
-                borderRadius: const BorderRadius.only(topLeft: radius, bottomLeft: radius),
+                borderRadius: const BorderRadius.only(
+                  topLeft: radius,
+                  bottomLeft: radius,
+                ),
                 onTap: () => onChanged(_combine(!_vertical, _horizontal)),
               ),
             ),
@@ -81,7 +86,10 @@ class FlapControl extends StatelessWidget {
                 on: _horizontal,
                 accent: accent,
                 enabled: enabled,
-                borderRadius: const BorderRadius.only(topRight: radius, bottomRight: radius),
+                borderRadius: const BorderRadius.only(
+                  topRight: radius,
+                  bottomRight: radius,
+                ),
                 onTap: () => onChanged(_combine(_vertical, !_horizontal)),
               ),
             ),
@@ -124,7 +132,12 @@ class _Half extends StatelessWidget {
         borderRadius: borderRadius,
       ),
       child: InkWell(
-        onTap: enabled ? onTap : null,
+        onTap: enabled
+            ? () {
+                Haptics.select();
+                onTap();
+              }
+            : null,
         customBorder: RoundedRectangleBorder(borderRadius: borderRadius),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

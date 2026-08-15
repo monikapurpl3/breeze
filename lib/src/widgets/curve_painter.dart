@@ -51,15 +51,17 @@ class _CurvePainter extends CustomPainter {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
       final tp = TextPainter(
         text: TextSpan(
-            text: '${t.toStringAsFixed(0)}°',
-            style: TextStyle(color: label, fontSize: 10)),
+          text: '${t.toStringAsFixed(0)}°',
+          style: TextStyle(color: label, fontSize: 10),
+        ),
         textDirection: TextDirection.ltr,
       )..layout();
       tp.paint(canvas, Offset(2, y - 12));
     }
     if (points.isEmpty) return;
 
-    final sorted = [...points]..sort((a, b) => minutesOf(a.time).compareTo(minutesOf(b.time)));
+    final sorted = [...points]
+      ..sort((a, b) => minutesOf(a.time).compareTo(minutesOf(b.time)));
     final path = Path();
     final fill = Path();
     for (var i = 0; i < sorted.length; i++) {
@@ -74,7 +76,10 @@ class _CurvePainter extends CustomPainter {
         fill.lineTo(x, y);
       }
     }
-    fill.lineTo(size.width * (minutesOf(sorted.last.time) / 1440.0), size.height);
+    fill.lineTo(
+      size.width * (minutesOf(sorted.last.time) / 1440.0),
+      size.height,
+    );
     fill.close();
     canvas.drawPath(fill, Paint()..color = accent.withValues(alpha: 0.15));
     canvas.drawPath(
@@ -87,7 +92,11 @@ class _CurvePainter extends CustomPainter {
     );
     for (final p in sorted) {
       final x = size.width * (minutesOf(p.time) / 1440.0);
-      canvas.drawCircle(Offset(x, _y(p.temperature, size)), 3.5, Paint()..color = accent);
+      canvas.drawCircle(
+        Offset(x, _y(p.temperature, size)),
+        3.5,
+        Paint()..color = accent,
+      );
     }
   }
 

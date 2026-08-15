@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models.dart';
 import '../util.dart';
+import '../haptics.dart';
 
 /// The temperature hero: a big current-value readout, a stepped slider
 /// (16–30 in 0.5° steps), and − / + buttons on each side for single steps.
@@ -39,7 +40,10 @@ class _TempControlState extends State<TempControl> {
   void _step(double delta) {
     if (!widget.enabled) return;
     final next = snapHalf((widget.value + delta).clamp(kMinTemp, kMaxTemp));
-    if (next != widget.value) widget.onChanged(next);
+    if (next != widget.value) {
+      Haptics.tick();
+      widget.onChanged(next);
+    }
   }
 
   @override
@@ -124,7 +128,13 @@ class _TempControlState extends State<TempControl> {
                     divisions: ((kMaxTemp - kMinTemp) * 2).round(),
                     value: shown.toDouble(),
                     onChanged: widget.enabled
-                        ? (v) => setState(() => _dragging = snapHalf(v))
+                        ? (v) {
+                            final snapped = snapHalf(v);
+                            // Tick only when the value actually moves a
+                            // notch, not on every pixel of the drag.
+                            if (snapped != _dragging) Haptics.tick();
+                            setState(() => _dragging = snapped);
+                          }
                         : null,
                     onChangeEnd: (v) {
                       final snapped = snapHalf(v);

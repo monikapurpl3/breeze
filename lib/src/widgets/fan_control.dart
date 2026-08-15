@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../haptics.dart';
 
 /// Fan speed: a Low→High slider over the five manual steps (20/40/60/80/100),
 /// which "detaches" to an Auto pill on the right. Picking Auto (fan_speed 102)
@@ -50,12 +51,23 @@ class _FanControlState extends State<FanControl> {
           children: [
             Icon(Icons.air, size: 20, color: scheme.onSurfaceVariant),
             const SizedBox(width: 8),
-            Text('Fan', style: TextStyle(fontWeight: FontWeight.w600, color: scheme.onSurface)),
+            Text(
+              'Fan',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: scheme.onSurface,
+              ),
+            ),
             const Spacer(),
             _AutoPill(
               active: auto,
               accent: accent,
-              onTap: widget.enabled ? () => widget.onChanged(102) : null,
+              onTap: widget.enabled
+                  ? () {
+                      Haptics.select();
+                      widget.onChanged(102);
+                    }
+                  : null,
             ),
           ],
         ),
@@ -69,7 +81,9 @@ class _FanControlState extends State<FanControl> {
                   inactiveTrackColor: sliderColor.withValues(alpha: 0.18),
                   thumbColor: sliderColor,
                   overlayColor: accent.withValues(alpha: 0.15),
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 10,
+                  ),
                 ),
                 child: Slider(
                   min: 0,
@@ -82,6 +96,7 @@ class _FanControlState extends State<FanControl> {
                   onChangeEnd: (v) {
                     final idx = v.round();
                     setState(() => _dragIdx = null);
+                    Haptics.select();
                     widget.onChanged(_steps[idx]); // also clears auto
                   },
                 ),
@@ -94,8 +109,14 @@ class _FanControlState extends State<FanControl> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Low', style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
-              Text('High', style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
+              Text(
+                'Low',
+                style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
+              ),
+              Text(
+                'High',
+                style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
+              ),
             ],
           ),
         ),
@@ -114,9 +135,14 @@ class _AutoPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Material(
-      color: active ? accent.withValues(alpha: 0.18) : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+      color: active
+          ? accent.withValues(alpha: 0.18)
+          : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
       shape: StadiumBorder(
-        side: BorderSide(color: active ? accent : Colors.transparent, width: 1.5),
+        side: BorderSide(
+          color: active ? accent : Colors.transparent,
+          width: 1.5,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -126,7 +152,11 @@ class _AutoPill extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.auto_mode, size: 16, color: active ? accent : scheme.onSurfaceVariant),
+              Icon(
+                Icons.auto_mode,
+                size: 16,
+                color: active ? accent : scheme.onSurfaceVariant,
+              ),
               const SizedBox(width: 6),
               Text(
                 'Auto',

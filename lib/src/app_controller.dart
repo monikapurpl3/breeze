@@ -10,6 +10,7 @@ import 'api_client.dart';
 import 'device_signer.dart';
 import 'models.dart';
 import 'secure_store.dart';
+import 'device_name.dart';
 
 enum AppStage { loading, onboarding, pairing, home }
 
@@ -23,9 +24,10 @@ class AppController extends ChangeNotifier {
 
   // --- display preferences (persisted, non-secret) ---
   static const _kTheme = 'pref_theme_mode'; // 'system' | 'light' | 'dark'
-  static const _kUnit = 'pref_temp_unit';   // 'C' | 'F'
-  static const _kBeep = 'pref_beep';        // whether commands make the unit chirp
-  static const _kLastUnit = 'pref_last_unit_id'; // last unit page the user was on
+  static const _kUnit = 'pref_temp_unit'; // 'C' | 'F'
+  static const _kBeep = 'pref_beep'; // whether commands make the unit chirp
+  static const _kLastUnit =
+      'pref_last_unit_id'; // last unit page the user was on
   ThemeMode themeMode = ThemeMode.system;
   String tempUnit = 'C';
   bool beep = false;
@@ -40,8 +42,8 @@ class AppController extends ChangeNotifier {
     themeMode = t == 'light'
         ? ThemeMode.light
         : t == 'dark'
-            ? ThemeMode.dark
-            : ThemeMode.system;
+        ? ThemeMode.dark
+        : ThemeMode.system;
     tempUnit = p.getString(_kUnit) == 'F' ? 'F' : 'C';
     beep = p.getBool(_kBeep) ?? false;
     lastUnitId = p.getString(_kLastUnit);
@@ -85,7 +87,11 @@ class AppController extends ChangeNotifier {
   String? sessionId;
   String? userCode;
   int expiresIn = 0;
-  String deviceLabel = 'Breeze';
+
+  /// Falls back to a generated name rather than a constant: a household that
+  /// pairs several phones used to end up with a device list of identical
+  /// "Breeze" rows, impossible to tell apart when revoking one.
+  String deviceLabel = DeviceName.suggest();
   // Ed25519 keypair generated for the enrollment in progress; persisted only
   // once the server approves it (see pollPairing).
   DeviceSigner? _pendingSigner;
@@ -94,7 +100,7 @@ class AppController extends ChangeNotifier {
 
   Future<void> init() async {
     await _loadPrefs();
-    deviceLabel = (await store.deviceLabel) ?? 'Breeze';
+    deviceLabel = (await store.deviceLabel) ?? DeviceName.suggest();
     api = await ApiClient.fromStore(store);
 
     if (api == null) {
@@ -127,7 +133,7 @@ class AppController extends ChangeNotifier {
   /// Called from onboarding: validate server+key by starting enrollment.
   Future<void> connect(String rawUrl, String key, String label) async {
     final url = ApiClient.normalizeUrl(rawUrl);
-    deviceLabel = label.trim().isEmpty ? 'Breeze' : label.trim();
+    deviceLabel = label.trim().isEmpty ? DeviceName.suggest() : label.trim();
     api = ApiClient(baseUrl: url, apiKey: key.trim());
     await _startEnrollment(); // throws on bad key / unreachable
     await store.saveConnection(url, key.trim(), deviceLabel);
@@ -139,7 +145,9 @@ class AppController extends ChangeNotifier {
     // once the server approves (pollPairing).
     _pendingSigner = await DeviceSigner.generate();
     final r = await api!.enrollStart(
-      deviceLabel, publicKey: await _pendingSigner!.publicKeyB64());
+      deviceLabel,
+      publicKey: await _pendingSigner!.publicKeyB64(),
+    );
     sessionId = r['session_id'] as String;
     userCode = r['user_code'] as String;
     expiresIn = (r['expires_in'] as num).toInt();
@@ -181,8 +189,9 @@ class AppController extends ChangeNotifier {
     if (api == null || api!.authVersion >= 2) return api?.authVersion == 2;
     try {
       final info = await api!.serverInfo();
-      final versions = ((info['auth_versions'] as List?) ?? const [])
-          .map((e) => (e as num).toInt());
+      final versions = ((info['auth_versions'] as List?) ?? const []).map(
+        (e) => (e as num).toInt(),
+      );
       if (!versions.contains(2)) return false; // server predates v2
       final signer = await DeviceSigner.generate();
       final res = await api!.upgradeToV2(await signer.publicKeyB64());

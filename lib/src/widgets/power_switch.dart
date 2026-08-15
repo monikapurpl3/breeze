@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../haptics.dart';
 
 /// Power control: a large Material 3 switch instead of a round icon button, so
 /// the on/off state is unmistakable at a glance and matches the mental model of
@@ -34,7 +35,12 @@ class PowerSwitch extends StatelessWidget {
         scale: 1.2, // "big" without breaking the header row's height
         child: Switch(
           value: on,
-          onChanged: enabled ? onChanged : null,
+          onChanged: enabled
+              ? (v) {
+                  Haptics.toggle();
+                  onChanged(v);
+                }
+              : null,
           // Thumb: solid colour so it stays legible on the faint track.
           thumbColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.disabled)) {

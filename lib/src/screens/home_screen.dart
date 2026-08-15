@@ -11,6 +11,7 @@ import 'diagnostics_screen.dart';
 import 'programs_screen.dart';
 import 'settings_screen.dart';
 import 'unit_page.dart';
+import '../haptics.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -565,6 +566,7 @@ class _HomeScreenState extends State<HomeScreen> {
             controller: _pageController,
             itemCount: _units.length,
             onPageChanged: (i) {
+              Haptics.tick(); // a notch, like flipping to the next card
               setState(() => _page = i);
               // Remember where we are so the next launch reopens here.
               if (i >= 0 && i < _units.length) {

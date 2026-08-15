@@ -39,21 +39,27 @@ class Dial extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                indoor == null ? '--°' : fmtTemp(indoor!, tempUnit, showUnit: false),
-                style: Theme.of(context)
-                    .textTheme
-                    .displaySmall
-                    ?.copyWith(fontWeight: FontWeight.w600),
+                indoor == null
+                    ? '--°'
+                    : fmtTemp(indoor!, tempUnit, showUnit: false),
+                style: Theme.of(
+                  context,
+                ).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w600),
               ),
-              Text('indoor',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: scheme.onSurfaceVariant, letterSpacing: 1.2)),
+              Text(
+                'indoor',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                  letterSpacing: 1.2,
+                ),
+              ),
               const SizedBox(height: 4),
-              Text('target ${fmtTemp(target, tempUnit)}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: scheme.onSurfaceVariant)),
+              Text(
+                'target ${fmtTemp(target, tempUnit)}',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+              ),
             ],
           ),
         ),
@@ -66,7 +72,11 @@ class _DialPainter extends CustomPainter {
   final double fraction;
   final Color accent;
   final Color track;
-  _DialPainter({required this.fraction, required this.accent, required this.track});
+  _DialPainter({
+    required this.fraction,
+    required this.accent,
+    required this.track,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {

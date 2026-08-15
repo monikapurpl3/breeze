@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models.dart';
 import '../theme.dart';
+import '../haptics.dart';
 
 const _modeIcons = <String, IconData>{
   'AUTO': Icons.auto_mode,
@@ -44,7 +45,12 @@ class ModeSelector extends StatelessWidget {
                 accent: accentForMode(m, scheme),
                 icon: _modeIcons[m] ?? Icons.tune,
                 label: kModeLabels[m] ?? m.toLowerCase(),
-                onTap: enabled ? () => onChanged(m) : null,
+                onTap: enabled
+                    ? () {
+                        Haptics.select();
+                        onChanged(m);
+                      }
+                    : null,
               ),
             ),
         ],

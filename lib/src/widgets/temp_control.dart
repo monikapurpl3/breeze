@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models.dart';
 import '../util.dart';
+import 'climate_bar.dart';
 import '../haptics.dart';
 
 /// The temperature hero: a big current-value readout, a stepped slider
@@ -18,11 +19,13 @@ class TempControl extends StatefulWidget {
     required this.unit,
     required this.onChanged,
     this.indoor,
+    this.outdoor,
     this.enabled = true,
   });
 
   final double value;
   final double? indoor;
+  final double? outdoor;
   final Color accent;
   final String unit;
   final ValueChanged<double> onChanged;
@@ -77,23 +80,15 @@ class _TempControlState extends State<TempControl> {
             ),
           ),
           const SizedBox(height: 2),
-          if (widget.indoor != null)
+          if (widget.indoor != null || widget.outdoor != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                children: [
-                  Text(
-                    'indoor ${fmtTemp(widget.indoor!, widget.unit)}',
-                    style: TextStyle(
-                      color: scheme.onSurfaceVariant,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _IndoorBar(indoor: widget.indoor!, accent: accent),
-                  ),
-                ],
+              child: ClimateBar(
+                indoor: widget.indoor,
+                outdoor: widget.outdoor,
+                target: shown.toDouble(),
+                accent: accent,
+                unit: widget.unit,
               ),
             )
           else
@@ -152,39 +147,6 @@ class _TempControlState extends State<TempControl> {
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// A slim rounded bar showing where the indoor temperature sits in a typical
-/// room range (10–35 °C), filled in the current mode's accent colour.
-class _IndoorBar extends StatelessWidget {
-  const _IndoorBar({required this.indoor, required this.accent});
-  final double indoor;
-  final Color accent;
-
-  static const _lo = 10.0;
-  static const _hi = 35.0;
-
-  @override
-  Widget build(BuildContext context) {
-    final frac = ((indoor - _lo) / (_hi - _lo)).clamp(0.0, 1.0);
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(5),
-      child: Container(
-        height: 8,
-        color: accent.withValues(alpha: 0.16),
-        child: FractionallySizedBox(
-          alignment: Alignment.centerLeft,
-          widthFactor: frac,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: accent,
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
-        ),
       ),
     );
   }

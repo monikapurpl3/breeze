@@ -103,6 +103,7 @@ class UnitPage extends StatelessWidget {
             child: TempControl(
               value: state.targetTemperature,
               indoor: state.indoorTemperature,
+              outdoor: state.outdoorTemperature,
               accent: accent,
               unit: unit,
               enabled: live,

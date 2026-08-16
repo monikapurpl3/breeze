@@ -80,8 +80,17 @@ screen (no scrolling), tinted to the active mode:
 
 - **Temperature** — a big readout with a **stepped slider** (0.5° steps) and
   **− / +** buttons on each side for single steps.
-- **Indoor bar** — a slim bar beside the indoor reading, coloured by the
-  current mode.
+- **Indoor / outdoor** — `I: 27.0 °C  /  O: 33.0 °C` when the unit has an
+  outdoor probe, above a bar that shows how the three temperatures relate.
+  One rule drives it: the **warmest** of indoor/outdoor/target sets the top of
+  the scale, and the other two are drawn from the floor as overlapping fills —
+  the warmer of them lighter, the cooler darker on top. In summer that reads as
+  "outdoor is the ceiling, target is the deepest fill"; in winter the target
+  becomes the ceiling and the outdoor reading the deepest fill; and when indoor
+  drops below target the shades swap by themselves. Readings that aren't real
+  — missing, NaN, or a no-sensor sentinel like 255 — are dropped rather than
+  drawn, and a sub-zero outdoor extends the scale below 0 instead of clamping
+  to nothing.
 - **Mode** — a colourful segmented picker: auto · cool · dry · heat · fan.
 - **Fan** — a Low→High slider that **detaches to Auto**.
 - **Flap** — one big pill split in two: **vertical flap** and **horizontal

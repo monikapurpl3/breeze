@@ -98,8 +98,23 @@ class AppController extends ChangeNotifier {
 
   List<UnitSummary> units = [];
 
+  /// Every saved server. Switching between them is credential-preserving —
+  /// see [switchProfile].
+  List<ServerProfile> profiles = [];
+  String? activeProfileId;
+
+  Future<void> reloadProfiles() async {
+    profiles = await store.profiles();
+    activeProfileId = await store.activeProfileId;
+    notifyListeners();
+  }
+
   Future<void> init() async {
     await _loadPrefs();
+    // Lift a pre-2.2.5 single-server install into a profile before anything
+    // reads a credential, or the app would look unpaired to an upgrader.
+    await store.migrate();
+    await reloadProfiles();
     deviceLabel = (await store.deviceLabel) ?? DeviceName.suggest();
     api = await ApiClient.fromStore(store);
 
@@ -136,7 +151,11 @@ class AppController extends ChangeNotifier {
     deviceLabel = label.trim().isEmpty ? DeviceName.suggest() : label.trim();
     api = ApiClient(baseUrl: url, apiKey: key.trim());
     await _startEnrollment(); // throws on bad key / unreachable
+    // Only now is the profile written (and made active): a server we couldn't
+    // reach, or a wrong key, must not leave a dead entry in the list.
     await store.saveConnection(url, key.trim(), deviceLabel);
+    addingServer = false;
+    await reloadProfiles();
   }
 
   Future<void> _startEnrollment() async {
@@ -177,6 +196,8 @@ class AppController extends ChangeNotifier {
         api!.authVersion = 1;
       }
       _pendingSigner = null;
+      addingServer = false;
+      await reloadProfiles();   // that profile now shows as paired
       _go(AppStage.home);
     }
     return status;
@@ -266,7 +287,83 @@ class AppController extends ChangeNotifier {
 
   Future<void> unpair() => _repair();
 
+  /// Point the app at another saved server. No re-pairing: that server's
+  /// credential is already in the keystore, so this is a pointer move plus a
+  /// fresh client. Falls back to pairing only if the stored credential for
+  /// the target is missing (e.g. it was revoked server-side).
+  Future<void> switchProfile(String id) async {
+    if (id == activeProfileId) return;
+    await store.setActiveProfile(id);
+    api?.close();
+    units = [];
+    error = null;
+    lastUnitId = null;          // unit ids are per-server; don't carry one over
+    deviceLabel = (await store.deviceLabel) ?? DeviceName.suggest();
+    api = await ApiClient.fromStore(store);
+    await reloadProfiles();
+
+    if (api == null) {
+      _go(AppStage.onboarding);
+      return;
+    }
+    if (api!.hasDeviceCredential) {
+      _go(AppStage.home);
+      unawaited(refreshUnits());
+      if (api!.authVersion < 2) unawaited(attemptUpgrade());
+      return;
+    }
+    try {
+      await _startEnrollment();
+    } catch (e) {
+      error = e.toString();
+      _go(AppStage.onboarding);
+    }
+  }
+
+  /// Start adding a *new* server without disturbing the current one: the
+  /// onboarding screen writes a new profile only once pairing succeeds.
+  void beginAddServer() {
+    addingServer = true;
+    error = null;
+    _go(AppStage.onboarding);
+  }
+
+  /// True while onboarding is adding an extra server rather than doing
+  /// first-run setup — the difference is whether Cancel has somewhere to go.
+  bool addingServer = false;
+
+  void cancelAddServer() {
+    addingServer = false;
+    error = null;
+    _go(api?.hasDeviceCredential == true ? AppStage.home : AppStage.onboarding);
+  }
+
+  /// Forget one server. If it was the last, the app returns to first-run
+  /// onboarding; otherwise it switches to whichever remains.
+  Future<void> removeProfile(String id) async {
+    final wasActive = id == activeProfileId;
+    final next = await store.removeProfile(id);
+    await reloadProfiles();
+    if (!wasActive) return;
+
+    api?.close();
+    api = null;
+    units = [];
+    if (next == null) {
+      _go(AppStage.onboarding);
+      return;
+    }
+    activeProfileId = null;     // force switchProfile to do the work
+    await switchProfile(next);
+  }
+
+  /// Forget the current server and start over (Settings → Change server).
   Future<void> changeServer() async {
+    final id = activeProfileId;
+    if (id != null) {
+      await removeProfile(id);
+      return;
+    }
     await store.clearAll();
     api?.close();
     api = null;

@@ -76,7 +76,22 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
 
+    final c = AppScope.of(context);
     return Scaffold(
+      // When this screen is reached from Settings > Servers > Add, the user
+      // already has a working server: give them a way back that doesn't
+      // require completing a pairing they may have opened by accident.
+      appBar: c.addingServer
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              title: const Text('Add a server'),
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: c.cancelAddServer,
+              ),
+            )
+          : null,
+      extendBodyBehindAppBar: true,
       body: Container(
         // A soft wash of the wallpaper accent, so the first screen feels part
         // of the phone rather than a blank form.

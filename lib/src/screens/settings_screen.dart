@@ -2,9 +2,23 @@ import 'package:flutter/material.dart';
 
 import '../app_info.dart';
 import '../app_scope.dart';
+import '../haptics.dart';
+import 'nerd_screen.dart';
+import 'servers_screen.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  /// Taps on the version row. Seven opens the Nerd screen — the same gesture
+  /// Android itself uses for developer options, so it's discoverable by
+  /// instinct and invisible otherwise.
+  int _versionTaps = 0;
+  DateTime? _lastTap;
 
   Future<bool> _confirm(BuildContext context, String title, String body) async {
     return await showDialog<bool>(
@@ -21,6 +35,41 @@ class SettingsScreen extends StatelessWidget {
         false;
   }
 
+  /// Seven taps opens the Nerd screen. The run resets after a couple of
+  /// seconds of hesitation so an idle poke days apart can't accumulate into
+  /// an accidental unlock.
+  void _onVersionTap() {
+    final now = DateTime.now();
+    if (_lastTap != null && now.difference(_lastTap!) > const Duration(seconds: 2)) {
+      _versionTaps = 0;
+    }
+    _lastTap = now;
+    _versionTaps++;
+
+    if (_versionTaps >= 7) {
+      _versionTaps = 0;
+      Haptics.success();
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const NerdScreen()),
+      );
+      return;
+    }
+    // Say nothing for the first few, then count down like Android does —
+    // silent enough not to be noise, loud enough to feel intentional.
+    final left = 7 - _versionTaps;
+    if (left <= 3) {
+      Haptics.tick();
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          duration: const Duration(milliseconds: 700),
+          content: Text(left == 1
+              ? 'One more tap…'
+              : '$left taps until you are a nerd'),
+        ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = AppScope.of(context);
@@ -35,7 +84,18 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.dns_outlined),
             title: const Text('Server'),
-            subtitle: Text(server),
+            subtitle: Text(c.profiles.length > 1
+                ? '''$server
+${c.profiles.length} saved — tap to switch'''
+                : server),
+            isThreeLine: c.profiles.length > 1,
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Haptics.tick();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ServersScreen()),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.smartphone_outlined),
@@ -110,11 +170,12 @@ class SettingsScreen extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.swap_horiz, color: scheme.error),
-            title: Text('Change server', style: TextStyle(color: scheme.error)),
-            subtitle: const Text('Forget this server, key and token; start over'),
+            title: Text('Forget this server', style: TextStyle(color: scheme.error)),
+            subtitle: const Text('Erase its address, key and credential from this phone'),
             onTap: () async {
-              if (await _confirm(context, 'Change server?',
-                  'This erases the stored server address, access key and device token.')) {
+              if (await _confirm(context, 'Forget this server?',
+                  'This erases the stored server address, access key and device '
+                  'credential. Other saved servers are untouched.')) {
                 if (!context.mounted) return;
                 final nav = Navigator.of(context);
                 await c.changeServer();
@@ -123,17 +184,28 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
           const Divider(),
-          AboutListTile(
-            icon: const Icon(Icons.info_outline),
-            applicationName: 'Breeze',
-            applicationVersion: AppInfo.version,
-            aboutBoxChildren: const [
-              Text('A climate control client. Material You dynamic colour, '
-                  'light/dark following your system (or forced in Settings). '
-                  'Requests are signed per-device with an Ed25519 key that '
-                  'never leaves the phone; the access key and key material are '
-                  'stored encrypted and traffic is over HTTPS.'),
-            ],
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: const Text('Breeze'),
+            subtitle: Text(AppInfo.version),
+            onTap: _onVersionTap,
+          ),
+          ListTile(
+            leading: const Icon(Icons.description_outlined),
+            title: const Text('Licences'),
+            subtitle: const Text('Open-source licences for this app'),
+            onTap: () {
+              Haptics.tick();
+              showLicensePage(
+                context: context,
+                applicationName: 'Breeze',
+                applicationVersion: AppInfo.version,
+                applicationLegalese:
+                    'AGPL-3.0-or-later. A client for a self-hosted Breeze Core '
+                    'server; requests are signed per-device with an Ed25519 key '
+                    'that never leaves this phone.',
+              );
+            },
           ),
         ],
       ),

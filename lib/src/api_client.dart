@@ -368,6 +368,12 @@ class ApiClient {
   Future<Map<String, dynamic>> serverInfo() async =>
       (await _send('GET', '/api/version', withToken: false)) as Map<String, dynamic>;
 
+  /// Everything the server knows about itself (Breeze Core >= 3.0.5).
+  /// Needs the device credential as well as the key — it reports enrolled
+  /// devices and host details, so it sits at the same bar as control.
+  Future<Map<String, dynamic>> systemInfo() async =>
+      (await _send('GET', '/api/system')) as Map<String, dynamic>;
+
   /// Remove a unit from the server's config (Breeze Core >= 2.4.0).
   Future<void> deleteUnit(String id) => _send('DELETE', '/api/units/$id');
 

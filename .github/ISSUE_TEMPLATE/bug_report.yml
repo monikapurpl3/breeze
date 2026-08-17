@@ -4,56 +4,123 @@ labels: ["bug"]
 body:
   - type: markdown
     attributes:
-      value: "Thanks for the report! Don't include your access key or server address if you'd rather keep them private."
+      value: |
+        Thanks for the report.
+
+        **Don't paste secrets** — not your access key, not a device credential.
+        A server address is usually fine and often relevant; redact it if you'd
+        rather not.
+
+        Every box below can be filled from one screen:
+        **Settings → tap the version seven times → Nerd.** It lists the app and
+        server versions, the server's OS and architecture, your auth version and
+        the measured latency.
+
   - type: textarea
     id: what
     attributes:
       label: What happened?
-      description: What you expected vs. what actually happened.
+      description: What you expected, and what happened instead.
     validations:
       required: true
+
   - type: textarea
     id: repro
     attributes:
       label: Steps to reproduce
+      placeholder: |
+        1. …
+        2. …
+        3. …
     validations:
       required: true
+
   - type: input
     id: appver
     attributes:
-      label: App version / commit
-      placeholder: "e.g. 1.0.0 or main @ abc1234"
+      label: App version
+      description: Settings → the version row (or Nerd → This app → Version).
+      placeholder: "2.2.6 (18)"
     validations:
       required: true
+
   - type: input
     id: android
     attributes:
       label: Android version and device
-      placeholder: "e.g. Android 15, Pixel 8"
+      placeholder: "Android 16, Samsung Galaxy S24"
     validations:
       required: true
+
   - type: input
     id: server
     attributes:
       label: Breeze Core server version
-      placeholder: "e.g. main @ def5678 (or 'unknown')"
+      description: Nerd → Server → Version, or the web panel footer.
+      placeholder: "3.0.5"
+    validations:
+      required: true
+
   - type: dropdown
     id: area
     attributes:
       label: Where?
       options:
         - Pairing / onboarding
-        - Unit control (home screen)
-        - Programs (favourites/schedule/curve)
-        - Diagnostics
-        - Settings / server switching
-        - Theming (Material You / dark mode)
+        - Unit control (temperature, mode, fan, flap, power)
+        - Switching between servers
+        - Home-screen widgets
+        - Android Auto
+        - Programs (favourites / schedule / curve)
+        - Diagnostics or the Nerd screen
+        - Settings / theming (Material You, dark mode, °C/°F)
+        - Background refresh
         - Other
     validations:
       required: true
+
+  - type: dropdown
+    id: authv
+    attributes:
+      label: Auth version
+      description: Nerd → Connection → Auth version. A v1 device upgrades itself to v2 on launch, so seeing v1 here is itself interesting.
+      options:
+        - "v2 (Ed25519 signed)"
+        - "v1 (bearer token)"
+        - "not sure"
+
+  - type: dropdown
+    id: reach
+    attributes:
+      label: How does the phone reach the server?
+      options:
+        - Same Wi-Fi / LAN
+        - Over a VPN (WireGuard / Tailscale)
+        - Through a reverse proxy from outside
+        - Mobile data
+        - Not sure
+    validations:
+      required: true
+
+  - type: input
+    id: units
+    attributes:
+      label: How many units, and which models?
+      description: Behaviour varies by firmware — some units ignore features the app offers.
+      placeholder: "3 × Midea MSAGBU-09HRFN8"
+
+  - type: input
+    id: latency
+    attributes:
+      label: Latency, if this is about slowness
+      description: Nerd → Connection → Latency. The units themselves need roughly 0.7 s per state read, so anything near that is the hardware rather than the app.
+      placeholder: "740 ms"
+
   - type: textarea
     id: logs
     attributes:
       label: Logs (optional)
-      description: "`flutter logs` or `adb logcat` output, if you have it. Redact secrets."
+      description: |
+        `adb logcat` while reproducing, or for the car screen specifically:
+        `adb logcat -s BreezeCar`. Redact secrets.
       render: text

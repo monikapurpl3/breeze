@@ -18,6 +18,19 @@ body:
     id: alternatives
     attributes:
       label: Alternatives considered
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Area
+      options:
+        - label: Unit control (the main screen)
+        - label: Home-screen widgets
+        - label: Android Auto
+        - label: Programs (favourites / schedule / curve)
+        - label: Multiple servers
+        - label: Diagnostics / Nerd screen
+        - label: Theming or accessibility
+        - label: Pairing / security
   - type: markdown
     attributes:
       value: "If this needs a new server endpoint, please also open an issue on [breeze-core](https://github.com/monikapurpl3/breeze-core/issues)."

@@ -6,3 +6,9 @@ contact_links:
   - name: Breeze Core (server / API) issues
     url: https://github.com/monikapurpl3/breeze-core/issues
     about: Bugs or requests for the server/API belong in the breeze-core repo.
+  - name: Get the latest APK
+    url: https://bolero.salataputarica.hr.eu.org/android/
+    about: Releases are also on the package host, with a sha256 beside each build.
+  - name: Android Auto won't show the app?
+    url: https://github.com/monikapurpl3/breeze#android-auto
+    about: Needs developer mode plus Unknown sources in Android Auto; the README covers what else to check.

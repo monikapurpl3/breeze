@@ -83,23 +83,22 @@ Because the fallback works, the app runs on iOS looking like a Material 3 app �
 seeded palette, Material ripples, Android-style navigation. It functions
 perfectly and looks faintly foreign.
 
-Three options, in ascending cost:
+**Decided: platform-adaptive polish.** Keep Material widgets and the custom
+controls; adapt the handful of things that feel wrong on iOS. (The alternatives
+considered and rejected: shipping it as plain Material, which is zero work and
+can be revisited if the polish slips; and a full Cupertino variant, rejected
+because it roughly doubles the UI surface to maintain for a cosmetic gain on
+screen areas that are already custom-drawn.)
 
-1. **Ship it as Material.** Zero work. Defensible: the custom controls dominate
-   the screen, and plenty of respected iOS apps aren't Cupertino. Cheapest way to
-   get something real onto a phone.
-2. **Platform-adaptive polish** (*recommended*). Keep Material widgets and the
-   custom controls; adapt the handful of things that feel wrong on iOS:
-   - Native swipe-back (`CupertinoPageRoute` instead of `MaterialPageRoute`)
-   - `BouncingScrollPhysics` rather than the Android glow/clamp
-   - iOS haptics via `HapticFeedback` (Android's vibration pattern feels wrong)
-   - `CupertinoSwitch` and `CupertinoActivityIndicator` where a bare Material
-     switch/spinner reads as out of place
-   - Drop ripple splashes on iOS (`splashFactory: NoSplash`) — iOS uses opacity
-   - A fixed, deliberate seed colour, since there is no wallpaper to sample
-3. **Full Cupertino variant.** A parallel widget tree. Not recommended: roughly
-   doubles the UI surface to maintain for a cosmetic gain, and the parts users
-   actually touch are custom-painted anyway.
+The adaptations, all of which belong behind one platform check rather than
+scattered through widgets:
+- Native swipe-back (`CupertinoPageRoute` instead of `MaterialPageRoute`)
+- `BouncingScrollPhysics` rather than the Android glow/clamp
+- iOS haptics via `HapticFeedback` (Android's vibration pattern feels wrong)
+- `CupertinoSwitch` and `CupertinoActivityIndicator` where a bare Material
+  switch/spinner reads as out of place
+- Drop ripple splashes on iOS (`splashFactory: NoSplash`) — iOS uses opacity
+- A fixed, deliberate seed colour, since there is no wallpaper to sample
 
 ### A2.2 Keychain semantics — the sharp one
 
@@ -127,9 +126,17 @@ Plan:
   uninstall while the Keychain is not, so a marker in prefs plus a key in the
   Keychain is a reliable "reinstalled over a stale credential" signal. On
   detecting it, discard the key and re-enrol rather than looping on 401.
-- Decide deliberately whether a *reinstall* should keep the pairing (fewer
-  re-approvals for the household) or drop it (cleaner security story). Either is
-  defensible; silently doing the first while assuming the second is the bug.
+
+**Decided: a reinstall drops the credential and re-enrols.** The resurrection
+check above is therefore not a corner case but the mechanism — prefs-missing plus
+key-present means "reinstalled", and the key is discarded rather than tried.
+
+The trade-off, stated so it is not a surprise later: reinstalling costs one LAN
+approval by an admin. That is friction the household has objected to before — it
+is why the token TTL was pushed to 3650 days. The difference is that a TTL expiry
+hits everyone on a schedule, whereas a reinstall is rare and deliberate. Keeping
+the pairing was the alternative, and was rejected because it would let a revoked
+device regain access simply by reinstalling, which makes revocation decorative.
 
 **Note for later:** the Secure Enclave cannot hold Ed25519 keys — it only does
 P-256. So the key lives in the Keychain as bytes, exactly as on Android. If
@@ -207,11 +214,14 @@ navigation, EV charging, parking, food ordering, driving-task apps. **Home
 climate control is not one of them**, and Apple does not grant entitlements
 outside those categories. This is a policy wall, not a technical one.
 
-The iOS-native answer is better than parity anyway: **App Intents / Siri
-Shortcuts.** "Hey Siri, set the living room to 22" works from the car, the watch,
-the Lock Screen and the Shortcuts app, with no entitlement and no driving-specific
-UI to maintain. Worth proposing as the iOS counterpart rather than mourning
-CarPlay.
+**Decided: App Intents / Siri Shortcuts are the iOS counterpart, and they are in
+scope for the port** rather than being a consolation prize. "Hey Siri, set the
+living room to 22" works from the car, the watch, the Lock Screen and the
+Shortcuts app, with no entitlement and no driving-specific UI to maintain — and
+it runs on-device, so it does not compromise the no-cloud premise. See
+[VOICE.md in breeze-core](https://github.com/monikapurpl3/breeze-core/blob/main/docs/VOICE.md)
+for why the Alexa and Google routes are excluded and what a local bridge would
+involve.
 
 ### A3.4 Smaller absences
 - **Quick Settings tile** — no equivalent; App Intents and Control Center widgets
@@ -227,8 +237,9 @@ CarPlay.
 | 2 | `IOSOptions` on secure storage + the reinstall-resurrection check (§A2.2) | logic is testable ✅ |
 | 3 | `lib/src/platform.dart` + adaptive polish (§A2.1 option 2) | widget tests ✅, look no |
 | 4 | CI: GitHub Actions `macos-latest`, `flutter build ios --no-codesign`, upload artifact | ✅ this *is* the verification |
-| 5 | Part B docs + README/bolero updates | ✅ |
-| later | WidgetKit extension, App Intents | no |
+| 5 | App Intents / Siri Shortcuts for the common actions — power, setpoint, mode, per unit (§A3.3) | intent definitions ✅, Siri no |
+| 6 | Part B docs + README/bolero updates | ✅ |
+| later | WidgetKit extension (§A3.1) | no |
 
 **Phase 4 is the one that changes the situation.** GitHub's macOS runners are
 free for public repositories, so a workflow that runs `flutter build ios
@@ -265,9 +276,14 @@ a Mac. Total time: about half an hour, most of it downloads.
 | **Paid, direct install** | $99/yr | 1 year | rebuild annually |
 | **Paid, TestFlight** | $99/yr | 90 days/build | installs over the air, share with family; needs beta review |
 
-For a household running its own AC controller, the **free tier** is usually
-right, with **paid + TestFlight** worth it if several family members want it on
-their phones without cables.
+**The project itself will not distribute an iOS build** — there is no paid Apple
+Developer account and no plan for one, so there will be no TestFlight link and no
+App Store listing. That is a deliberate decision, recorded so nobody waits for
+something that is not coming.
+
+The tiers above still apply to *you*: if you already have a paid account, nothing
+stops you using TestFlight to get Breeze onto your own family's phones. For most
+households the **free tier** is the right answer — one command a week.
 
 ## Build it
 
@@ -353,15 +369,33 @@ hardware.
 
 ---
 
-## Open questions for the maintainer
+## Decisions taken (2026-08-18)
 
-1. **Adaptive polish or plain Material?** §A2.1 — recommendation is option 2,
-   but option 1 gets something real onto a phone sooner.
-2. **Should a reinstall keep the pairing?** §A2.2 — iOS makes this a real choice
-   rather than a default, and it needs deciding before shipping, not after
-   someone is locked out.
-3. **Is a paid developer account ever in scope?** If not, say so in the docs so
-   nobody waits for a TestFlight link that will never come.
-4. **App Store submission at all?** It brings encryption export-compliance
-   declarations, and a review team that cannot test a LAN-only app without either
-   hardware or a demo endpoint. Direct install and TestFlight avoid all of it.
+Recorded here so the plan reads as settled rather than as a menu, and so the
+reasoning survives longer than the conversation.
+
+1. **Look: platform-adaptive polish** (§A2.1). Material widgets and the
+   custom-painted controls stay; swipe-back, scroll physics, haptics, switches,
+   splashes and the seed colour adapt. Plain Material was the cheap alternative
+   and remains the fallback if the polish slips; a full Cupertino tree was
+   rejected as double maintenance for a cosmetic gain.
+2. **A reinstall drops the credential and re-enrols** (§A2.2). The
+   prefs-cleared-but-Keychain-survives asymmetry is the detection mechanism.
+   Costs one LAN approval on the rare occasion someone reinstalls; keeping the
+   pairing was rejected because it would let a revoked device regain access by
+   reinstalling, making revocation decorative.
+3. **No paid Apple Developer account** (Part B). Users build it themselves on the
+   free tier, and the docs say plainly that no TestFlight link is coming.
+   Revisit only if enough people ask.
+4. **Voice: App Intents / Siri Shortcuts, in scope for the port** (§A3.3). Local,
+   no account, no entitlement, and it doubles as the CarPlay substitute. The
+   heavier bridge options — HomeKit via HAP, or Matter for all four ecosystems at
+   once — are written up in
+   [breeze-core docs/VOICE.md](https://github.com/monikapurpl3/breeze-core/blob/main/docs/VOICE.md)
+   and deliberately **not** committed to yet.
+
+Still genuinely open, and worth deciding before Part A phase 1 rather than during
+it: **which bundle identifier** the project standardises on. The Android
+application id is `app.breeze.breeze`, which is fine for self-built installs but
+is not a domain anyone here controls — irrelevant for free-tier sideloading,
+relevant the moment an App Store listing is ever considered.

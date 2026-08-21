@@ -7,6 +7,7 @@ import '../api_client.dart';
 import '../app_scope.dart';
 import '../home_widget_service.dart';
 import '../models.dart';
+import '../widgets/loading_cat.dart';
 import 'diagnostics_screen.dart';
 import 'programs_screen.dart';
 import 'settings_screen.dart';
@@ -22,6 +23,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<UnitSummary> _units = [];
   final Map<String, UnitState> _states = {};
+  /// Pending one-shot timers, keyed by unit id. Empty when the server predates
+  /// them, which is also how the hourglass stays hidden rather than being
+  /// offered and then failing.
+  final Map<String, SleepTimer> _timers = {};
+  bool _timersSupported = false;
   final Set<String> _busy = {};
   bool _loading = true;
   bool _reauthing = false;
@@ -248,11 +254,57 @@ class _HomeScreenState extends State<HomeScreen> {
         final info = await _api.serverInfo();
         final feats = (info['features'] as List?)?.cast<String>() ?? const [];
         _liveSupported = feats.contains('live_stream');
+        _timersSupported = feats.contains('sleep_timer');
         _liveChecked = true;
       } catch (_) {/* old server / offline — re-probe next time, keep polling */}
     }
     if (_liveSupported) _startStream();
+    if (_timersSupported) await _pullTimers();
     _syncWidgets();
+  }
+
+  /// Fetch the pending timers. Best-effort on purpose: a server that cannot
+  /// answer this must not stop the unit pages from rendering, so a failure just
+  /// leaves the hourglasses idle.
+  Future<void> _pullTimers() async {
+    if (!_timersSupported) return;
+    try {
+      final list = await _api.listTimers();
+      if (!mounted) return;
+      setState(() {
+        _timers
+          ..clear()
+          ..addEntries(
+            list.expand((t) => t.unitIds.map((u) => MapEntry(u, t))),
+          );
+      });
+    } catch (_) {/* leave the hourglasses idle */}
+  }
+
+  /// Set (minutes > 0) or cancel (0) the timer for one unit.
+  Future<void> _setSleepTimer(String unitId, int minutes) async {
+    final existing = _timers[unitId];
+    try {
+      if (minutes <= 0) {
+        if (existing == null) return;
+        await _api.cancelTimer(existing.id);
+        if (mounted) setState(() => _timers.remove(unitId));
+        _toast('Timer cancelled');
+        return;
+      }
+      final t = await _api.createTimer(unitId, minutes);
+      if (mounted) setState(() => _timers[unitId] = t);
+      // The server decided the moment, so quote its answer rather than the
+      // minutes that were asked for.
+      _toast('Switching off at ${t.firesAtClock}');
+    } on ApiException catch (e) {
+      await _handleErr(e);
+    }
+  }
+
+  void _toast(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _refreshStates() async {
@@ -265,6 +317,11 @@ class _HomeScreenState extends State<HomeScreen> {
     } on ApiException catch (e) {
       await _handleErr(e, silent: true); // background: banner only, no snackbar spam
     }
+    // A timer that has run out has been consumed server-side, so re-read the
+    // list rather than leaving a spent entry in memory. Only when one has
+    // actually expired — polling timers on every refresh would be a second
+    // request per cycle for something that changes a few times a day.
+    if (_timers.values.any((t) => t.expired)) await _pullTimers();
     _syncWidgets();
   }
 
@@ -534,7 +591,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBody() {
     if (_loading && _states.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const LoadingCat(label: 'Reaching your Breeze Core server…');
     }
     if (_error != null && _states.isEmpty) {
       return _CenteredMessage(
@@ -577,16 +634,7 @@ class _HomeScreenState extends State<HomeScreen> {
               final u = _units[i];
               final s = _states[u.id];
               if (s == null) {
-                return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(strokeWidth: 2),
-                      const SizedBox(height: 12),
-                      Text('Connecting to ${u.name}…'),
-                    ],
-                  ),
-                );
+                return LoadingCat(label: 'Connecting to ${u.name}…');
               }
               return UnitPage(
                 key: ValueKey(u.id),
@@ -597,6 +645,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 onControl: (delta) => _control(u.id, delta),
                 onRename: () => _rename(u.id, s.name),
                 onRemove: () => _removeUnit(u.id, s.name),
+                sleepTimer: _timers[u.id],
+                // Null when the server has no timers: the hourglass then does
+                // not appear at all, instead of appearing and failing.
+                onSleepTimer: _timersSupported
+                    ? (minutes) => _setSleepTimer(u.id, minutes)
+                    : null,
               );
             },
           ),

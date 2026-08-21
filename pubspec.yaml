@@ -83,6 +83,11 @@ flutter:
     # versions from the lock file itself rather than a hand-maintained list
     # that would drift on the next `pub upgrade`.
     - pubspec.lock
+    # Apache-2.0, for the native Android dependencies. Flutter's LicenseRegistry
+    # only collects Dart package licences, so the AndroidX Car App Library the
+    # Android Auto surface is built on has no attribution anywhere in the app
+    # without this. Registered in main() — see registerNativeLicenses().
+    - assets/licenses/APACHE-2.0.txt
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../app_scope.dart';
+import '../haptics.dart';
 import '../models.dart';
 import '../theme.dart';
 import '../widgets/big_toggle.dart';
@@ -8,6 +11,7 @@ import '../widgets/fan_control.dart';
 import '../widgets/flap_control.dart';
 import '../widgets/mode_selector.dart';
 import '../widgets/power_switch.dart';
+import '../widgets/sleep_timer_sheet.dart';
 import '../widgets/temp_control.dart';
 
 /// One AC unit, filling the screen (no scrolling). Composed of the modern
@@ -23,6 +27,8 @@ class UnitPage extends StatelessWidget {
     this.refreshing = false,
     this.onRename,
     this.onRemove,
+    this.sleepTimer,
+    this.onSleepTimer,
   });
 
   final UnitState state;
@@ -30,6 +36,14 @@ class UnitPage extends StatelessWidget {
   final bool refreshing;
   final VoidCallback? onRename;
   final VoidCallback? onRemove;
+
+  /// The unit's pending one-shot timer, if the server has one for it.
+  final SleepTimer? sleepTimer;
+
+  /// Minutes to run for, or 0 to cancel. Null when the server is too old to
+  /// support timers — the hourglass is then not shown at all, rather than
+  /// offered and then failing.
+  final ValueChanged<int>? onSleepTimer;
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +59,36 @@ class UnitPage extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
       child: Column(
         children: [
-          // ---- header: status · name · refresh · power · menu ----
+          // ---- header: status · refresh · name · hourglass · power · menu ----
+          //
+          // The refresh indicator used to sit immediately left of the power
+          // switch, which is where the sleep-timer hourglass belongs — it is
+          // about the switch. So the indicator moved next to the status dot,
+          // where both "what is this unit doing" signals now live together, and
+          // it no longer takes width from the name only while a command is in
+          // flight (the row used to reflow as it appeared and vanished). The
+          // name keeps the Expanded, so a long one ellipsises instead of
+          // pushing anything off the edge.
           Row(
             children: [
               Icon(Icons.circle, size: 10, color: online ? accent : scheme.error),
-              const SizedBox(width: 8),
+              // Fixed-width slot: reserved whether or not the spinner is
+              // visible, so the title never shifts sideways mid-command.
+              SizedBox(
+                width: 24,
+                height: 16,
+                child: Center(
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 150),
+                    opacity: refreshing ? 1 : 0,
+                    child: SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: accent),
+                    ),
+                  ),
+                ),
+              ),
               Expanded(
                 child: Text(
                   state.name,
@@ -60,17 +99,14 @@ class UnitPage extends StatelessWidget {
                       ),
                 ),
               ),
-              // Discreet refresh indicator — tiny, only while updating.
-              AnimatedOpacity(
-                duration: const Duration(milliseconds: 150),
-                opacity: refreshing ? 1 : 0,
-                child: SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: accent),
+              if (onSleepTimer != null)
+                _SleepTimerButton(
+                  timer: sleepTimer,
+                  accent: accent,
+                  enabled: live,
+                  unitName: state.name,
+                  onChosen: onSleepTimer!,
                 ),
-              ),
-              const SizedBox(width: 8),
               PowerSwitch(
                 on: state.powerState,
                 enabled: live,
@@ -169,3 +205,119 @@ class UnitPage extends StatelessWidget {
   }
 }
 
+
+/// The hourglass beside the power switch: idle when nothing is pending, and a
+/// live countdown when the server is holding a timer for this unit.
+///
+/// Stateful only to keep the countdown honest — [SleepTimer.remaining] is
+/// derived from the server's `seconds_remaining` and the local elapsed time, so
+/// it needs a periodic rebuild to tick down. One timer per visible unit page,
+/// cancelled on dispose, and only while a countdown is actually running.
+class _SleepTimerButton extends StatefulWidget {
+  const _SleepTimerButton({
+    required this.timer,
+    required this.accent,
+    required this.enabled,
+    required this.unitName,
+    required this.onChosen,
+  });
+
+  final SleepTimer? timer;
+  final Color accent;
+  final bool enabled;
+  final String unitName;
+  final ValueChanged<int> onChosen;
+
+  @override
+  State<_SleepTimerButton> createState() => _SleepTimerButtonState();
+}
+
+class _SleepTimerButtonState extends State<_SleepTimerButton> {
+  Timer? _ticker;
+
+  @override
+  void initState() {
+    super.initState();
+    _syncTicker();
+  }
+
+  @override
+  void didUpdateWidget(_SleepTimerButton old) {
+    super.didUpdateWidget(old);
+    _syncTicker();
+  }
+
+  void _syncTicker() {
+    final running = widget.timer != null && !widget.timer!.expired;
+    if (running && _ticker == null) {
+      // Ten seconds, not one: the label is "42m", so a per-second rebuild would
+      // burn battery to change nothing.
+      _ticker = Timer.periodic(const Duration(seconds: 10), (_) {
+        if (mounted) setState(() {});
+      });
+    } else if (!running) {
+      _ticker?.cancel();
+      _ticker = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _open() async {
+    Haptics.tick();
+    final chosen = await SleepTimerSheet.show(
+      context,
+      unitName: widget.unitName,
+      existing: widget.timer,
+    );
+    if (chosen != null) widget.onChosen(chosen);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final t = widget.timer;
+    final active = t != null && !t.expired;
+    final colour = !widget.enabled
+        ? scheme.onSurfaceVariant.withValues(alpha: 0.4)
+        : (active ? widget.accent : scheme.onSurfaceVariant);
+
+    return Tooltip(
+      message: active
+          ? 'Turns off at ${t.firesAtClock}'
+          : 'Turn off after a while',
+      child: InkWell(
+        onTap: widget.enabled ? _open : null,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+          child: Row(
+            children: [
+              Icon(
+                active ? Icons.hourglass_bottom : Icons.hourglass_empty,
+                size: 20,
+                color: colour,
+              ),
+              // The remaining time only appears when there is one, so an idle
+              // header stays as narrow as it was before this feature existed.
+              if (active) ...[
+                const SizedBox(width: 3),
+                Text(
+                  t.shortLabel,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: colour,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

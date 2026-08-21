@@ -8,10 +8,17 @@ import 'src/home_widget_service.dart';
 import 'src/screens/home_screen.dart';
 import 'src/screens/onboarding_screen.dart';
 import 'src/screens/pairing_screen.dart';
+import 'src/native_licenses.dart';
 import 'src/secure_store.dart';
+import 'src/widgets/loading_cat.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // The native dependencies' licences, which LicenseRegistry cannot find on
+  // its own -- see native_licenses.dart. After ensureInitialized because the
+  // callback reads an asset (it is lazy, but the ordering should not depend
+  // on that).
+  registerNativeLicenses();
   // Read our own version out of the package before the first frame, so the
   // About dialog can't disagree with what's actually installed.
   await AppInfo.load();
@@ -77,7 +84,7 @@ class _Gate extends StatelessWidget {
           case AppStage.home:
             return const HomeScreen();
           case AppStage.loading:
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+            return const Scaffold(body: LoadingCat());
         }
       },
     );

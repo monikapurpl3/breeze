@@ -97,7 +97,10 @@ Flutter 3.44+, Android SDK (API 36), JDK 17/21. Release signing, icons and CI:
 
 ## License
 
-[AGPL-3.0](LICENSE), same as the server. All dependencies are permissive (Flutter,
-`http`, `flutter_secure_storage` BSD-3; `dynamic_color` Apache-2.0), which
-AGPL-3.0 permits. Found a vulnerability? [SECURITY.md](SECURITY.md) — privately,
-please.
+[AGPL-3.0](LICENSE), same as the server. Every dependency is permissive — BSD-3
+(Flutter, `http`, `shared_preferences`, `flutter_secure_storage`,
+`package_info_plus`, `home_widget`), MIT (`cupertino_icons`, `workmanager`,
+`pointycastle`) and Apache-2.0 (`dynamic_color`, `cryptography`, and the AndroidX
+Car App Library behind Android Auto) — which AGPL-3.0 permits. The full texts are
+in the app under **Settings → Licences**. Found a vulnerability?
+[SECURITY.md](SECURITY.md) — privately, please.

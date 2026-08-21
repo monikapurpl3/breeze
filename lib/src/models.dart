@@ -295,3 +295,65 @@ class Program {
     return m;
   }
 }
+
+/// A one-shot server-side timer: "turn this unit off in N minutes"
+/// (Breeze Core >= 3.2.0, feature flag `sleep_timer`).
+///
+/// The remaining time comes from the server as [secondsRemaining] and is counted
+/// down locally from [fetchedAt]. That is deliberate: the phone's clock is used
+/// only to measure *elapsed* time, never to decide what time it is — the same
+/// reason the server takes minutes rather than a wall-clock moment.
+class SleepTimer {
+  final String id;
+  final List<String> unitIds;
+  final int minutes;
+  final String firesAt; // server-local ISO, for display only
+  final int secondsRemaining;
+  final DateTime fetchedAt;
+
+  SleepTimer({
+    required this.id,
+    required this.unitIds,
+    required this.minutes,
+    required this.firesAt,
+    required this.secondsRemaining,
+    required this.fetchedAt,
+  });
+
+  factory SleepTimer.fromJson(Map<String, dynamic> j) => SleepTimer(
+    id: j['id'] as String,
+    unitIds: ((j['unit_ids'] as List?) ?? const []).map((e) => '$e').toList(),
+    minutes: (j['minutes'] as num?)?.toInt() ?? 0,
+    firesAt: (j['fires_at'] as String?) ?? '',
+    secondsRemaining: (j['seconds_remaining'] as num?)?.toInt() ?? 0,
+    fetchedAt: DateTime.now(),
+  );
+
+  /// Seconds left right now, floored at zero.
+  int get remaining {
+    final elapsed = DateTime.now().difference(fetchedAt).inSeconds;
+    final left = secondsRemaining - elapsed;
+    return left > 0 ? left : 0;
+  }
+
+  bool get expired => remaining == 0;
+
+  /// "45m" / "1h 20m" / "40s" — short enough to sit next to the power switch.
+  String get shortLabel {
+    final s = remaining;
+    if (s < 60) return '${s}s';
+    final m = (s / 60).ceil();
+    if (m < 60) return '${m}m';
+    final h = m ~/ 60;
+    final rest = m % 60;
+    return rest == 0 ? '${h}h' : '${h}h ${rest}m';
+  }
+
+  /// "23:15" out of the server's ISO string, without re-interpreting it in the
+  /// phone's timezone — it is already the server's local wall clock.
+  String get firesAtClock {
+    final i = firesAt.indexOf('T');
+    if (i < 0 || firesAt.length < i + 6) return firesAt;
+    return firesAt.substring(i + 1, i + 6);
+  }
+}

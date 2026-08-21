@@ -486,6 +486,30 @@ class ApiClient {
 
   Future<void> applyProgram(String id) => _send('POST', '/api/programs/$id/apply');
 
+  // --- one-shot timers (Breeze Core >= 3.2.0, feature `sleep_timer`) ---------
+  // The server is asked for MINUTES, never a wall-clock time: it computes the
+  // moment from its own clock, so a phone in another timezone — or with a clock
+  // that is simply wrong — still gets the right result.
+
+  Future<List<SleepTimer>> listTimers() async {
+    final j = (await _send('GET', '/api/timers')) as List;
+    return j
+        .map((e) => SleepTimer.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<SleepTimer> createTimer(String unitId, int minutes) async =>
+      SleepTimer.fromJson(
+        (await _send(
+              'POST',
+              '/api/timers',
+              body: {'unit_ids': [unitId], 'minutes': minutes},
+            ))
+            as Map<String, dynamic>,
+      );
+
+  Future<void> cancelTimer(String id) => _send('DELETE', '/api/timers/$id');
+
   Future<Map<String, dynamic>> schedulerStatus() async =>
       (await _send('GET', '/api/programs/status')) as Map<String, dynamic>;
 

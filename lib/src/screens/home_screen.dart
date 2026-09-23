@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../api_client.dart';
 import '../app_scope.dart';
+import '../control_ledger.dart';
 import '../home_widget_service.dart';
 import '../models.dart';
 import '../widgets/loading_cat.dart';
@@ -28,7 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
   /// offered and then failing.
   final Map<String, SleepTimer> _timers = {};
   bool _timersSupported = false;
-  final Set<String> _busy = {};
+  /// Which replies reach the screen while controls are in flight. See
+  /// [ControlLedger] for why this is not simply "show every reply".
+  final ControlLedger _ledger = ControlLedger();
   bool _loading = true;
   bool _reauthing = false;
   bool _offline = false;     // server unreachable — show a banner, back off polling
@@ -80,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
       (s) {
         if (!mounted) return;
         setState(() {
-          _states[s.id] = s;
+          if (_ledger.reported(s)) _states[s.id] = s;
           _offline = false;
         });
         _syncWidgets();
@@ -190,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (!mounted) return true;
         setState(() {
           for (final s in b.states) {
-            _states[s.id] = s;
+            if (_ledger.reported(s)) _states[s.id] = s;
           }
           for (final e in b.errors) {
             final id = e['id'] as String;
@@ -214,11 +217,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     var reached = false;
     for (final u in _units) {
-      if (_busy.contains(u.id)) continue;
+      if (_ledger.isBusy(u.id)) continue;
       try {
         final s = await _api.getState(u.id);
         reached = true;
-        if (mounted) setState(() => _states[u.id] = s);
+        if (mounted && _ledger.reported(s)) setState(() => _states[u.id] = s);
       } on ApiException catch (e) {
         if (e.unauthorized) rethrow;
         if (e.status == 0) return reached;
@@ -331,16 +334,21 @@ class _HomeScreenState extends State<HomeScreen> {
     final prev = _states[id];
     HapticFeedback.selectionClick();
     // Optimistic: reflect the change instantly, reconcile on the reply.
-    if (prev != null) setState(() => _states[id] = prev.withDelta(delta));
-    setState(() => _busy.add(id));
+    final ticket = _ledger.begin(id);
+    setState(() {
+      if (prev != null) _states[id] = prev.withDelta(delta);
+    });
     try {
       final s = await _api.control(id, delta);
-      if (mounted) setState(() => _states[id] = s);
+      final show = _ledger.replied(id, ticket, s);
+      if (show != null && mounted) setState(() => _states[id] = show);
     } on ApiException catch (e) {
-      if (prev != null && mounted) setState(() => _states[id] = prev); // revert
+      final back = _ledger.failed(id, ticket, prev);
+      if (back != null && mounted) setState(() => _states[id] = back);
       await _handleErr(e);
     } finally {
-      if (mounted) setState(() => _busy.remove(id));
+      _ledger.settled(id);
+      if (mounted) setState(() {});
     }
     _syncWidgets();
   }
@@ -393,6 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (ok != true || !mounted) return;
     final done = await _guard(() => _api.deleteUnit(id));
     if (done && mounted) {
+      _ledger.forget(id);
       setState(() => _states.remove(id));
       await _loadAll();
     }
@@ -641,7 +650,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 state: s,
                 // Discreet indicator only while a user-initiated command for
                 // this unit is in flight — never during idle background polls.
-                refreshing: _busy.contains(u.id),
+                refreshing: _ledger.isBusy(u.id),
                 onControl: (delta) => _control(u.id, delta),
                 onRename: () => _rename(u.id, s.name),
                 onRemove: () => _removeUnit(u.id, s.name),

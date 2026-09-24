@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../api_client.dart';
 import '../app_scope.dart';
+import '../control_feedback.dart';
 import '../control_ledger.dart';
 import '../home_widget_service.dart';
 import '../models.dart';
@@ -305,9 +306,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _toast(String message) {
+  void _toast(String message, {Duration duration = const Duration(seconds: 4)}) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    // One at a time: a burst of refused taps should not queue a line of them.
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message), duration: duration));
   }
 
   Future<void> _refreshStates() async {
@@ -341,7 +345,13 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final s = await _api.control(id, delta);
       final show = _ledger.replied(id, ticket, s);
-      if (show != null && mounted) setState(() => _states[id] = show);
+      if (show != null && mounted) {
+        setState(() => _states[id] = show);
+        // The unit answered but may have refused part of it. Say so, and whose
+        // doing it was, rather than let the control silently spring back.
+        final note = notAppliedMessage(show);
+        if (note != null) _toast(note, duration: const Duration(seconds: 8));
+      }
     } on ApiException catch (e) {
       final back = _ledger.failed(id, ticket, prev);
       if (back != null && mounted) setState(() => _states[id] = back);

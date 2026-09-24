@@ -44,6 +44,11 @@ class UnitState {
   final bool eco;
   final bool turbo;
 
+  /// Fields the unit did not take in the control command this state answers
+  /// (`not_applied`, Breeze Core 4.1.1+). Only ever set on a control reply;
+  /// empty everywhere else, and on older servers.
+  final List<String> notApplied;
+
   UnitState({
     required this.id,
     required this.name,
@@ -58,6 +63,7 @@ class UnitState {
     required this.swingMode,
     required this.eco,
     required this.turbo,
+    this.notApplied = const [],
   });
 
   factory UnitState.fromJson(Map<String, dynamic> j) => UnitState(
@@ -74,6 +80,9 @@ class UnitState {
         swingMode: j['swing_mode'] as String,
         eco: j['eco'] as bool,
         turbo: j['turbo'] as bool,
+        notApplied: [
+          for (final f in (j['not_applied'] as List? ?? const [])) f as String,
+        ],
       );
 
   /// A placeholder state for a unit that couldn't be reached at all.

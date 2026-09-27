@@ -10,6 +10,7 @@ import '../control_ledger.dart';
 import '../home_widget_service.dart';
 import '../models.dart';
 import '../widgets/loading_cat.dart';
+import '../widgets/timer_sheet.dart';
 import 'diagnostics_screen.dart';
 import 'programs_screen.dart';
 import 'settings_screen.dart';
@@ -25,11 +26,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<UnitSummary> _units = [];
   final Map<String, UnitState> _states = {};
-  /// Pending one-shot timers, keyed by unit id. Empty when the server predates
-  /// them, which is also how the hourglass stays hidden rather than being
+  /// Pending sleep timers, keyed by unit id. Empty when the server predates
+  /// them, which is also how the timer button stays hidden rather than being
   /// offered and then failing.
-  final Map<String, SleepTimer> _timers = {};
+  final Map<String, UnitTimer> _timers = {};
   bool _timersSupported = false;
+  /// Pending scheduled starts (Breeze Core 4.2.0, `timer_at`), keyed by unit
+  /// id. A unit has at most one of each kind.
+  final Map<String, UnitTimer> _starts = {};
+  bool _startsSupported = false;
   /// Which replies reach the screen while controls are in flight. See
   /// [ControlLedger] for why this is not simply "show every reply".
   final ControlLedger _ledger = ControlLedger();
@@ -259,6 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final feats = (info['features'] as List?)?.cast<String>() ?? const [];
         _liveSupported = feats.contains('live_stream');
         _timersSupported = feats.contains('sleep_timer');
+        _startsSupported = feats.contains('timer_at');
         _liveChecked = true;
       } catch (_) {/* old server / offline — re-probe next time, keep polling */}
     }
@@ -273,35 +279,47 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _pullTimers() async {
     if (!_timersSupported) return;
     try {
-      final list = await _api.listTimers();
+      final list = await _api.listTimers(withStarts: _startsSupported);
       if (!mounted) return;
       setState(() {
         _timers
           ..clear()
-          ..addEntries(
-            list.expand((t) => t.unitIds.map((u) => MapEntry(u, t))),
-          );
+          ..addEntries(list
+              .where((t) => !t.isStart)
+              .expand((t) => t.unitIds.map((u) => MapEntry(u, t))));
+        _starts
+          ..clear()
+          ..addEntries(list
+              .where((t) => t.isStart)
+              .expand((t) => t.unitIds.map((u) => MapEntry(u, t))));
       });
     } catch (_) {/* leave the hourglasses idle */}
   }
 
-  /// Set (minutes > 0) or cancel (0) the timer for one unit.
-  Future<void> _setSleepTimer(String unitId, int minutes) async {
-    final existing = _timers[unitId];
+  /// Carry out what the timer sheet chose for one unit.
+  Future<void> _onTimer(String unitId, TimerChoice choice) async {
     try {
-      if (minutes <= 0) {
-        if (existing == null) return;
-        await _api.cancelTimer(existing.id);
-        if (mounted) setState(() => _timers.remove(unitId));
-        _toast('Timer cancelled');
-        return;
+      switch (choice) {
+        case CancelTimer(:final timer):
+          await _api.cancelTimer(timer.id);
+          if (mounted) {
+            setState(() => (timer.isStart ? _starts : _timers).remove(unitId));
+          }
+          _toast(timer.isStart ? 'Scheduled start cancelled' : 'Timer cancelled');
+        case SleepFor(:final minutes):
+          final t = await _api.createTimer(unitId, minutes);
+          if (mounted) setState(() => _timers[unitId] = t);
+          // The server decided the moment, so quote its answer rather than the
+          // minutes that were asked for.
+          _toast('Switching off at ${t.firesAtClock}');
+        case StartAt(:final days, :final at):
+          final t = await _api.createStartTimer(unitId, days, at);
+          if (mounted) setState(() => _starts[unitId] = t);
+          _toast('Switching on ${t.whenLabel}');
       }
-      final t = await _api.createTimer(unitId, minutes);
-      if (mounted) setState(() => _timers[unitId] = t);
-      // The server decided the moment, so quote its answer rather than the
-      // minutes that were asked for.
-      _toast('Switching off at ${t.firesAtClock}');
     } on ApiException catch (e) {
+      // A time already gone today comes back as a 422 whose message says so,
+      // on the server's clock; _handleErr shows it as it is.
       await _handleErr(e);
     }
   }
@@ -328,7 +346,10 @@ class _HomeScreenState extends State<HomeScreen> {
     // list rather than leaving a spent entry in memory. Only when one has
     // actually expired — polling timers on every refresh would be a second
     // request per cycle for something that changes a few times a day.
-    if (_timers.values.any((t) => t.expired)) await _pullTimers();
+    if (_timers.values.any((t) => t.expired) ||
+        _starts.values.any((t) => t.expired)) {
+      await _pullTimers();
+    }
     _syncWidgets();
   }
 
@@ -665,10 +686,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 onRename: () => _rename(u.id, s.name),
                 onRemove: () => _removeUnit(u.id, s.name),
                 sleepTimer: _timers[u.id],
-                // Null when the server has no timers: the hourglass then does
+                startTimer: _starts[u.id],
+                startsSupported: _startsSupported,
+                // Null when the server has no timers: the button then does
                 // not appear at all, instead of appearing and failing.
-                onSleepTimer: _timersSupported
-                    ? (minutes) => _setSleepTimer(u.id, minutes)
+                onTimer: _timersSupported
+                    ? (choice) => _onTimer(u.id, choice)
                     : null,
               );
             },

@@ -305,37 +305,46 @@ class Program {
   }
 }
 
-/// A one-shot server-side timer: "turn this unit off in N minutes"
-/// (Breeze Core >= 3.2.0, feature flag `sleep_timer`).
+/// One pending server-side timer for a unit. Two kinds:
+///
+///  * a **sleep** timer, "turn this unit off in N minutes" (Breeze Core
+///    >= 3.2.0, feature `sleep_timer`);
+///  * a **scheduled start**, "turn it on in N days at HH:MM" (4.2.0, feature
+///    `timer_at`). A server older than that sends no `kind`, and everything it
+///    has is a sleep timer.
 ///
 /// The remaining time comes from the server as [secondsRemaining] and is counted
 /// down locally from [fetchedAt]. That is deliberate: the phone's clock is used
 /// only to measure *elapsed* time, never to decide what time it is — the same
-/// reason the server takes minutes rather than a wall-clock moment.
-class SleepTimer {
+/// reason the server is asked for minutes, or for days plus a time on its own
+/// clock, rather than a moment the phone worked out.
+class UnitTimer {
   final String id;
   final List<String> unitIds;
   final int minutes;
   final String firesAt; // server-local ISO, for display only
   final int secondsRemaining;
   final DateTime fetchedAt;
+  final bool isStart;
 
-  SleepTimer({
+  UnitTimer({
     required this.id,
     required this.unitIds,
     required this.minutes,
     required this.firesAt,
     required this.secondsRemaining,
     required this.fetchedAt,
+    this.isStart = false,
   });
 
-  factory SleepTimer.fromJson(Map<String, dynamic> j) => SleepTimer(
+  factory UnitTimer.fromJson(Map<String, dynamic> j) => UnitTimer(
     id: j['id'] as String,
     unitIds: ((j['unit_ids'] as List?) ?? const []).map((e) => '$e').toList(),
     minutes: (j['minutes'] as num?)?.toInt() ?? 0,
     firesAt: (j['fires_at'] as String?) ?? '',
     secondsRemaining: (j['seconds_remaining'] as num?)?.toInt() ?? 0,
     fetchedAt: DateTime.now(),
+    isStart: j['kind'] == 'start',
   );
 
   /// Seconds left right now, floored at zero.
@@ -364,5 +373,59 @@ class SleepTimer {
     final i = firesAt.indexOf('T');
     if (i < 0 || firesAt.length < i + 6) return firesAt;
     return firesAt.substring(i + 1, i + 6);
+  }
+
+  static const _weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  static const _months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+
+  /// [firesAt]'s wall clock as a UTC [DateTime], which is only a convenient
+  /// box for calendar arithmetic: no timezone is applied or implied.
+  DateTime? get _wall {
+    final m = RegExp(r'^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})').firstMatch(firesAt);
+    if (m == null) return null;
+    int g(int i) => int.parse(m.group(i)!);
+    return DateTime.utc(g(1), g(2), g(3), g(4), g(5));
+  }
+
+  /// How many of the server's days away the timer fires: 0 today, 1 tomorrow.
+  ///
+  /// The server's "today" is recovered from the timer itself — [firesAt] minus
+  /// the seconds it said were left — so the phone's own date never enters in.
+  int? get daysAhead {
+    final w = _wall;
+    if (w == null) return null;
+    final now = w.subtract(Duration(seconds: remaining));
+    final today = DateTime.utc(now.year, now.month, now.day);
+    final day = DateTime.utc(w.year, w.month, w.day);
+    return day.difference(today).inDays;
+  }
+
+  /// "today at 07:30", "tomorrow at 07:30", "Tue 29 Sep at 07:30".
+  String get whenLabel {
+    final w = _wall;
+    if (w == null) return 'at $firesAt';
+    final clock = firesAtClock;
+    switch (daysAhead) {
+      case 0:
+        return 'today at $clock';
+      case 1:
+        return 'tomorrow at $clock';
+    }
+    return '${_weekdays[w.weekday - 1]} ${w.day} ${_months[w.month - 1]} at $clock';
+  }
+
+  /// "07:30" today, "Tue" within the week, "29 Sep" beyond it — for the
+  /// header, where anything longer squeezes the unit's name on a narrow phone.
+  /// The time itself is one tap away, in the sheet.
+  String get shortWhen {
+    final w = _wall;
+    final days = daysAhead;
+    if (w == null || days == null) return firesAtClock;
+    if (days == 0) return firesAtClock;
+    if (days < 7) return _weekdays[w.weekday - 1];
+    return '${w.day} ${_months[w.month - 1]}';
   }
 }

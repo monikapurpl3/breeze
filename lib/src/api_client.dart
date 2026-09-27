@@ -490,20 +490,43 @@ class ApiClient {
   // The server is asked for MINUTES, never a wall-clock time: it computes the
   // moment from its own clock, so a phone in another timezone — or with a clock
   // that is simply wrong — still gets the right result.
+  //
+  // Scheduled starts (4.2.0, feature `timer_at`) keep to that: they are asked
+  // for as a number of days from the SERVER's today plus an HH:MM on the
+  // server's clock, and the server works out the moment.
 
-  Future<List<SleepTimer>> listTimers() async {
-    final j = (await _send('GET', '/api/timers')) as List;
+  /// Every pending timer. [withStarts] asks a 4.2.0 server for its scheduled
+  /// starts too — without it the server lists only sleep timers, so an app
+  /// that predates starts never mistakes one for a sleep timer. Only set it
+  /// when the server advertises `timer_at`.
+  Future<List<UnitTimer>> listTimers({bool withStarts = false}) async {
+    final j =
+        (await _send('GET', withStarts ? '/api/timers?kind=all' : '/api/timers'))
+            as List;
     return j
-        .map((e) => SleepTimer.fromJson(e as Map<String, dynamic>))
+        .map((e) => UnitTimer.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
-  Future<SleepTimer> createTimer(String unitId, int minutes) async =>
-      SleepTimer.fromJson(
+  /// A sleep timer: off in [minutes].
+  Future<UnitTimer> createTimer(String unitId, int minutes) async =>
+      UnitTimer.fromJson(
         (await _send(
               'POST',
               '/api/timers',
               body: {'unit_ids': [unitId], 'minutes': minutes},
+            ))
+            as Map<String, dynamic>,
+      );
+
+  /// A scheduled start: on in [days] (0 = today) at [at], an `HH:MM` on the
+  /// server's clock.
+  Future<UnitTimer> createStartTimer(String unitId, int days, String at) async =>
+      UnitTimer.fromJson(
+        (await _send(
+              'POST',
+              '/api/timers',
+              body: {'unit_ids': [unitId], 'days': days, 'at': at},
             ))
             as Map<String, dynamic>,
       );

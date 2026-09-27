@@ -78,9 +78,12 @@
         <!-- ── Android Auto ──────────────────────────────────────────────────
              One unit per screen, one huge power button. Registered under the
              IOT category (controlling a device at home), NOT navigation/media.
-             Distribution note: template apps in these categories need Google
-             review for Play; for a self-hosted APK, turn on "Unknown sources"
-             in Android Auto's developer settings. -->
+             Distribution note: a real car lists a Car App Library app only if
+             it was installed from Google Play - Auto's "Unknown sources"
+             setting does not cover these apps, and neither does recording Play
+             as the installer with adb. Play's internal testing track (not
+             reviewed) is enough. A sideloaded APK is listed by the Desktop Head
+             Unit only; see the wiki's Android Auto page. -->
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
@@ -104,9 +107,10 @@
                  GridTemplate this app uses. POI is kept alongside it because
                  Android Auto has historically surfaced POI apps more reliably
                  than IOT ones; it's a stretch semantically (we are not a point
-                 of interest), which is fine for a self-hosted APK but would be
-                 rejected in Play review — if this ever goes to Play, drop POI
-                 and ship the car surface for Automotive OS only. -->
+                 of interest), which is fine for the DHU and for Play's
+                 unreviewed internal testing track but would be rejected in a
+                 reviewed Play release - one of those would have to drop POI,
+                 and with it the Android Auto surface. -->
             <intent-filter>
                 <action android:name="androidx.car.app.CarAppService" />
                 <category android:name="androidx.car.app.category.IOT" />

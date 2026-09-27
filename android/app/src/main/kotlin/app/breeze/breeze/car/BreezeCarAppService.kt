@@ -12,9 +12,13 @@ import androidx.car.app.validation.HostValidator
  * (see the manifest) — this is a "control a thing in your house from the car"
  * app, not navigation or media.
  *
- * Note for distribution: template apps outside navigation/media need Google
- * review to ship on Play. For a self-hosted APK, enable *Unknown sources* in
- * Android Auto's developer settings.
+ * Note for distribution: a real car lists this only if the app was installed
+ * from Google Play (the internal testing track is enough, and is not
+ * reviewed). Auto's *Unknown sources* setting does not apply to Car App
+ * Library apps, and the refusal shows up only as
+ * `CAR.VALIDATOR: Package DENIED; failed all other checks`. The Desktop Head
+ * Unit lists a sideloaded build, unless its config gives it another car's
+ * identity - which is how to check the real-car rule without a car.
  */
 class BreezeCarAppService : CarAppService() {
 
@@ -23,12 +27,12 @@ class BreezeCarAppService : CarAppService() {
      *
      * The stricter path used to be "release builds only trust Google's signed
      * hosts", via the library's sample allowlist. That's the right call for a
-     * Play app, but this one is only ever sideloaded: the Desktop Head Unit
-     * isn't a signed host, so the strict path made the app untestable off a
-     * real car, and any silent mismatch between that allowlist and the host on
-     * a given phone fails invisibly — there is no log, the app simply never
+     * reviewed Play app, but this one is tested on the Desktop Head Unit, which
+     * isn't a signed host, so the strict path made it untestable off a real
+     * car, and any silent mismatch between that allowlist and the host on a
+     * given phone fails invisibly - there is no log, the app simply never
      * works. What a rogue host could do here is toggle an air conditioner.
-     * That trade is worth making; revisit it if this ever ships on Play.
+     * That trade is worth making; revisit it if this ever ships reviewed.
      */
     override fun createHostValidator(): HostValidator =
         HostValidator.ALLOW_ALL_HOSTS_VALIDATOR

@@ -8,9 +8,27 @@
 
 import 'package:flutter/material.dart';
 
+import '../app_controller.dart';
 import '../app_scope.dart';
 import '../haptics.dart';
 import '../secure_store.dart';
+
+/// Back to the screen this was opened from, unless the app has just changed
+/// stage - then all the way to the root.
+///
+/// Onboarding, pairing and home are not routes: they are what the root route
+/// shows, chosen by AppController.stage. This screen is opened from Settings,
+/// which is itself pushed on top of that root, so popping only this one
+/// leaves Settings covering whatever the root now shows. That is how "Add a
+/// server" used to drop you back into Settings, with the add-a-server screen
+/// appearing only once Settings was closed.
+void _leave(NavigatorState nav, AppController c) {
+  if (c.stage == AppStage.home) {
+    if (nav.canPop()) nav.pop();
+  } else {
+    nav.popUntil((r) => r.isFirst);
+  }
+}
 
 class ServersScreen extends StatelessWidget {
   const ServersScreen({super.key});
@@ -40,7 +58,9 @@ class ServersScreen extends StatelessWidget {
                 Haptics.select();
                 final nav = Navigator.of(context);
                 await c.switchProfile(p.id);
-                if (nav.canPop()) nav.pop();
+                // Home: back to Settings, now showing the new server. A
+                // server that needs pairing again: to the pairing screen.
+                _leave(nav, c);
               },
               onRename: () => _rename(context, p),
               onForget: () => _forget(context, p),
@@ -52,7 +72,8 @@ class ServersScreen extends StatelessWidget {
             subtitle: const Text('Pair with another Breeze Core; this one stays saved'),
             onTap: () {
               Haptics.tick();
-              Navigator.of(context).pop();
+              // Settings as well as this screen, or onboarding opens under it.
+              Navigator.of(context).popUntil((r) => r.isFirst);
               c.beginAddServer();
             },
           ),
@@ -116,9 +137,13 @@ class ServersScreen extends StatelessWidget {
     Haptics.failure();
     final nav = Navigator.of(context);
     await c.removeProfile(p.id);
-    // Nothing left to manage: close this screen so the app can fall back to
-    // onboarding rather than leaving an empty list on top of it.
-    if (c.profiles.isEmpty && nav.canPop()) nav.pop();
+    // Forgetting the active server switches to another, which may need
+    // pairing again, and forgetting the last one returns to onboarding. Both
+    // happen on the root, so clear the whole stack for them; otherwise stay
+    // here with the shorter list.
+    if (c.stage != AppStage.home || c.profiles.isEmpty) {
+      nav.popUntil((r) => r.isFirst);
+    }
   }
 }
 

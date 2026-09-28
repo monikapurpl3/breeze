@@ -72,7 +72,7 @@ Everything lives in the **[wiki](https://github.com/monikapurpl3/breeze/wiki)**:
 | [Diagnostics and the Nerd screen](https://github.com/monikapurpl3/breeze/wiki/Diagnostics-and-the-Nerd-screen) · [Multiple servers](https://github.com/monikapurpl3/breeze/wiki/Multiple-servers) | when something's off, and running more than one server |
 | [Security](https://github.com/monikapurpl3/breeze/wiki/Security) | how credentials are held, and how a 401 is handled |
 | [Architecture](https://github.com/monikapurpl3/breeze/wiki/Architecture) · [Building and releasing](https://github.com/monikapurpl3/breeze/wiki/Building-and-releasing) | working on it |
-| [iOS port (plan)](https://github.com/monikapurpl3/breeze/wiki/iOS-port-plan) | what an iOS build would take |
+| [iOS (untested)](https://github.com/monikapurpl3/breeze/wiki/iOS) | an iOS build on the `ios` branch that has not been run on an iPhone yet |
 
 ## Honest limits
 

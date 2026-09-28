@@ -1,0 +1,80 @@
+name: iOS
+
+# An unsigned iOS build, for sideloading. There is no paid Apple developer
+# account: Sideloadly (or AltStore) signs the IPA on the way onto the phone
+# with a free Apple ID, which is good for seven days at a time.
+#
+# Run by hand, and on every push to the ios branch while the port is being
+# prepared (a manual run only works once this file is on main). The repository
+# is public, so GitHub-hosted runners cost nothing here, macOS included; the
+# 2,000-minute allowance and the macOS multiplier apply to private ones.
+on:
+  workflow_dispatch:
+  push:
+    branches: [ios]
+
+permissions:
+  contents: read
+
+# A newer push makes an older build pointless.
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    needs: check
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          # The version the Android releases are built with, so both apps run
+          # the same Dart.
+          flutter-version: 3.44.4
+          channel: stable
+          cache: true
+      - name: Toolchain
+        run: |
+          xcodebuild -version
+          flutter --version
+      - run: flutter pub get
+      - name: Build
+        run: flutter build ios --release --no-codesign
+      - name: Package
+        # `flutter build ipa --no-codesign` stops at the .xcarchive and writes
+        # no IPA. An IPA is only a zip with the app under Payload/, so make it
+        # by hand.
+        run: |
+          version=$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml)
+          ipa="breeze-${version}-unsigned.ipa"
+          mkdir Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          zip -qry "$ipa" Payload
+          shasum -a 256 "$ipa" > "$ipa.sha256"
+          echo "IPA=$ipa" >> "$GITHUB_ENV"
+          {
+            echo "### $ipa"
+            echo
+            echo "$(du -h "$ipa" | cut -f1), SHA-256 \`$(cut -d' ' -f1 "$ipa.sha256")\`"
+            echo
+            echo "Unsigned: sign it while sideloading (Sideloadly or AltStore)."
+          } >> "$GITHUB_STEP_SUMMARY"
+      # Single files, uploaded as they are: an IPA is already a zip, and the
+      # download should be the .ipa itself, not a zip around it.
+      - uses: actions/upload-artifact@v7
+        with:
+          path: ${{ env.IPA }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          path: ${{ env.IPA }}.sha256
+          archive: false
+          retention-days: 14
+          if-no-files-found: error

@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # The iOS workflow runs this first, so a Dart mistake fails in a minute on
+  # Linux rather than after a macOS build.
+  workflow_call:
 
 # This job checks out the code, analyses it and runs the tests -- it writes
 # nothing back, so read-only is the whole requirement. Declared explicitly

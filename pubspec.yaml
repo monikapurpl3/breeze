@@ -61,8 +61,14 @@ dev_dependencies:
 # App launcher icon — regenerate with: dart run flutter_launcher_icons
 flutter_launcher_icons:
   android: true
-  ios: false
+  ios: true
+  # iOS icons may not have an alpha channel. icon.png's top row and left
+  # column are half-transparent, which flattening turns into a bright green
+  # line, so iOS gets icon_ios.png: the same picture with those edges copied
+  # from their neighbours, and no alpha at all.
   image_path: "assets/icon/icon.png"
+  image_path_ios: "assets/icon/icon_ios.png"
+  remove_alpha_ios: true
   adaptive_icon_background: "#11586E"
   adaptive_icon_foreground: "assets/icon/icon_foreground.png"
   min_sdk_android: 24

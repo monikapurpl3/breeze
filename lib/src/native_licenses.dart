@@ -11,7 +11,10 @@ import 'package:flutter/services.dart';
 /// at all.
 ///
 /// Anything added to `android/app/build.gradle.kts` belongs in this list too.
+/// They are Android libraries, so only an Android build lists them; the iOS
+/// build uses Swift packages whose licences would go in a list of their own.
 void registerNativeLicenses() {
+  if (defaultTargetPlatform != TargetPlatform.android) return;
   LicenseRegistry.addLicense(() async* {
     final text = await rootBundle.loadString('assets/licenses/APACHE-2.0.txt');
     yield LicenseEntryWithLineBreaks(const [

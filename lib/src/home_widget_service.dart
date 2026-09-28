@@ -9,10 +9,17 @@
 //
 // Everything here is best-effort: widget failures must never surface in, or
 // break, the foreground app.
+//
+// **Android only, for now.** On iOS the same plugins need a WidgetKit
+// extension, an App Group and BGTaskScheduler identifiers that the iOS build
+// doesn't have yet, and an unregistered background task is a native crash, not
+// an exception the try/catch below could swallow. So every entry point checks
+// [HomeWidgetService.supported] and does nothing elsewhere.
 
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -31,8 +38,14 @@ const String _kPaired = 'paired'; // "1" | "0"
 String _stateKey(String unitId) => 'state.$unitId';
 
 class HomeWidgetService {
+  /// Whether this platform has the home-screen widget and its background
+  /// refresh. [defaultTargetPlatform] rather than `dart:io`'s Platform so a
+  /// test can pretend to be an iPhone.
+  static bool get supported => defaultTargetPlatform == TargetPlatform.android;
+
   /// Register the interactive callback. Call once at startup.
   static Future<void> init() async {
+    if (!supported) return;
     try {
       await HomeWidget.registerInteractivityCallback(interactiveCallback);
     } catch (_) {/* widgets are optional */}
@@ -41,6 +54,7 @@ class HomeWidgetService {
   /// Register a periodic background task (min 15 min on Android) that
   /// refreshes widget data even while the app is closed. Best-effort.
   static Future<void> registerBackgroundRefresh() async {
+    if (!supported) return;
     try {
       await Workmanager().initialize(workmanagerDispatcher);
       await Workmanager().registerPeriodicTask(
@@ -59,6 +73,7 @@ class HomeWidgetService {
     required Map<String, UnitState> states,
     required bool paired,
   }) async {
+    if (!supported) return;
     try {
       final list = units.map((u) => {'id': u.id, 'name': u.name}).toList();
       await HomeWidget.saveWidgetData<String>(_kUnitList, jsonEncode(list));

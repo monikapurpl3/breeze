@@ -2,7 +2,13 @@
 //
 // flutter_secure_storage (v10+) encrypts values by default on Android
 // (Keystore-wrapped custom ciphers), so access keys and per-device
-// credentials never touch disk in the clear.
+// credentials never touch disk in the clear. On iOS they live in the Keychain,
+// readable from the first unlock after a restart (so background work can
+// reach the server while the phone is locked) and never copied into a backup
+// or onto another phone, the Keychain's version of Android's
+// allowBackup="false". Keychain items belong to the signing team: a sideloaded
+// build re-signed with a different Apple ID sees none of them and has to pair
+// again.
 //
 // **Profiles.** Every secret is namespaced by a profile id (`p_<id>_<field>`)
 // and one key, `active_profile`, says which is current. Switching servers is
@@ -53,7 +59,11 @@ class ServerProfile {
 }
 
 class SecureStore {
-  final FlutterSecureStorage _s = const FlutterSecureStorage();
+  final FlutterSecureStorage _s = const FlutterSecureStorage(
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
+  );
 
   static const _kActive = 'active_profile';
   static const _kIndex = 'profile_index';   // JSON list of ids

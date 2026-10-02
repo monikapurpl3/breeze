@@ -8,6 +8,10 @@ name: iOS
 # prepared (a manual run only works once this file is on main). The repository
 # is public, so GitHub-hosted runners cost nothing here, macOS included; the
 # 2,000-minute allowance and the macOS multiplier apply to private ones.
+#
+# Each build is attached to the GitHub release of the same version, beside the
+# Android APK, replacing the IPA a previous build put there. Before that version
+# has a release, it is kept as a 14-day artifact instead.
 on:
   workflow_dispatch:
   push:
@@ -29,6 +33,9 @@ jobs:
     needs: check
     runs-on: macos-26
     timeout-minutes: 30
+    # To attach the IPA to a release; nothing else here writes.
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v5
       - uses: subosito/flutter-action@v2
@@ -64,15 +71,30 @@ jobs:
             echo
             echo "Unsigned: sign it while sideloading (Sideloadly or AltStore)."
           } >> "$GITHUB_STEP_SUMMARY"
-      # Single files, uploaded as they are: an IPA is already a zip, and the
-      # download should be the .ipa itself, not a zip around it.
-      - uses: actions/upload-artifact@v7
+      # Where people look for it, and where it does not expire in 14 days.
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml)"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$IPA" "$IPA.sha256" --clobber
+            echo "ATTACHED=1" >> "$GITHUB_ENV"
+            echo "Attached to release [$tag](https://github.com/${{ github.repository }}/releases/tag/$tag)." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No release $tag yet, so this build is kept as an artifact." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      # Until then: single files, uploaded as they are. An IPA is already a zip,
+      # and the download should be the .ipa itself, not a zip around it.
+      - if: env.ATTACHED != '1'
+        uses: actions/upload-artifact@v7
         with:
           path: ${{ env.IPA }}
           archive: false
           retention-days: 14
           if-no-files-found: error
-      - uses: actions/upload-artifact@v7
+      - if: env.ATTACHED != '1'
+        uses: actions/upload-artifact@v7
         with:
           path: ${{ env.IPA }}.sha256
           archive: false

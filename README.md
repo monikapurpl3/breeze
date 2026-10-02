@@ -16,7 +16,7 @@ self-hosted control for Midea air conditioners, over your own LAN.
 </div>
 
 <p align="center">
-  <img src="https://i.imgur.com/LyieDjQ.png" alt="Breeze — the control screen, network scan-to-add, and the Programs editor" width="900">
+  <img src="https://imlink.salataputarica.hr.eu.org/u/V5MMHi.png" alt="Breeze — the control screen, network scan-to-add, and the Programs editor" width="900">
 </p>
 
 ## Why

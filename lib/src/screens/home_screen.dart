@@ -324,12 +324,21 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _toast(String message, {Duration duration = const Duration(seconds: 4)}) {
+  void _toast(String message,
+      {Duration duration = const Duration(seconds: 4), bool keepForReader = false}) {
     if (!mounted) return;
+    // With a screen reader on, a long message stays until OK: it could
+    // vanish before it had been read out, and the reader cannot be hurried.
+    final keep = keepForReader && MediaQuery.accessibleNavigationOf(context);
     // One at a time: a burst of refused taps should not queue a line of them.
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message), duration: duration));
+      ..showSnackBar(SnackBar(
+        content: Text(message),
+        duration: duration,
+        persist: keep,
+        action: keep ? SnackBarAction(label: 'OK', onPressed: () {}) : null,
+      ));
   }
 
   Future<void> _refreshStates() async {
@@ -371,7 +380,10 @@ class _HomeScreenState extends State<HomeScreen> {
         // The unit answered but may have refused part of it. Say so, and whose
         // doing it was, rather than let the control silently spring back.
         final note = notAppliedMessage(show);
-        if (note != null) _toast(note, duration: const Duration(seconds: 8));
+        if (note != null) {
+          Haptics.failure(); // felt, too, not only seen or heard
+          _toast(note, duration: const Duration(seconds: 8), keepForReader: true);
+        }
       }
     } on ApiException catch (e) {
       final back = _ledger.failed(id, ticket, prev);
@@ -619,8 +631,13 @@ class _HomeScreenState extends State<HomeScreen> {
             Icon(Icons.cloud_off, size: 18, color: scheme.onErrorContainer),
             const SizedBox(width: 10),
             Expanded(
-              child: Text('Can’t reach the server — retrying…',
-                  style: TextStyle(color: scheme.onErrorContainer)),
+              // Said when it appears: the controls stop answering, and
+              // otherwise only the banner's colour says why.
+              child: Semantics(
+                liveRegion: true,
+                child: Text('Can’t reach the server — retrying…',
+                    style: TextStyle(color: scheme.onErrorContainer)),
+              ),
             ),
             TextButton(onPressed: _loadAll, child: const Text('Retry')),
           ],
@@ -631,7 +648,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBody() {
     if (_loading && _states.isEmpty) {
-      return const LoadingCat(label: 'Reaching your Breeze Core server…');
+      // Live: after pairing the screen changes under a screen-reader user
+      // with nothing said; this is what tells them it worked.
+      return const LoadingCat(
+        label: 'Reaching your Breeze Core server…',
+        live: true,
+      );
     }
     if (_error != null && _states.isEmpty) {
       return _CenteredMessage(
@@ -702,24 +724,55 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _goToPage(int i) {
+    final c = _pageController;
+    if (c == null || !c.hasClients || i < 0 || i >= _units.length) return;
+    c.animateToPage(i,
+        duration: const Duration(milliseconds: 280), curve: Curves.easeOut);
+  }
+
+  // The dots, with a button either side: swiping is the only other way
+  // between units, which Switch Access, Voice Access and a shaky finger all
+  // find hard. The position is said as words, and again when it changes.
   Widget _dots(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final page = _page.clamp(0, _units.length - 1);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10, top: 2),
+      padding: const EdgeInsets.only(bottom: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          for (var i = 0; i < _units.length; i++)
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              width: i == _page ? 22 : 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: i == _page ? scheme.primary : scheme.onSurfaceVariant.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(4),
-              ),
+          IconButton(
+            tooltip: 'Previous unit',
+            icon: const Icon(Icons.chevron_left),
+            onPressed: page > 0 ? () => _goToPage(page - 1) : null,
+          ),
+          Semantics(
+            liveRegion: true,
+            label: 'Unit ${page + 1} of ${_units.length}, ${_units[page].name}',
+            excludeSemantics: true,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < _units.length; i++)
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    width: i == page ? 22 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: i == page ? scheme.primary : scheme.onSurfaceVariant.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+              ],
             ),
+          ),
+          IconButton(
+            tooltip: 'Next unit',
+            icon: const Icon(Icons.chevron_right),
+            onPressed: page < _units.length - 1 ? () => _goToPage(page + 1) : null,
+          ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../haptics.dart';
+import '../theme.dart';
 
 /// A large, colourful on/off control for the main screen (eco, turbo, …).
 /// The whole surface is tappable; it fills with a light tint of [accent] when
@@ -28,70 +29,94 @@ class BigToggle extends StatelessWidget {
     final on = value && enabled;
     final fg = !enabled
         ? scheme.onSurfaceVariant.withValues(alpha: 0.4)
-        : (on ? accent : scheme.onSurfaceVariant);
+        : (on
+              ? readableAccent(
+                  accent,
+                  scheme,
+                  on: layeredOnSurface(scheme, [
+                    accent.withValues(alpha: 0.16),
+                  ]),
+                )
+              : scheme.onSurfaceVariant);
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOut,
-      decoration: BoxDecoration(
-        color: on
-            ? accent.withValues(alpha: 0.16)
-            : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: on ? accent.withValues(alpha: 0.7) : Colors.transparent,
-          width: 1.5,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
+    // One node: "Eco, switch, off". The card and the Switch inside it both
+    // took taps, so TalkBack found two -- "Eco" that did nothing, then an
+    // unlabelled switch.
+    return Semantics(
+      container: true,
+      label: label,
+      toggled: value,
+      enabled: enabled,
+      onTap: enabled
+          ? () {
+              Haptics.select();
+              onChanged(!value);
+            }
+          : null,
+      excludeSemantics: true,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
+          color: on
+              ? accent.withValues(alpha: 0.16)
+              : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(22),
-          onTap: enabled
-              ? () {
-                  Haptics.select();
-                  onChanged(!value);
-                }
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            // Vertical layout: the label gets the full card width, so short
-            // words like "Turbo" never wrap even at half-screen or large font
-            // scales. Reads as a big tappable switch.
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(icon, color: fg, size: 24),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        label,
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: fg,
+          border: Border.all(
+            color: on ? accent.withValues(alpha: 0.7) : Colors.transparent,
+            width: 1.5,
+          ),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(22),
+            onTap: enabled
+                ? () {
+                    Haptics.select();
+                    onChanged(!value);
+                  }
+                : null,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              // Vertical layout: the label gets the full card width, so short
+              // words like "Turbo" never wrap even at half-screen or large font
+              // scales. Reads as a big tappable switch.
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, color: fg, size: 24),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          label,
+                          maxLines: 1,
+                          softWrap: false,
+                          overflow: TextOverflow.fade,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: fg,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                Switch(
-                  value: value,
-                  activeThumbColor: accent,
-                  onChanged: enabled
-                      ? (v) {
-                          Haptics.select();
-                          onChanged(v);
-                        }
-                      : null,
-                ),
-              ],
+                    ],
+                  ),
+                  Switch(
+                    value: value,
+                    activeThumbColor: accent,
+                    onChanged: enabled
+                        ? (v) {
+                            Haptics.select();
+                            onChanged(v);
+                          }
+                        : null,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

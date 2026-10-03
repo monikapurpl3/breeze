@@ -56,6 +56,23 @@ class UnitPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // With large text (Android's font size from "Large", 1.15x, up) the
+    // page no longer fits a small phone, and the bottom controls were cut off
+    // with no way to reach them. Then it scrolls: at least the screen tall,
+    // so the temperature still takes the slack when there is some.
+    final largeText = MediaQuery.textScalerOf(context).scale(10) > 11;
+    if (!largeText) return _page(context);
+    return LayoutBuilder(
+      builder: (context, box) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: box.maxHeight),
+          child: IntrinsicHeight(child: _page(context)),
+        ),
+      ),
+    );
+  }
+
+  Widget _page(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final accent = accentForMode(state.operationalMode, scheme);
     final unit = AppScope.of(context).tempUnit;
@@ -99,13 +116,17 @@ class UnitPage extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Text(
-                  state.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                // A heading, so a screen reader can jump unit to unit.
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    state.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
                 ),
               ),
               if (onTimer != null)
@@ -125,6 +146,7 @@ class UnitPage extends StatelessWidget {
               ),
               if (onRename != null || onRemove != null)
                 PopupMenuButton<String>(
+                  tooltip: 'More options for ${state.name}',
                   onSelected: (v) {
                     if (v == 'rename') onRename?.call();
                     if (v == 'remove') onRemove?.call();
@@ -141,8 +163,12 @@ class UnitPage extends StatelessWidget {
           if (!online)
             Padding(
               padding: const EdgeInsets.only(top: 4),
-              child: Text('offline — last known settings',
-                  style: TextStyle(color: scheme.error, fontSize: 13)),
+              // Said when the unit drops off, not only shown in red.
+              child: Semantics(
+                liveRegion: true,
+                child: Text('offline — last known settings',
+                    style: TextStyle(color: scheme.error, fontSize: 13)),
+              ),
             ),
 
           // ---- temperature hero (absorbs slack so the page fills) ----
@@ -315,16 +341,16 @@ class _TimerButtonState extends State<_TimerButton> {
       if (starting) 'Turns on ${start!.whenLabel}',
     ];
 
-    return Tooltip(
-      message: tips.isEmpty
-          ? (widget.startsSupported ? 'Turn off or on later' : 'Turn off after a while')
-          : tips.join('\n'),
+    final idle = widget.startsSupported ? 'Turn off or on later' : 'Turn off after a while';
+    final button = Tooltip(
+      message: tips.isEmpty ? idle : tips.join('\n'),
       child: InkWell(
         onTap: widget.enabled ? _open : null,
         borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Idle: the hourglass it always was, so a header with nothing
               // pending stays exactly as narrow as before starts existed.
@@ -357,6 +383,21 @@ class _TimerButtonState extends State<_TimerButton> {
             ],
           ),
         ),
+      ),
+    );
+
+    // One named button, "Timer, turns off at 23:30" -- it was an unnamed tap
+    // target whose state was a glyph and "42m" -- and at least 48dp square.
+    return Semantics(
+      button: true,
+      enabled: widget.enabled,
+      label: tips.isEmpty ? 'Timer, ${idle.toLowerCase()}' : 'Timer',
+      value: tips.join(', '),
+      onTap: widget.enabled ? _open : null,
+      excludeSemantics: true,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+        child: button,
       ),
     );
   }

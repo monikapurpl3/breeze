@@ -30,30 +30,37 @@ class ModeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Container(
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      padding: const EdgeInsets.all(4),
-      child: Row(
-        children: [
-          for (final m in kModes)
-            Expanded(
-              child: _Segment(
-                selected: m == value,
-                accent: accentForMode(m, scheme),
-                icon: _modeIcons[m] ?? Icons.tune,
-                label: kModeLabels[m] ?? m.toLowerCase(),
-                onTap: enabled
-                    ? () {
-                        Haptics.select();
-                        onChanged(m);
-                      }
-                    : null,
+    // A named group, so TalkBack says "Mode" on the way in, and each segment
+    // says whether it is the selected one -- before this the colour was the
+    // only sign, and a blind user could not find out which mode was on.
+    return Semantics(
+      container: true,
+      label: 'Mode',
+      child: Container(
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        padding: const EdgeInsets.all(4),
+        child: Row(
+          children: [
+            for (final m in kModes)
+              Expanded(
+                child: _Segment(
+                  selected: m == value,
+                  accent: accentForMode(m, scheme),
+                  icon: _modeIcons[m] ?? Icons.tune,
+                  label: kModeLabels[m] ?? m.toLowerCase(),
+                  onTap: enabled
+                      ? () {
+                          Haptics.select();
+                          onChanged(m);
+                        }
+                      : null,
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -77,31 +84,49 @@ class _Segment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final fg = selected ? accent : scheme.onSurfaceVariant;
-    return Material(
-      color: selected ? accent.withValues(alpha: 0.18) : Colors.transparent,
-      borderRadius: BorderRadius.circular(16),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 22, color: fg),
-              const SizedBox(height: 3),
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                  color: fg,
-                ),
+    // The label in a shade of the accent that can be read on the tinted fill
+    // under it; the fill keeps the accent itself.
+    final fg = selected
+        ? readableAccent(
+            accent,
+            scheme,
+            on: layeredOnSurface(scheme, [
+              scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+              accent.withValues(alpha: 0.18),
+            ]),
+          )
+        : scheme.onSurfaceVariant;
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        selected: selected,
+        inMutuallyExclusiveGroup: true,
+        child: Material(
+          color: selected ? accent.withValues(alpha: 0.18) : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 22, color: fg),
+                  const SizedBox(height: 3),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                      color: fg,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

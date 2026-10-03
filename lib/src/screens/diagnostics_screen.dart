@@ -489,6 +489,13 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
           _Level.fail => Icons.error,
           _Level.info => Icons.info_outline,
         };
+    // Said, not only drawn: "passed", "warning", "failed".
+    String wordFor(_Level l) => switch (l) {
+          _Level.ok => 'passed',
+          _Level.warn => 'warning',
+          _Level.fail => 'failed',
+          _Level.info => 'note',
+        };
 
     return Scaffold(
       appBar: AppBar(title: const Text('Diagnostics')),
@@ -526,19 +533,23 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                       if (r.isSection) {
                         return Padding(
                           padding: const EdgeInsets.fromLTRB(16, 20, 16, 6),
-                          child: Text(
+                          child: Semantics(header: true, child: Text(
                             r.label.toUpperCase(),
+                            // A heading, read in its own case (capitals can
+                            // get spelled out letter by letter).
+                            semanticsLabel: r.label,
                             style: TextStyle(
                               color: scheme.primary,
                               fontWeight: FontWeight.w700,
                               fontSize: 12,
                               letterSpacing: 0.8,
                             ),
-                          ),
+                          )),
                         );
                       }
                       return ListTile(
-                        leading: Icon(iconFor(r.level), color: colorFor(r.level)),
+                        leading: Icon(iconFor(r.level),
+                            color: colorFor(r.level), semanticLabel: wordFor(r.level)),
                         title: Text(r.label),
                         subtitle: r.detail.isEmpty ? null : Text(r.detail),
                         dense: true,

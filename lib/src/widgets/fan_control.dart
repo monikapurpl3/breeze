@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../haptics.dart';
+import '../theme.dart';
 
 /// Fan speed: a Low→High slider over the five manual steps (20/40/60/80/100),
 /// which "detaches" to an Auto pill on the right. Picking Auto (fan_speed 102)
@@ -24,6 +25,9 @@ class FanControl extends StatefulWidget {
 
 class _FanControlState extends State<FanControl> {
   static const _steps = [20, 40, 60, 80, 100];
+  // What each step is called aloud -- the slider otherwise reads "50 percent".
+  // The same words as `breeze-core control`.
+  static const _names = ['silent', 'low', 'medium', 'high', 'max'];
   int? _dragIdx;
 
   bool get _isAuto => widget.value == 102;
@@ -84,12 +88,19 @@ class _FanControlState extends State<FanControl> {
                   thumbShape: const RoundSliderThumbShape(
                     enabledThumbRadius: 10,
                   ),
+                  // The label below is for TalkBack; no bubble shows it.
+                  showValueIndicator: ShowValueIndicator.never,
                 ),
                 child: Slider(
+                  // Named, and read in words (it said "50 percent").
+                  label: 'Fan speed',
                   min: 0,
                   max: 4,
                   divisions: 4,
                   value: _shownIdx.toDouble(),
+                  semanticFormatterCallback: (v) => auto
+                      ? 'auto; move to set a speed'
+                      : _names[v.round().clamp(0, _names.length - 1)],
                   onChanged: widget.enabled
                       ? (v) => setState(() => _dragIdx = v.round())
                       : null,
@@ -134,38 +145,53 @@ class _AutoPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Material(
-      color: active
-          ? accent.withValues(alpha: 0.18)
-          : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
-      shape: StadiumBorder(
-        side: BorderSide(
-          color: active ? accent : Colors.transparent,
-          width: 1.5,
-        ),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.auto_mode,
-                size: 16,
-                color: active ? accent : scheme.onSurfaceVariant,
+    final fg = active
+        ? readableAccent(
+            accent,
+            scheme,
+            on: layeredOnSurface(scheme, [accent.withValues(alpha: 0.18)]),
+          )
+        : scheme.onSurfaceVariant;
+    // "Fan auto, selected": the outline was the only sign it was on. And at
+    // least 48dp tall -- it was 32, small for a shaky finger.
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        selected: active,
+        label: 'Fan',
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+          child: Material(
+            color: active
+                ? accent.withValues(alpha: 0.18)
+                : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            shape: StadiumBorder(
+              side: BorderSide(
+                color: active ? accent : Colors.transparent,
+                width: 1.5,
               ),
-              const SizedBox(width: 6),
-              Text(
-                'Auto',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: active ? accent : scheme.onSurfaceVariant,
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.auto_mode, size: 16, color: fg),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Auto',
+                      style: TextStyle(fontWeight: FontWeight.w600, color: fg),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

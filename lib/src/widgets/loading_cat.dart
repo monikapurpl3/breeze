@@ -65,10 +65,15 @@ class LoadingCat extends StatefulWidget {
     super.key,
     this.label,
     this.rotate = const Duration(seconds: 7),
+    this.live = false,
   });
 
   /// What is being waited for, e.g. 'Connecting to Living Room…'.
   final String? label;
+
+  /// Say [label] as soon as it shows, for a wait a screen-reader user did not
+  /// start and would otherwise not hear about -- the first load after pairing.
+  final bool live;
 
   /// How often to swap the fact. A long wait should not be one static sentence.
   final Duration rotate;
@@ -118,10 +123,13 @@ class _LoadingCatState extends State<LoadingCat> {
             const CircularProgressIndicator(),
             const SizedBox(height: 20),
             if (widget.label != null) ...[
-              Text(
-                widget.label!,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
+              Semantics(
+                liveRegion: widget.live,
+                child: Text(
+                  widget.label!,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
               const SizedBox(height: 24),
             ],

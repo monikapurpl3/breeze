@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../haptics.dart';
+import '../theme.dart';
 
 /// Flap (swing) control: one big pill split into two independently-toggled
 /// halves — **vertical** (up/down) and **horizontal** (left/right) — which is
@@ -122,42 +123,59 @@ class _Half extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final fg = on ? accent : scheme.onSurfaceVariant;
+    final fg = on
+        ? readableAccent(
+            accent,
+            scheme,
+            on: layeredOnSurface(scheme, [
+              scheme.surfaceContainerHighest.withValues(alpha: 0.45),
+              accent.withValues(alpha: 0.20),
+            ]),
+          )
+        : scheme.onSurfaceVariant;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOut,
-      decoration: BoxDecoration(
-        color: on ? accent.withValues(alpha: 0.20) : Colors.transparent,
-        borderRadius: borderRadius,
-      ),
-      child: InkWell(
-        onTap: enabled
-            ? () {
-                Haptics.select();
-                onTap();
-              }
-            : null,
-        customBorder: RoundedRectangleBorder(borderRadius: borderRadius),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 26, color: fg),
-            const SizedBox(width: 10),
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  height: 1.15,
-                  fontWeight: on ? FontWeight.w700 : FontWeight.w500,
-                  color: fg,
+    // One node per half that says whether that flap is swinging. Each tap
+    // flips it, so without the state a blind user could not tell which way
+    // a tap would go, nor reach the swing they wanted.
+    return MergeSemantics(
+      child: Semantics(
+        toggled: on,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
+          decoration: BoxDecoration(
+            color: on ? accent.withValues(alpha: 0.20) : Colors.transparent,
+            borderRadius: borderRadius,
+          ),
+          child: InkWell(
+            onTap: enabled
+                ? () {
+                    Haptics.select();
+                    onTap();
+                  }
+                : null,
+            customBorder: RoundedRectangleBorder(borderRadius: borderRadius),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 26, color: fg),
+                const SizedBox(width: 10),
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.15,
+                      fontWeight: on ? FontWeight.w700 : FontWeight.w500,
+                      color: fg,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

@@ -162,8 +162,19 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Switch(value: p.enabled, onChanged: (v) => _toggle(p, v)),
+                // Named after its program: a list of bare "switch, on" said
+                // nothing about which program each one ran.
+                MergeSemantics(
+                  child: Semantics(
+                    label: 'Enabled, ${p.name}',
+                    child: Switch(
+                      value: p.enabled,
+                      onChanged: (v) => _toggle(p, v),
+                    ),
+                  ),
+                ),
                 PopupMenuButton<String>(
+                  tooltip: 'More options for ${p.name}',
                   onSelected: (v) {
                     if (v == 'apply') _apply(p);
                     if (v == 'edit') _edit(p);

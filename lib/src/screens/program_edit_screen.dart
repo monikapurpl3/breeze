@@ -112,6 +112,7 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
         title: Text(widget.existing == null ? 'New program' : 'Edit program'),
         actions: [
           IconButton(
+            tooltip: 'Save',
             icon: _saving
                 ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
                 : const Icon(Icons.check),
@@ -229,6 +230,7 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
                         ),
                       ),
                       IconButton(
+                        tooltip: 'Delete the ${entry.time} entry',
                         icon: const Icon(Icons.delete_outline),
                         onPressed: () => setState(() => _schedule.remove(entry)),
                       ),
@@ -343,11 +345,15 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
                       divisions: ((kMaxTemp - kMinTemp) * 2).round(),
                       value: p.temperature.clamp(kMinTemp, kMaxTemp),
                       label: '${p.temperature.toStringAsFixed(1)}°',
+                      // Read as degrees at a time, not "57 percent".
+                      semanticFormatterCallback: (v) =>
+                          '${((v * 2).round() / 2).toStringAsFixed(1)} degrees at ${p.time}',
                       onChanged: (v) => setState(() => p.temperature = (v * 2).round() / 2),
                     ),
                   ),
                   SizedBox(width: 44, child: Text('${p.temperature.toStringAsFixed(1)}°')),
                   IconButton(
+                    tooltip: 'Delete the ${p.time} point',
                     icon: const Icon(Icons.delete_outline),
                     onPressed: _curve.points.length <= 1
                         ? null

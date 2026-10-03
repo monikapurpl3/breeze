@@ -33,6 +33,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   )..forward();
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // "Remove animations" in Android's accessibility settings: no slide-in.
+    if (MediaQuery.disableAnimationsOf(context)) _intro.value = 1;
+  }
+
+  @override
   void dispose() {
     _url.dispose();
     _key.dispose();
@@ -86,6 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               backgroundColor: Colors.transparent,
               title: const Text('Add a server'),
               leading: IconButton(
+                tooltip: 'Cancel adding a server',
                 icon: const Icon(Icons.close),
                 onPressed: c.cancelAddServer,
               ),
@@ -191,32 +199,40 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         ),
                         if (_error != null) ...[
                           const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 11,
-                            ),
-                            decoration: BoxDecoration(
-                              color: scheme.errorContainer,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  size: 20,
-                                  color: scheme.onErrorContainer,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    _error!,
-                                    style: TextStyle(
-                                      color: scheme.onErrorContainer,
+                          // Said when it appears: "Connect" otherwise just
+                          // went quiet, with the reason only on screen.
+                          Semantics(
+                            liveRegion: true,
+                            container: true,
+                            label: 'Error: $_error',
+                            excludeSemantics: true,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 11,
+                              ),
+                              decoration: BoxDecoration(
+                                color: scheme.errorContainer,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
+                                    size: 20,
+                                    color: scheme.onErrorContainer,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      _error!,
+                                      style: TextStyle(
+                                        color: scheme.onErrorContainer,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ],

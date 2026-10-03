@@ -10,7 +10,7 @@ self-hosted control for Midea air conditioners, over your own LAN.
 
 [![License](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/monikapurpl3/breeze?label=release)](https://github.com/monikapurpl3/breeze/releases/latest)
-[![APK](https://img.shields.io/badge/APK-bolero-6aa84f)](https://bolero.salataputarica.hr.eu.org/android/)
+[![APK](https://img.shields.io/badge/APK-aspic-6aa84f)](https://aspic.salataputarica.hr.eu.org/breeze/)
 [![Documentation](https://img.shields.io/badge/docs-wiki-8e7cc3)](https://github.com/monikapurpl3/breeze/wiki)
 
 </div>
@@ -42,10 +42,10 @@ the same room as you. Breeze asks a server on your own network instead.
 
 Grab the APK from the
 [latest release](https://github.com/monikapurpl3/breeze/releases/latest) or from
-[bolero](https://bolero.salataputarica.hr.eu.org/android/):
+[aspic](https://aspic.salataputarica.hr.eu.org/breeze/), the project's host:
 
 ```bash
-adb install -r Breeze-2.2.6.apk
+adb install -r Breeze-<version>.apk
 ```
 
 …or copy it to the phone and open it. Android 7.0+.

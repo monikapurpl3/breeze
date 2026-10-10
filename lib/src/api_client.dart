@@ -86,6 +86,10 @@ class ApiClient {
   /// one short chance to come back.
   int _active = 0;
   DateTime _switchedAt = DateTime.fromMillisecondsSinceEpoch(0);
+
+  /// The clock the fallback timing reads; a test replaces it.
+  @visibleForTesting
+  DateTime Function() now = DateTime.now;
   static const _retryMainAfter = Duration(minutes: 2);
   static const _mainProbeTimeout = Duration(seconds: 3);
 
@@ -306,11 +310,12 @@ class ApiClient {
   }) async {
     final cands = candidates;
     final active = _active < cands.length ? _active : 0;
-    final order = attemptOrder(
-      cands.length,
-      active,
-      retryMain: DateTime.now().difference(_switchedAt) > _retryMainAfter,
-    );
+    final retryMain = active != 0 && now().difference(_switchedAt) > _retryMainAfter;
+    // One short try of the main address per interval, whatever it finds: the
+    // clock restarts here, not only on a switch, or a main address that stays
+    // down would cost every request after the first interval its 3 seconds.
+    if (retryMain) _switchedAt = now();
+    final order = attemptOrder(cands.length, active, retryMain: retryMain);
     ApiException? failure;
     for (final i in order) {
       final headers = _headers(json: encoded != null);
@@ -329,7 +334,7 @@ class ApiClient {
         if (clock != null) latencyMs.value = clock.elapsedMilliseconds;
         if (i != _active) {
           _active = i;
-          _switchedAt = DateTime.now();
+          _switchedAt = now();
           currentUrl.value = cands[i];
         }
         return r;

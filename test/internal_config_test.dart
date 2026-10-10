@@ -51,6 +51,30 @@ void main() {
       expect(log, ['192.168.1.98'], reason: 'no timeout paid on the dead ones again');
     });
 
+    test('a main address that stays down gets one short try per two minutes, not one per request', () async {
+      final log = <String>[];
+      var clock = DateTime(2026, 10, 10, 12);
+      final api = ApiClient(
+        baseUrl: 'https://main.test',
+        apiKey: 'k',
+        alternates: ['https://fb.test'],
+        client: onlyAt('fb.test', log: log),
+      )..now = () => clock;
+      await api.health(); // main fails, fallback answers
+      clock = clock.add(const Duration(minutes: 3));
+      log.clear();
+      await api.health();
+      expect(log, ['main.test', 'fb.test'], reason: 'due: the main address is tried first');
+      log.clear();
+      await api.health();
+      await api.health();
+      expect(log, ['fb.test', 'fb.test'], reason: 'not again until two minutes have passed');
+      clock = clock.add(const Duration(minutes: 3));
+      log.clear();
+      await api.health();
+      expect(log, ['main.test', 'fb.test']);
+    });
+
     test('an HTTP error is an answer: no fallback for a 500', () async {
       final log = <String>[];
       final api = ApiClient(

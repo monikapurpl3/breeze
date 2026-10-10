@@ -21,3 +21,32 @@ Color accentForMode(String mode, ColorScheme scheme) {
 }
 
 const List<String> kWeekdayShort = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+/// [accent] made dark (or light) enough to READ as text: at least 4.5:1, the
+/// contrast text needs, against [on] -- the colour actually behind it, usually
+/// a tint of the accent itself (see [layeredOnSurface]); the bare surface when
+/// not given. The accents are chosen to tint surfaces, and as text on the
+/// light theme they fell to 1.6:1 (dry) – 2.6:1 (auto). Only the lightness
+/// moves, so a heat label is still warm and a cool one still cool.
+Color readableAccent(Color accent, ColorScheme scheme, {Color? on}) {
+  final bg = on ?? scheme.surface;
+  double contrast(Color c) {
+    final a = c.computeLuminance(), b = bg.computeLuminance();
+    return (a > b ? a + 0.05 : b + 0.05) / (a > b ? b + 0.05 : a + 0.05);
+  }
+
+  // Towards black on a light background, towards white on a dark one. A
+  // little over 4.5, so rounding in the drawn pixels cannot dip below it.
+  final darken = bg.computeLuminance() > 0.5;
+  var hsl = HSLColor.fromColor(accent);
+  for (var i = 0; i < 50 && contrast(hsl.toColor()) < 4.7; i++) {
+    final l = hsl.lightness + (darken ? -0.02 : 0.02);
+    hsl = hsl.withLightness(l.clamp(0.0, 1.0));
+  }
+  return hsl.toColor();
+}
+
+/// What translucent fills stacked on [scheme]'s surface look like, bottom
+/// layer first: the background to hand [readableAccent].
+Color layeredOnSurface(ColorScheme scheme, List<Color> layers) =>
+    layers.fold(scheme.surface, (under, over) => Color.alphaBlend(over, under));

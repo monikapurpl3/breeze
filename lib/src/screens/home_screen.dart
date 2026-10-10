@@ -53,6 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
   StreamSubscription<UnitState>? _stateSub;
   Timer? _streamRetry;
 
+  // The latency readout's own heartbeat, while it is switched on (Nerd
+  // screen, Internal). Most updates arrive over the stream, so without it the
+  // number would only move when you touched something.
+  Timer? _ping;
+  static const _pingEvery = Duration(seconds: 15);
+
   // Created lazily once units are known, positioned on the last-viewed unit
   // (see _initialPageIndex) so a relaunch reopens where the user left off.
   PageController? _pageController;
@@ -71,7 +77,32 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncPing();
+  }
+
+  void _syncPing() {
+    final c = AppScope.of(context);
+    final on = c.internal.showLatency;
+    if (on && _ping == null) {
+      Future<void> beat() async {
+        try {
+          await c.api?.health();
+        } catch (_) {/* the offline banner says so; the number just stops */}
+      }
+
+      unawaited(beat());
+      _ping = Timer.periodic(_pingEvery, (_) => beat());
+    } else if (!on) {
+      _ping?.cancel();
+      _ping = null;
+    }
+  }
+
+  @override
   void dispose() {
+    _ping?.cancel();
     _poll?.cancel();
     _streamRetry?.cancel();
     _stateSub?.cancel();
@@ -83,6 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _startStream() {
     if (!_liveSupported || _streaming || !mounted) return;
+    // Switched off on the Nerd screen: poll instead, as with an old server.
+    if (!AppScope.of(context).internal.liveUpdates) return;
     _streaming = true;
     _poll?.cancel();  // the stream is our source of truth now
     _stateSub = _api.streamStates().listen(
@@ -324,12 +357,21 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _toast(String message, {Duration duration = const Duration(seconds: 4)}) {
+  void _toast(String message,
+      {Duration duration = const Duration(seconds: 4), bool keepForReader = false}) {
     if (!mounted) return;
+    // With a screen reader on, a long message stays until OK: it could
+    // vanish before it had been read out, and the reader cannot be hurried.
+    final keep = keepForReader && MediaQuery.accessibleNavigationOf(context);
     // One at a time: a burst of refused taps should not queue a line of them.
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message), duration: duration));
+      ..showSnackBar(SnackBar(
+        content: Text(message),
+        duration: duration,
+        persist: keep,
+        action: keep ? SnackBarAction(label: 'OK', onPressed: () {}) : null,
+      ));
   }
 
   Future<void> _refreshStates() async {
@@ -371,7 +413,10 @@ class _HomeScreenState extends State<HomeScreen> {
         // The unit answered but may have refused part of it. Say so, and whose
         // doing it was, rather than let the control silently spring back.
         final note = notAppliedMessage(show);
-        if (note != null) _toast(note, duration: const Duration(seconds: 8));
+        if (note != null) {
+          Haptics.failure(); // felt, too, not only seen or heard
+          _toast(note, duration: const Duration(seconds: 8), keepForReader: true);
+        }
       }
     } on ApiException catch (e) {
       final back = _ledger.failed(id, ticket, prev);
@@ -573,7 +618,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Breeze'),
+        title: const _Title(),
         actions: [
           IconButton(
             tooltip: 'Add unit',
@@ -619,8 +664,13 @@ class _HomeScreenState extends State<HomeScreen> {
             Icon(Icons.cloud_off, size: 18, color: scheme.onErrorContainer),
             const SizedBox(width: 10),
             Expanded(
-              child: Text('Can’t reach the server — retrying…',
-                  style: TextStyle(color: scheme.onErrorContainer)),
+              // Said when it appears: the controls stop answering, and
+              // otherwise only the banner's colour says why.
+              child: Semantics(
+                liveRegion: true,
+                child: Text('Can’t reach the server — retrying…',
+                    style: TextStyle(color: scheme.onErrorContainer)),
+              ),
             ),
             TextButton(onPressed: _loadAll, child: const Text('Retry')),
           ],
@@ -631,7 +681,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBody() {
     if (_loading && _states.isEmpty) {
-      return const LoadingCat(label: 'Reaching your Breeze Core server…');
+      // Live: after pairing the screen changes under a screen-reader user
+      // with nothing said; this is what tells them it worked.
+      return const LoadingCat(
+        label: 'Reaching your Breeze Core server…',
+        live: true,
+      );
     }
     if (_error != null && _states.isEmpty) {
       return _CenteredMessage(
@@ -702,26 +757,116 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _goToPage(int i) {
+    final c = _pageController;
+    if (c == null || !c.hasClients || i < 0 || i >= _units.length) return;
+    c.animateToPage(i,
+        duration: const Duration(milliseconds: 280), curve: Curves.easeOut);
+  }
+
+  // The dots, with a button either side: swiping is the only other way
+  // between units, which Switch Access, Voice Access and a shaky finger all
+  // find hard. The position is said as words, and again when it changes.
   Widget _dots(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final page = _page.clamp(0, _units.length - 1);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10, top: 2),
+      padding: const EdgeInsets.only(bottom: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          for (var i = 0; i < _units.length; i++)
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              width: i == _page ? 22 : 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: i == _page ? scheme.primary : scheme.onSurfaceVariant.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(4),
-              ),
+          IconButton(
+            tooltip: 'Previous unit',
+            icon: const Icon(Icons.chevron_left),
+            onPressed: page > 0 ? () => _goToPage(page - 1) : null,
+          ),
+          Semantics(
+            liveRegion: true,
+            label: 'Unit ${page + 1} of ${_units.length}, ${_units[page].name}',
+            excludeSemantics: true,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < _units.length; i++)
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    width: i == page ? 22 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: i == page ? scheme.primary : scheme.onSurfaceVariant.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+              ],
             ),
+          ),
+          IconButton(
+            tooltip: 'Next unit',
+            icon: const Icon(Icons.chevron_right),
+            onPressed: page < _units.length - 1 ? () => _goToPage(page + 1) : null,
+          ),
         ],
       ),
+    );
+  }
+}
+
+/// "Breeze", and -- when switched on from the Nerd screen -- the latest
+/// round-trip time beside it, plus the address in use whenever a fallback is
+/// answering instead of the main one.
+class _Title extends StatelessWidget {
+  const _Title();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = AppScope.of(context);
+    final api = c.api;
+    if (!c.internal.showLatency || api == null) return const Text('Breeze');
+    final scheme = Theme.of(context).colorScheme;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Breeze'),
+        const SizedBox(width: 10),
+        Flexible(
+          child: ListenableBuilder(
+            listenable: Listenable.merge([api.latencyMs, api.currentUrl]),
+            builder: (context, _) {
+              final ms = api.latencyMs.value;
+              final url = api.currentUrl.value;
+              final onFallback = url != api.baseUrl;
+              final text = [
+                ms == null ? '… ms' : '$ms ms',
+                if (onFallback) Uri.tryParse(url)?.host ?? url,
+              ].join(' · ');
+              return Semantics(
+                label: ms == null
+                    ? 'Latency not measured yet'
+                    : 'Latency $ms milliseconds${onFallback ? ', through a fallback address' : ''}',
+                excludeSemantics: true,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: (onFallback ? scheme.tertiaryContainer : scheme.secondaryContainer),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                      color: onFallback ? scheme.onTertiaryContainer : scheme.onSecondaryContainer,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

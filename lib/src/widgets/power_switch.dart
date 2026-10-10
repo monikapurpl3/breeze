@@ -28,50 +28,55 @@ class PowerSwitch extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    return Semantics(
-      label: 'Power',
-      toggled: on,
-      child: Transform.scale(
-        scale: 1.2, // "big" without breaking the header row's height
-        child: Switch(
-          value: on,
-          onChanged: enabled
-              ? (v) {
-                  Haptics.toggle();
-                  onChanged(v);
-                }
-              : null,
-          // Thumb: solid colour so it stays legible on the faint track.
-          thumbColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.disabled)) {
-              return scheme.onSurfaceVariant.withValues(alpha: 0.4);
-            }
-            return states.contains(WidgetState.selected) ? _green : _red;
-          }),
-          // Track: the "faint" part — a tinted wash, not a saturated slab.
-          trackColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.disabled)) {
-              return scheme.surfaceContainerHighest.withValues(alpha: 0.4);
-            }
-            return states.contains(WidgetState.selected)
-                ? _green.withValues(alpha: 0.22)
-                : _red.withValues(alpha: 0.16);
-          }),
-          trackOutlineColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.disabled)) {
-              return scheme.outlineVariant.withValues(alpha: 0.5);
-            }
-            return states.contains(WidgetState.selected)
-                ? _green.withValues(alpha: 0.45)
-                : _red.withValues(alpha: 0.40);
-          }),
-          trackOutlineWidth: const WidgetStatePropertyAll(1.5),
-          thumbIcon: WidgetStateProperty.resolveWith(
-            (states) => Icon(
-              Icons.power_settings_new,
-              color: states.contains(WidgetState.disabled)
-                  ? scheme.surface.withValues(alpha: 0.7)
-                  : Colors.white,
+    // One node: "Power, switch, on". The Switch already reports toggled; an
+    // outer `toggled:` as well split it into a labelled node that did nothing
+    // and an unlabelled one that did -- Voice Access's "tap Power" landed on
+    // the dead one.
+    return MergeSemantics(
+      child: Semantics(
+        label: 'Power',
+        child: Transform.scale(
+          scale: 1.2, // "big" without breaking the header row's height
+          child: Switch(
+            value: on,
+            onChanged: enabled
+                ? (v) {
+                    Haptics.toggle();
+                    onChanged(v);
+                  }
+                : null,
+            // Thumb: solid colour so it stays legible on the faint track.
+            thumbColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.disabled)) {
+                return scheme.onSurfaceVariant.withValues(alpha: 0.4);
+              }
+              return states.contains(WidgetState.selected) ? _green : _red;
+            }),
+            // Track: the "faint" part — a tinted wash, not a saturated slab.
+            trackColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.disabled)) {
+                return scheme.surfaceContainerHighest.withValues(alpha: 0.4);
+              }
+              return states.contains(WidgetState.selected)
+                  ? _green.withValues(alpha: 0.22)
+                  : _red.withValues(alpha: 0.16);
+            }),
+            trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.disabled)) {
+                return scheme.outlineVariant.withValues(alpha: 0.5);
+              }
+              return states.contains(WidgetState.selected)
+                  ? _green.withValues(alpha: 0.45)
+                  : _red.withValues(alpha: 0.40);
+            }),
+            trackOutlineWidth: const WidgetStatePropertyAll(1.5),
+            thumbIcon: WidgetStateProperty.resolveWith(
+              (states) => Icon(
+                Icons.power_settings_new,
+                color: states.contains(WidgetState.disabled)
+                    ? scheme.surface.withValues(alpha: 0.7)
+                    : Colors.white,
+              ),
             ),
           ),
         ),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../a11y.dart';
 import '../app_scope.dart';
 
 class PairingScreen extends StatefulWidget {
@@ -127,17 +128,27 @@ class _PairingScreenState extends State<PairingScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          SelectableText(
-                            code,
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 4,
-                                  color: scheme.onPrimaryContainer,
-                                ),
+                          // Spelled out, and said as soon as it shows (or a
+                          // new one replaces it): read as words, "JH7S-XT2P"
+                          // came out as a guess. Copy stays on the button.
+                          Semantics(
+                            label: _code == null
+                                ? 'Getting a pairing code'
+                                : 'Pairing code ${spelled(code)}',
+                            liveRegion: true,
+                            excludeSemantics: true,
+                            child: SelectableText(
+                              code,
+                              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 4,
+                                    color: scheme.onPrimaryContainer,
+                                  ),
+                            ),
                           ),
                           const SizedBox(width: 12),
                           IconButton(
-                            tooltip: 'Copy',
+                            tooltip: 'Copy the code',
                             onPressed: () => Clipboard.setData(ClipboardData(text: code)),
                             icon: Icon(Icons.copy, color: scheme.onPrimaryContainer),
                           ),
@@ -149,7 +160,12 @@ class _PairingScreenState extends State<PairingScreen> {
                   if (_expired)
                     Column(
                       children: [
-                        Text('Code expired', style: TextStyle(color: scheme.error)),
+                        // Said when it happens: the red text alone left a
+                        // screen-reader user waiting on a dead code.
+                        Semantics(
+                          liveRegion: true,
+                          child: Text('Code expired', style: TextStyle(color: scheme.error)),
+                        ),
                         const SizedBox(height: 12),
                         FilledButton.tonalIcon(
                           onPressed: _restarting ? null : _newCode,
@@ -162,14 +178,26 @@ class _PairingScreenState extends State<PairingScreen> {
                     Column(
                       children: [
                         LinearProgressIndicator(
+                          semanticsLabel: 'Time left',
+                          semanticsValue: '$_remaining seconds',
                           value: c.expiresIn == 0 ? null : _remaining / c.expiresIn,
                         ),
                         const SizedBox(height: 8),
                         Text('expires in ${_remaining}s · waiting for approval…',
+                            semanticsLabel:
+                                'Expires in $_remaining seconds. Waiting for approval.',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodySmall
                                 ?.copyWith(color: scheme.onSurfaceVariant)),
+                        // The countdown is not spoken every second; once,
+                        // near the end, it is.
+                        if (_code != null && _remaining > 0 && _remaining <= kPairingWarnAtSeconds)
+                          Semantics(
+                            liveRegion: true,
+                            label: '$kPairingWarnAtSeconds seconds left on the pairing code.',
+                            child: const SizedBox.shrink(),
+                          ),
                       ],
                     ),
                   const SizedBox(height: 24),

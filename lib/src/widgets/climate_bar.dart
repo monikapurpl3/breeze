@@ -168,6 +168,9 @@ class ClimateBar extends StatelessWidget {
         if (outC != null) 'outdoor ${fmtTemp(outC, unit)}',
         if (sanitiseTemp(target) != null) 'target ${fmtTemp(target!, unit)}',
       ].join(', '),
+      // The words above, once: without this the "I: / O:" line was read
+      // after them as well.
+      excludeSemantics: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

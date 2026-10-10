@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../models.dart';
+import '../theme.dart';
 import '../util.dart';
 import 'climate_bar.dart';
 import '../haptics.dart';
@@ -37,6 +40,7 @@ class TempControl extends StatefulWidget {
 
 class _TempControlState extends State<TempControl> {
   double? _dragging;
+  Timer? _repeat;
 
   double get _shown => _dragging ?? widget.value;
 
@@ -47,6 +51,40 @@ class _TempControlState extends State<TempControl> {
       Haptics.tick();
       widget.onChanged(next);
     }
+  }
+
+  // Press and hold − / + to keep stepping, so 16 to 30 is one hold instead of
+  // 28 taps -- which matters most to someone for whom each tap is effort.
+  // Like the slider, the number moves locally and is sent once, on release,
+  // rather than as a command per step.
+  void _holdStart(double delta) {
+    if (!widget.enabled) return;
+    _repeat?.cancel();
+    void tick() {
+      final from = _dragging ?? widget.value;
+      final next = snapHalf((from + delta).clamp(kMinTemp, kMaxTemp));
+      if (next != from) {
+        Haptics.tick();
+        setState(() => _dragging = next);
+      }
+    }
+
+    tick();
+    _repeat = Timer.periodic(const Duration(milliseconds: 180), (_) => tick());
+  }
+
+  void _holdEnd() {
+    _repeat?.cancel();
+    _repeat = null;
+    final held = _dragging;
+    setState(() => _dragging = null);
+    if (held != null && held != widget.value) widget.onChanged(held);
+  }
+
+  @override
+  void dispose() {
+    _repeat?.cancel();
+    super.dispose();
   }
 
   @override
@@ -64,18 +102,26 @@ class _TempControlState extends State<TempControl> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Big readout.
-          FittedBox(
-            child: Text(
-              fmtTemp(shown, widget.unit, showUnit: false),
-              style: TextStyle(
-                fontSize: 88,
-                fontWeight: FontWeight.w300,
-                height: 1.0,
-                color: widget.enabled
-                    ? scheme.onSurface
-                    : scheme.onSurfaceVariant,
-                letterSpacing: -2,
+          // Big readout. Read as "Target temperature, 23.5 °C" rather than a
+          // bare number, and a live region, so a change -- from the buttons,
+          // or from another phone -- is spoken without moving focus.
+          Semantics(
+            label: 'Target temperature',
+            value: fmtTemp(shown, widget.unit),
+            liveRegion: true,
+            excludeSemantics: true,
+            child: FittedBox(
+              child: Text(
+                fmtTemp(shown, widget.unit, showUnit: false),
+                style: TextStyle(
+                  fontSize: 88,
+                  fontWeight: FontWeight.w300,
+                  height: 1.0,
+                  color: widget.enabled
+                      ? scheme.onSurface
+                      : scheme.onSurfaceVariant,
+                  letterSpacing: -2,
+                ),
               ),
             ),
           ),
@@ -101,8 +147,11 @@ class _TempControlState extends State<TempControl> {
             children: [
               _StepButton(
                 icon: Icons.remove,
+                label: 'Lower the target temperature',
                 accent: accent,
                 onTap: widget.enabled ? () => _step(-0.5) : null,
+                onHoldStart: () => _holdStart(-0.5),
+                onHoldEnd: _holdEnd,
               ),
               Expanded(
                 child: SliderTheme(
@@ -118,10 +167,15 @@ class _TempControlState extends State<TempControl> {
                     showValueIndicator: ShowValueIndicator.never,
                   ),
                   child: Slider(
+                    // Named, and read in degrees: it said "57 percent". No
+                    // value bubble shows the label (showValueIndicator: never).
+                    label: 'Target temperature',
                     min: kMinTemp,
                     max: kMaxTemp,
                     divisions: ((kMaxTemp - kMinTemp) * 2).round(),
                     value: shown.toDouble(),
+                    semanticFormatterCallback: (v) =>
+                        fmtTemp(snapHalf(v), widget.unit),
                     onChanged: widget.enabled
                         ? (v) {
                             final snapped = snapHalf(v);
@@ -141,8 +195,11 @@ class _TempControlState extends State<TempControl> {
               ),
               _StepButton(
                 icon: Icons.add,
+                label: 'Raise the target temperature',
                 accent: accent,
                 onTap: widget.enabled ? () => _step(0.5) : null,
+                onHoldStart: () => _holdStart(0.5),
+                onHoldEnd: _holdEnd,
               ),
             ],
           ),
@@ -153,29 +210,63 @@ class _TempControlState extends State<TempControl> {
 }
 
 class _StepButton extends StatelessWidget {
-  const _StepButton({required this.icon, required this.accent, this.onTap});
+  const _StepButton({
+    required this.icon,
+    required this.label,
+    required this.accent,
+    this.onTap,
+    this.onHoldStart,
+    this.onHoldEnd,
+  });
   final IconData icon;
+  final String label;
   final Color accent;
   final VoidCallback? onTap;
+  final VoidCallback? onHoldStart;
+  final VoidCallback? onHoldEnd;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return SizedBox(
-      width: 52,
-      height: 52,
-      child: Material(
-        color: onTap == null
-            ? scheme.surfaceContainerHighest.withValues(alpha: 0.4)
-            : accent.withValues(alpha: 0.16),
-        shape: const CircleBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Icon(
-            icon,
-            color: onTap == null ? scheme.onSurfaceVariant : accent,
-            size: 26,
+    // A named button: it was an unlabelled icon, "Unlabelled, double-tap to
+    // activate" to TalkBack, and unreachable by name for Voice Access.
+    return Semantics(
+      button: true,
+      enabled: onTap != null,
+      label: label,
+      onTap: onTap,
+      excludeSemantics: true,
+      child: GestureDetector(
+        onLongPressStart: onTap == null || onHoldStart == null
+            ? null
+            : (_) => onHoldStart!(),
+        onLongPressEnd: onHoldEnd == null ? null : (_) => onHoldEnd!(),
+        onLongPressCancel: onHoldEnd,
+        child: SizedBox(
+          width: 52,
+          height: 52,
+          child: Material(
+            color: onTap == null
+                ? scheme.surfaceContainerHighest.withValues(alpha: 0.4)
+                : accent.withValues(alpha: 0.16),
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onTap,
+              child: Icon(
+                icon,
+                color: onTap == null
+                    ? scheme.onSurfaceVariant
+                    : readableAccent(
+                        accent,
+                        scheme,
+                        on: layeredOnSurface(scheme, [
+                          accent.withValues(alpha: 0.16),
+                        ]),
+                      ),
+                size: 26,
+              ),
+            ),
           ),
         ),
       ),

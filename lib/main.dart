@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'src/app_controller.dart';
 import 'src/app_info.dart';
 import 'src/app_scope.dart';
+import 'src/internal_prefs.dart';
 import 'src/home_widget_service.dart';
 import 'src/screens/home_screen.dart';
 import 'src/screens/onboarding_screen.dart';
@@ -43,23 +44,34 @@ class BreezeApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        final light = lightDynamic ??
-            ColorScheme.fromSeed(seedColor: _fallbackSeed, brightness: Brightness.light);
-        final dark = darkDynamic ??
-            ColorScheme.fromSeed(seedColor: _fallbackSeed, brightness: Brightness.dark);
         return AppScope(
           controller: controller,
           // Rebuild MaterialApp when the theme-mode preference changes.
           child: ListenableBuilder(
             listenable: controller,
-            builder: (context, _) => MaterialApp(
-              title: 'Breeze',
-              debugShowCheckedModeBanner: false,
-              themeMode: controller.themeMode, // system / light / dark (Settings)
-              theme: ThemeData(colorScheme: light, useMaterial3: true),
-              darkTheme: ThemeData(colorScheme: dark, useMaterial3: true),
-              home: const _Gate(),
-            ),
+            builder: (context, _) {
+              // Material You where the system offers it, unless a colour was
+              // chosen on the Nerd screen -- which is also the only choice
+              // there is on iOS, which has no wallpaper palette to offer.
+              final i = controller.internal;
+              final custom = i.colourSource == ColourSource.custom;
+              ColorScheme seeded(Brightness b) => ColorScheme.fromSeed(
+                    seedColor: custom ? Color(i.seedColour) : _fallbackSeed,
+                    brightness: b,
+                    dynamicSchemeVariant:
+                        custom ? i.schemeVariant : DynamicSchemeVariant.tonalSpot,
+                  );
+              final light = custom ? seeded(Brightness.light) : (lightDynamic ?? seeded(Brightness.light));
+              final dark = custom ? seeded(Brightness.dark) : (darkDynamic ?? seeded(Brightness.dark));
+              return MaterialApp(
+                title: 'Breeze',
+                debugShowCheckedModeBanner: false,
+                themeMode: controller.themeMode, // system / light / dark (Settings)
+                theme: ThemeData(colorScheme: light, useMaterial3: true),
+                darkTheme: ThemeData(colorScheme: dark, useMaterial3: true),
+                home: const _Gate(),
+              );
+            },
           ),
         );
       },

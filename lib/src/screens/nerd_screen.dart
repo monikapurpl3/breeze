@@ -19,6 +19,7 @@ import '../api_client.dart';
 import '../app_info.dart';
 import '../app_scope.dart';
 import '../haptics.dart';
+import 'internal_tab.dart';
 
 /// Server version this screen needs. Below it, the endpoint doesn't exist.
 const _kMinServer = [3, 0, 5];
@@ -116,23 +117,46 @@ class _NerdScreenState extends State<NerdScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nerd'),
-        actions: [
-          IconButton(
-            tooltip: 'Copy all',
-            icon: const Icon(Icons.copy_all_outlined),
-            onPressed: _sys == null ? null : _copyAll,
+    // Two tabs: what the app and server are (System), and the internal
+    // settings that change how the app looks and connects (Internal). The
+    // second works against any server, so it stays reachable when the first
+    // can only say "womp womp".
+    return DefaultTabController(
+      length: 2,
+      child: Builder(builder: (context) {
+        final tabs = DefaultTabController.of(context);
+        return ListenableBuilder(
+          listenable: tabs,
+          builder: (context, _) => Scaffold(
+            appBar: AppBar(
+              title: const Text('Nerd'),
+              actions: [
+                if (tabs.index == 0) ...[
+                  IconButton(
+                    tooltip: 'Copy all',
+                    icon: const Icon(Icons.copy_all_outlined),
+                    onPressed: _sys == null ? null : _copyAll,
+                  ),
+                  IconButton(
+                    tooltip: 'Refresh',
+                    icon: const Icon(Icons.refresh),
+                    onPressed: _loading ? null : _load,
+                  ),
+                ],
+              ],
+              bottom: const TabBar(
+                tabs: [
+                  Tab(icon: Icon(Icons.memory), text: 'System'),
+                  Tab(icon: Icon(Icons.tune), text: 'Internal'),
+                ],
+              ),
+            ),
+            body: TabBarView(
+              children: [_body(), const InternalTab()],
+            ),
           ),
-          IconButton(
-            tooltip: 'Refresh',
-            icon: const Icon(Icons.refresh),
-            onPressed: _loading ? null : _load,
-          ),
-        ],
-      ),
-      body: _body(),
+        );
+      }),
     );
   }
 
@@ -176,6 +200,8 @@ class _NerdScreenState extends State<NerdScreen> {
       ]),
       _Section('Connection', [
         _Row('Server URL', api?.baseUrl),
+        if (api != null && api.currentUrl.value != api.baseUrl)
+          _Row('Answering now', '${api.currentUrl.value} (a fallback)'),
         _Row('Latency', _latencyMs == null ? null : '$_latencyMs ms (this request)'),
         _Row('Auth version', 'v${api?.authVersion ?? 1}'
             '${(api?.authVersion ?? 1) >= 2 ? ' — Ed25519 signed' : ' — bearer token'}'),

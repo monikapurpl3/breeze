@@ -162,7 +162,8 @@ class SecureStore {
   /// was the last one.
   Future<String?> removeProfile(String id) async {
     for (final f in ['url', 'api_key', 'label', 'name', 'token', 'seed',
-                     'key_id', 'auth_version']) {
+                     'key_id', 'auth_version', 'fallbacks', 'lan_fallback',
+                     'lan_addrs', 'pin_v1']) {
       await _s.delete(key: _k(id, f));
     }
     final ids = (await _ids())..remove(id);
@@ -236,6 +237,49 @@ class SecureStore {
     await _delete('key_id');
     await _delete('auth_version');
   }
+
+  // --- other ways to reach the active server -------------------------------
+  //
+  // Tried in order when the main address can't be reached: first the user's
+  // own fallbacks, then -- if switched on -- the server's own LAN addresses,
+  // learned from /api/system. The device credential works at any of them,
+  // because a v2 signature covers the path and body, never the host.
+
+  Future<List<String>> _list(String field) async {
+    final raw = await _read(field);
+    if (raw == null || raw.isEmpty) return <String>[];
+    try {
+      return (jsonDecode(raw) as List).cast<String>();
+    } catch (_) {
+      return <String>[];
+    }
+  }
+
+  Future<List<String>> get fallbackUrls => _list('fallbacks');
+  Future<void> saveFallbackUrls(List<String> urls) =>
+      _write('fallbacks', jsonEncode(urls));
+
+  Future<bool> get lanFallback async => (await _read('lan_fallback')) == '1';
+  Future<void> setLanFallback(bool on) => _write('lan_fallback', on ? '1' : '0');
+
+  Future<List<String>> get lanAddresses => _list('lan_addrs');
+  Future<void> saveLanAddresses(List<String> urls) =>
+      _write('lan_addrs', jsonEncode(urls));
+
+  /// Every address to try, in order, after the main one.
+  Future<List<String>> get alternateUrls async => [
+        ...await fallbackUrls,
+        if (await lanFallback) ...await lanAddresses,
+      ];
+
+  /// Stay on v1 (a bearer token) rather than upgrading to v2 in the
+  /// background -- for a server that should be tested with v1, chosen when
+  /// pairing again from the Nerd screen.
+  Future<bool> get pinnedToV1 async => (await _read('pin_v1')) == '1';
+  Future<void> setPinnedToV1(bool on) => _write('pin_v1', on ? '1' : '0');
+
+  /// The device name for the active server.
+  Future<void> saveLabel(String label) => _write('label', label);
 
   /// Forget the active server entirely (the old "change server").
   Future<void> clearAll() async {

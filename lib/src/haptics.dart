@@ -14,24 +14,37 @@ import 'package:flutter/services.dart';
 class Haptics {
   Haptics._();
 
+  /// Off from the Nerd screen's Internal tab. Every call below goes quiet;
+  /// nothing that calls them needs to know.
+  static bool enabled = true;
+
   /// A discrete value moved one notch: temperature ±, a slider crossing a
   /// detent, swiping to another unit. The lightest thing that's still felt.
-  static void tick() => HapticFeedback.selectionClick();
+  static void tick() {
+    if (enabled) HapticFeedback.selectionClick();
+  }
 
   /// A setting was chosen: mode, fan speed, a flap half, eco/turbo.
-  static void select() => HapticFeedback.lightImpact();
+  static void select() {
+    if (enabled) HapticFeedback.lightImpact();
+  }
 
   /// A consequential toggle — power on/off. Deliberately the most substantial
   /// feedback in the app, because it's the one action with a physical result
   /// you might be across the room from.
-  static void toggle() => HapticFeedback.mediumImpact();
+  static void toggle() {
+    if (enabled) HapticFeedback.mediumImpact();
+  }
 
   /// Something finished well: pairing approved, a diagnosis with no failures.
-  static void success() => HapticFeedback.mediumImpact();
+  static void success() {
+    if (enabled) HapticFeedback.mediumImpact();
+  }
 
   /// Something went wrong: a rejected key, a failed command, a failed check.
   /// Two beats so it's distinguishable from [toggle] without looking.
   static Future<void> failure() async {
+    if (!enabled) return;
     await HapticFeedback.heavyImpact();
     await Future.delayed(const Duration(milliseconds: 90));
     await HapticFeedback.heavyImpact();

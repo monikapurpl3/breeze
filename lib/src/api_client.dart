@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'device_signer.dart';
@@ -62,7 +63,7 @@ class ApiException implements Exception {
 }
 
 class ApiClient {
-  final String baseUrl; // normalized, no trailing slash
+  final String baseUrl; // the main address: normalized, no trailing slash
   final String apiKey;
   // v1 credential (bearer). Null once the device is on v2.
   String? deviceToken;
@@ -70,8 +71,71 @@ class ApiClient {
   DeviceSigner? signer;
   // Which auth profile this client sends: 1 = bearer, 2 = signed requests.
   int authVersion;
-  final Duration timeout;
+  Duration timeout;
   final http.Client _http;
+
+  /// Other addresses for the same server, tried in order when the current one
+  /// can't be reached at all (a timeout or a connection error -- never an HTTP
+  /// error, which means the server *was* reached). The credential works at any
+  /// of them: a v2 signature covers the path and body, not the host.
+  List<String> _alternates;
+
+  /// Index into [candidates] of the address in use. Sticky: once a fallback
+  /// has answered, requests stay on it rather than paying the main address's
+  /// timeout every time -- until [_retryMainAfter], when the main address gets
+  /// one short chance to come back.
+  int _active = 0;
+  DateTime _switchedAt = DateTime.fromMillisecondsSinceEpoch(0);
+  static const _retryMainAfter = Duration(minutes: 2);
+  static const _mainProbeTimeout = Duration(seconds: 3);
+
+  /// Round-trip time of the latest request that got an answer, in ms -- only
+  /// while [measureLatency] is on (the Nerd screen's "Show latency at the
+  /// top"); null otherwise.
+  final ValueNotifier<int?> latencyMs = ValueNotifier<int?>(null);
+
+  bool _measureLatency = false;
+  bool get measureLatency => _measureLatency;
+  set measureLatency(bool on) {
+    _measureLatency = on;
+    if (!on) latencyMs.value = null;
+  }
+
+  /// The address requests are going to right now.
+  late final ValueNotifier<String> currentUrl = ValueNotifier<String>(baseUrl);
+
+  /// The main address first, then each alternate once.
+  List<String> get candidates {
+    final out = <String>[baseUrl];
+    for (final a in _alternates) {
+      if (!out.contains(a)) out.add(a);
+    }
+    return out;
+  }
+
+  List<String> get alternates => List.unmodifiable(_alternates);
+
+  /// Replace the alternates, and go back to the main address.
+  set alternates(List<String> urls) {
+    _alternates = [...urls];
+    _active = 0;
+    currentUrl.value = baseUrl;
+  }
+
+  /// The order to try [count] addresses in, with [active] the one in use.
+  /// [retryMain] puts the main address first again after a while on a
+  /// fallback.
+  @visibleForTesting
+  static List<int> attemptOrder(int count, int active, {bool retryMain = false}) {
+    if (count <= 1) return const [0];
+    final order = <int>[];
+    if (active != 0 && retryMain) order.add(0);
+    order.add(active);
+    for (var i = 0; i < count; i++) {
+      if (!order.contains(i)) order.add(i);
+    }
+    return order;
+  }
 
   /// server_time − device_time, learned from a `clock_skew` rejection and
   /// applied to every later signature. Kept in memory only: it's re-learned in
@@ -90,17 +154,23 @@ class ApiClient {
     this.authVersion = 1,
     http.Client? client,
     this.timeout = const Duration(seconds: 15),
-  }) : _http = client ?? http.Client();
+    List<String> alternates = const [],
+  })  : _http = client ?? http.Client(),
+        _alternates = [...alternates];
 
   /// Build a client from stored credentials, or null if server+key are
   /// missing. Used by the foreground app and the headless widget isolate so
   /// request signing is set up identically everywhere. A returned client may
   /// still lack a device credential (only URL+key stored) — check
   /// [hasDeviceCredential] before hitting authenticated routes.
-  static Future<ApiClient?> fromStore(SecureStore store) async {
+  static Future<ApiClient?> fromStore(
+    SecureStore store, {
+    Duration timeout = const Duration(seconds: 15),
+  }) async {
     final url = await store.serverUrl;
     final key = await store.apiKey;
     if (url == null || key == null) return null;
+    final alternates = await store.alternateUrls;
     if (await store.authVersion >= 2) {
       final seed = await store.deviceSeed;
       final keyId = await store.deviceKeyId;
@@ -110,11 +180,18 @@ class ApiClient {
           apiKey: key,
           signer: await DeviceSigner.fromSeed(seed, keyId),
           authVersion: 2,
+          timeout: timeout,
+          alternates: alternates,
         );
       }
     }
     return ApiClient(
-      baseUrl: url, apiKey: key, deviceToken: await store.deviceToken, authVersion: 1,
+      baseUrl: url,
+      apiKey: key,
+      deviceToken: await store.deviceToken,
+      authVersion: 1,
+      timeout: timeout,
+      alternates: alternates,
     );
   }
 
@@ -159,7 +236,10 @@ class ApiClient {
     return h;
   }
 
-  Uri _uri(String path) => Uri.parse('$baseUrl$path');
+  /// [path] at the address in use. For the requests that don't fall back:
+  /// the live stream (its caller reconnects, and by then a polled request
+  /// will have moved [currentUrl]) and diagnostic probes.
+  Uri _uri(String path) => Uri.parse('${currentUrl.value}$path');
 
   /// Attach the device credential. v1 adds the bearer header; v2 signs the
   /// request (over the path + exact body bytes) via [DeviceSigner]. The
@@ -205,45 +285,90 @@ class ApiClient {
     Object? body,
     bool withToken = true,
   }) async {
-    late http.Response r;
-    try {
-      final headers = _headers(json: body != null);
-      final uri = _uri(path);
-      final encoded = body == null ? null : jsonEncode(body);
-      if (withToken) {
-        await _authenticate(
-          headers, method, path, encoded == null ? const [] : utf8.encode(encoded));
-      }
-      switch (method) {
-        case 'GET':
-          r = await _http.get(uri, headers: headers).timeout(timeout);
-          break;
-        case 'POST':
-          r = await _http.post(uri, headers: headers, body: encoded).timeout(timeout);
-          break;
-        case 'PUT':
-          r = await _http.put(uri, headers: headers, body: encoded).timeout(timeout);
-          break;
-        case 'PATCH':
-          r = await _http.patch(uri, headers: headers, body: encoded).timeout(timeout);
-          break;
-        case 'DELETE':
-          r = await _http.delete(uri, headers: headers, body: encoded).timeout(timeout);
-          break;
-        default:
-          throw ApiException(0, 'unsupported method $method');
-      }
-    } on TimeoutException {
-      throw ApiException(0, 'timed out reaching the server');
-    } catch (e) {
-      throw ApiException(0, 'network error: $e');
-    }
-
+    final encoded = body == null ? null : jsonEncode(body);
+    final r = await _exchange(method, path, encoded: encoded, withToken: withToken);
     if (r.statusCode >= 200 && r.statusCode < 300) {
       if (r.body.isEmpty) return null;
       return jsonDecode(r.body);
     }
     throw _error(r);
+  }
+
+  /// One request, at the address in use or -- if that can't be reached -- at
+  /// each other address in turn. Signed afresh for every attempt, so a
+  /// request that reached a server whose answer was lost is never replayed
+  /// with the same nonce.
+  Future<http.Response> _exchange(
+    String method,
+    String path, {
+    String? encoded,
+    bool withToken = true,
+  }) async {
+    final cands = candidates;
+    final active = _active < cands.length ? _active : 0;
+    final order = attemptOrder(
+      cands.length,
+      active,
+      retryMain: DateTime.now().difference(_switchedAt) > _retryMainAfter,
+    );
+    ApiException? failure;
+    for (final i in order) {
+      final headers = _headers(json: encoded != null);
+      if (withToken) {
+        await _authenticate(
+            headers, method, path, encoded == null ? const [] : utf8.encode(encoded));
+      }
+      // The main address, tried again from a fallback, gets a short timeout:
+      // if it is still down, the fallback that worked is a few seconds away.
+      final wait = (i == 0 && active != 0 && _mainProbeTimeout < timeout)
+          ? _mainProbeTimeout
+          : timeout;
+      final clock = _measureLatency ? (Stopwatch()..start()) : null;
+      try {
+        final r = await _raw(method, Uri.parse('${cands[i]}$path'), headers, encoded, wait);
+        if (clock != null) latencyMs.value = clock.elapsedMilliseconds;
+        if (i != _active) {
+          _active = i;
+          _switchedAt = DateTime.now();
+          currentUrl.value = cands[i];
+        }
+        return r;
+      } on ApiException {
+        rethrow; // an unsupported method: no address will do better
+      } on TimeoutException {
+        failure = ApiException(0, 'timed out reaching the server');
+      } catch (e) {
+        failure = ApiException(0, 'network error: $e');
+      }
+    }
+    if (cands.length > 1) {
+      throw ApiException(0,
+          'could not reach the server at any of its ${cands.length} addresses (${failure!.message})');
+    }
+    throw failure!;
+  }
+
+  Future<http.Response> _raw(
+    String method,
+    Uri uri,
+    Map<String, String> headers,
+    String? encoded,
+    Duration wait,
+  ) {
+    switch (method) {
+      case 'GET':
+        return _http.get(uri, headers: headers).timeout(wait);
+      case 'POST':
+        return _http.post(uri, headers: headers, body: encoded).timeout(wait);
+      case 'PUT':
+        return _http.put(uri, headers: headers, body: encoded).timeout(wait);
+      case 'PATCH':
+        return _http.patch(uri, headers: headers, body: encoded).timeout(wait);
+      case 'DELETE':
+        return _http.delete(uri, headers: headers, body: encoded).timeout(wait);
+      default:
+        throw ApiException(0, 'unsupported method $method');
+    }
   }
 
   /// Turn a non-2xx response into a typed error, picking up the structured
@@ -475,6 +600,17 @@ class ApiClient {
     final j = await _send('GET', '/api/programs') as List;
     return j.map((e) => Program.fromJson(e as Map<String, dynamic>)).toList();
   }
+
+  /// The programs exactly as the server sends them, for the Nerd screen's
+  /// read-only JSON view: nothing the app's model leaves out is lost.
+  Future<List<dynamic>> programsRaw() async =>
+      (await _send('GET', '/api/programs')) as List<dynamic>;
+
+  /// The pending timers exactly as the server sends them (read-only view).
+  /// [withStarts] as for [listTimers].
+  Future<List<dynamic>> timersRaw({bool withStarts = false}) async =>
+      (await _send('GET', withStarts ? '/api/timers?kind=all' : '/api/timers'))
+          as List<dynamic>;
 
   Future<Program> createProgram(Program p) async => Program.fromJson(
       await _send('POST', '/api/programs', body: p.toSpecJson()) as Map<String, dynamic>);

@@ -8,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_client.dart';
 import 'device_signer.dart';
+import 'haptics.dart';
+import 'internal_prefs.dart';
+import 'widgets/loading_cat.dart';
 import 'models.dart';
 import 'secure_store.dart';
 import 'device_name.dart';
@@ -36,7 +39,40 @@ class AppController extends ChangeNotifier {
   // no preference yet → start on the first unit.
   String? lastUnitId;
 
+  /// The Nerd screen's Internal tab. See [InternalPrefs].
+  InternalPrefs internal = InternalPrefs();
+
+  Duration get _timeout => Duration(seconds: internal.timeoutSeconds);
+
+  /// Push the settings that live outside this controller to where they are
+  /// read: haptics and cat facts are static, the timeout is on the client.
+  void _applyInternal() {
+    Haptics.enabled = internal.haptics;
+    CatFacts.custom = internal.catFacts;
+    CatFacts.includeBuiltIn = internal.builtInCatFacts;
+    api?.timeout = _timeout;
+    // Requests are timed only while the latency readout is switched on.
+    api?.measureLatency = internal.showLatency;
+  }
+
+  /// Change one or more internal settings: [edit] mutates [internal], then
+  /// everything that depends on it is updated and the change is saved.
+  Future<void> updateInternal(void Function(InternalPrefs p) edit) async {
+    edit(internal);
+    _applyInternal();
+    notifyListeners();
+    await internal.save();
+  }
+
+  Future<void> resetInternal() async {
+    internal = await InternalPrefs.reset();
+    _applyInternal();
+    notifyListeners();
+  }
+
   Future<void> _loadPrefs() async {
+    internal = await InternalPrefs.load();
+    _applyInternal();
     final p = await SharedPreferences.getInstance();
     final t = p.getString(_kTheme);
     themeMode = t == 'light'
@@ -116,7 +152,8 @@ class AppController extends ChangeNotifier {
     await store.migrate();
     await reloadProfiles();
     deviceLabel = (await store.deviceLabel) ?? DeviceName.suggest();
-    api = await ApiClient.fromStore(store);
+    api = await ApiClient.fromStore(store, timeout: _timeout);
+    _applyInternal();
 
     if (api == null) {
       _go(AppStage.onboarding);
@@ -129,6 +166,7 @@ class AppController extends ChangeNotifier {
       // an older server or a transient failure just leaves it on v1
       // (which still works) to retry next launch.
       if (api!.authVersion < 2) unawaited(attemptUpgrade());
+      unawaited(_refreshLanIfOn());
       return;
     }
     // Have server+key but no device credential (e.g. after unpair): pair.
@@ -149,7 +187,8 @@ class AppController extends ChangeNotifier {
   Future<void> connect(String rawUrl, String key, String label) async {
     final url = ApiClient.normalizeUrl(rawUrl);
     deviceLabel = label.trim().isEmpty ? DeviceName.suggest() : label.trim();
-    api = ApiClient(baseUrl: url, apiKey: key.trim());
+    api = ApiClient(baseUrl: url, apiKey: key.trim(), timeout: _timeout);
+    _applyInternal();
     await _startEnrollment(); // throws on bad key / unreachable
     // Only now is the profile written (and made active): a server we couldn't
     // reach, or a wrong key, must not leave a dead entry in the list.
@@ -158,14 +197,24 @@ class AppController extends ChangeNotifier {
     await reloadProfiles();
   }
 
-  Future<void> _startEnrollment() async {
-    // New devices enroll straight onto v2: generate a keypair and register
-    // its public half. The private key stays on-device and is persisted only
-    // once the server approves (pollPairing).
-    _pendingSigner = await DeviceSigner.generate();
+  /// Which auth version the pairing in progress asks for. 2 unless the Nerd
+  /// screen asked for 1.
+  int _enrollVersion = 2;
+
+  Future<void> _startEnrollment({int? authVersion}) async {
+    _enrollVersion = authVersion ?? _enrollVersion;
+    if (_enrollVersion >= 2) {
+      // New devices enroll straight onto v2: generate a keypair and register
+      // its public half. The private key stays on-device and is persisted
+      // only once the server approves (pollPairing).
+      _pendingSigner = await DeviceSigner.generate();
+    } else {
+      // v1, asked for from the Nerd screen: the server issues a bearer token.
+      _pendingSigner = null;
+    }
     final r = await api!.enrollStart(
       deviceLabel,
-      publicKey: await _pendingSigner!.publicKeyB64(),
+      publicKey: _pendingSigner == null ? null : await _pendingSigner!.publicKeyB64(),
     );
     sessionId = r['session_id'] as String;
     userCode = r['user_code'] as String;
@@ -176,6 +225,29 @@ class AppController extends ChangeNotifier {
 
   Future<void> restartEnrollment() => _startEnrollment();
 
+  /// Pair this device again, from the Nerd screen: with [authVersion] 1 or 2,
+  /// under a new [label].
+  ///
+  /// The new pairing is started first, and the current credential is kept
+  /// until an admin approves the new one -- so a server that can't be reached
+  /// right now leaves the device as it was, rather than with no credential at
+  /// all. The old entry stays in the server's device list until revoked
+  /// there. A v1 choice also stops the background upgrade to v2, which would
+  /// otherwise undo it on the next launch.
+  Future<void> pairAgain({required int authVersion, required String label}) async {
+    final name = label.trim().isEmpty ? DeviceName.suggest() : label.trim();
+    final previous = deviceLabel;
+    deviceLabel = name;
+    try {
+      await _startEnrollment(authVersion: authVersion);
+    } catch (_) {
+      deviceLabel = previous;
+      rethrow;
+    }
+    await store.saveLabel(name);
+    await store.setPinnedToV1(authVersion == 1);
+  }
+
   /// One poll tick. Returns the status string; on approval, persists the
   /// device credential (v2 keypair, or a v1 token from an older server) and
   /// moves home.
@@ -184,9 +256,14 @@ class AppController extends ChangeNotifier {
     final status = r['status'] as String;
     if (status == 'approved') {
       final av = (r['auth_version'] as num?)?.toInt() ?? 1;
+      // Whatever was there before goes: pairing again from the Nerd screen
+      // keeps the old credential working until this moment.
+      await store.clearToken();
+      _enrollVersion = 2;
       if (av >= 2 && _pendingSigner != null) {
         final signer = _pendingSigner!.withKeyId(r['token_id'] as String);
         await store.saveV2(await signer.seedB64(), signer.keyId);
+        await store.setPinnedToV1(false);
         api!.adoptSigner(signer);
       } else {
         // Older server without v2: fall back to the bearer token it issued.
@@ -208,6 +285,8 @@ class AppController extends ChangeNotifier {
   /// on v2 (no-op) or when the server is too old (returns false, stays v1).
   Future<bool> attemptUpgrade() async {
     if (api == null || api!.authVersion >= 2) return api?.authVersion == 2;
+    // Paired as v1 on purpose, from the Nerd screen: stay there.
+    if (await store.pinnedToV1) return false;
     try {
       final info = await api!.serverInfo();
       final versions = ((info['auth_versions'] as List?) ?? const []).map(
@@ -299,7 +378,8 @@ class AppController extends ChangeNotifier {
     error = null;
     lastUnitId = null;          // unit ids are per-server; don't carry one over
     deviceLabel = (await store.deviceLabel) ?? DeviceName.suggest();
-    api = await ApiClient.fromStore(store);
+    api = await ApiClient.fromStore(store, timeout: _timeout);
+    _applyInternal();
     await reloadProfiles();
 
     if (api == null) {
@@ -310,6 +390,7 @@ class AppController extends ChangeNotifier {
       _go(AppStage.home);
       unawaited(refreshUnits());
       if (api!.authVersion < 2) unawaited(attemptUpgrade());
+      unawaited(_refreshLanIfOn());
       return;
     }
     try {
@@ -356,6 +437,84 @@ class AppController extends ChangeNotifier {
     activeProfileId = null;     // force switchProfile to do the work
     await switchProfile(next);
   }
+
+  // --- other addresses for the active server (Nerd screen) -----------------
+
+  /// The user's own fallback addresses, normalised, in the order to try them.
+  Future<void> setFallbackUrls(List<String> raw) async {
+    final urls = <String>[];
+    for (final r in raw) {
+      final u = ApiClient.normalizeUrl(r);
+      if (u.isNotEmpty && !urls.contains(u)) urls.add(u);
+    }
+    await store.saveFallbackUrls(urls);
+    await _refreshAlternates();
+  }
+
+  Future<void> setLanFallback(bool on) async {
+    await store.setLanFallback(on);
+    if (on) {
+      try {
+        await learnLanAddresses();
+      } catch (_) {/* kept switched on; learned next time it can be */}
+    }
+    await _refreshAlternates();
+  }
+
+  Future<void> _refreshAlternates() async {
+    api?.alternates = await store.alternateUrls;
+    notifyListeners();
+  }
+
+  /// Ask the server for its own LAN address and port (`/api/system`,
+  /// Breeze Core 3.0.5+) and keep them as the last tier of fallbacks.
+  ///
+  /// Returns why there is nothing to keep, or null when addresses were
+  /// learned. A server bound only to loopback sits behind a proxy on its own
+  /// machine: nothing on the LAN can reach it directly, so there is no LAN
+  /// address worth trying.
+  Future<String?> learnLanAddresses() async {
+    final sys = await api!.systemInfo();
+    final net = (sys['network'] as Map?)?.cast<String, dynamic>() ?? const {};
+    final urls = lanUrlsFrom(net);
+    await store.saveLanAddresses(urls);
+    await _refreshAlternates();
+    if (urls.isNotEmpty) return null;
+    final host = net['bind_host']?.toString() ?? '';
+    return _isLoopback(host)
+        ? 'The server only listens on its own machine ($host), behind a proxy, '
+            'so nothing on the LAN can reach it directly.'
+        : 'The server did not report a LAN address.';
+  }
+
+  /// `http://ip:port` for each address the server can be reached at on its
+  /// LAN, from its `/api/system` network facts.
+  @visibleForTesting
+  static List<String> lanUrlsFrom(Map<String, dynamic> net) {
+    final host = net['bind_host']?.toString() ?? '0.0.0.0';
+    final port = net['bind_port']?.toString() ?? '8420';
+    if (_isLoopback(host)) return const [];
+    final ips = <String>[
+      // Bound to one address: that is the only one that answers.
+      if (host != '0.0.0.0' && host != '::' && host.isNotEmpty) host
+      else ...((net['local_addresses'] as List?) ?? const []).map((e) => '$e'),
+    ];
+    return [
+      for (final ip in ips)
+        if (ip.isNotEmpty) 'http://${ip.contains(':') ? '[$ip]' : ip}:$port',
+    ];
+  }
+
+  /// Once per launch, if the LAN tier is on: the server's address can change
+  /// (DHCP), and a stale one is a fallback that never answers. Best-effort.
+  Future<void> _refreshLanIfOn() async {
+    try {
+      if (await store.lanFallback) await learnLanAddresses();
+    } catch (_) {/* keep the last ones learned */}
+  }
+
+  static bool _isLoopback(String host) =>
+      host == '127.0.0.1' || host == '::1' || host == 'localhost';
 
   /// Forget the current server and start over (Settings → Change server).
   Future<void> changeServer() async {

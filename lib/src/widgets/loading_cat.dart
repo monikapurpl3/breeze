@@ -54,8 +54,24 @@ class CatFacts {
     'A cat can be either right- or left-pawed, and most females are right-pawed.',
   ];
 
-  static String random([Random? rng]) =>
-      all[(rng ?? Random()).nextInt(all.length)];
+  /// The user's own facts, from the Nerd screen's Internal tab, and whether
+  /// the bundled ones stay in the mix. Set once at start and on every change.
+  static List<String> custom = const [];
+  static bool includeBuiltIn = true;
+
+  /// What is actually shown: the user's facts, the bundled ones, or both.
+  /// Never empty -- with nothing of the user's and the bundled ones off, the
+  /// bundled ones come back rather than leaving a blank under the spinner.
+  static List<String> get pool {
+    final mine = custom.where((f) => f.trim().isNotEmpty).toList();
+    if (mine.isEmpty) return all;
+    return includeBuiltIn ? [...mine, ...all] : mine;
+  }
+
+  static String random([Random? rng]) {
+    final facts = pool;
+    return facts[(rng ?? Random()).nextInt(facts.length)];
+  }
 }
 
 /// Spinner plus a rotating cat fact. Use wherever the app is waiting on the
@@ -96,7 +112,7 @@ class _LoadingCatState extends State<LoadingCat> {
       // sentence looks like the app has frozen, which is the opposite of the
       // point.
       String next = CatFacts.random(_rng);
-      if (CatFacts.all.length > 1) {
+      if (CatFacts.pool.length > 1) {
         while (next == _fact) {
           next = CatFacts.random(_rng);
         }

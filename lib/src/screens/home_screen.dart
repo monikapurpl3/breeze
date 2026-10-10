@@ -53,6 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
   StreamSubscription<UnitState>? _stateSub;
   Timer? _streamRetry;
 
+  // The latency readout's own heartbeat, while it is switched on (Nerd
+  // screen, Internal). Most updates arrive over the stream, so without it the
+  // number would only move when you touched something.
+  Timer? _ping;
+  static const _pingEvery = Duration(seconds: 15);
+
   // Created lazily once units are known, positioned on the last-viewed unit
   // (see _initialPageIndex) so a relaunch reopens where the user left off.
   PageController? _pageController;
@@ -71,7 +77,32 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncPing();
+  }
+
+  void _syncPing() {
+    final c = AppScope.of(context);
+    final on = c.internal.showLatency;
+    if (on && _ping == null) {
+      Future<void> beat() async {
+        try {
+          await c.api?.health();
+        } catch (_) {/* the offline banner says so; the number just stops */}
+      }
+
+      unawaited(beat());
+      _ping = Timer.periodic(_pingEvery, (_) => beat());
+    } else if (!on) {
+      _ping?.cancel();
+      _ping = null;
+    }
+  }
+
+  @override
   void dispose() {
+    _ping?.cancel();
     _poll?.cancel();
     _streamRetry?.cancel();
     _stateSub?.cancel();
@@ -83,6 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _startStream() {
     if (!_liveSupported || _streaming || !mounted) return;
+    // Switched off on the Nerd screen: poll instead, as with an old server.
+    if (!AppScope.of(context).internal.liveUpdates) return;
     _streaming = true;
     _poll?.cancel();  // the stream is our source of truth now
     _stateSub = _api.streamStates().listen(
@@ -585,7 +618,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Breeze'),
+        title: const _Title(),
         actions: [
           IconButton(
             tooltip: 'Add unit',
@@ -775,6 +808,65 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// "Breeze", and -- when switched on from the Nerd screen -- the latest
+/// round-trip time beside it, plus the address in use whenever a fallback is
+/// answering instead of the main one.
+class _Title extends StatelessWidget {
+  const _Title();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = AppScope.of(context);
+    final api = c.api;
+    if (!c.internal.showLatency || api == null) return const Text('Breeze');
+    final scheme = Theme.of(context).colorScheme;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text('Breeze'),
+        const SizedBox(width: 10),
+        Flexible(
+          child: ListenableBuilder(
+            listenable: Listenable.merge([api.latencyMs, api.currentUrl]),
+            builder: (context, _) {
+              final ms = api.latencyMs.value;
+              final url = api.currentUrl.value;
+              final onFallback = url != api.baseUrl;
+              final text = [
+                ms == null ? '… ms' : '$ms ms',
+                if (onFallback) Uri.tryParse(url)?.host ?? url,
+              ].join(' · ');
+              return Semantics(
+                label: ms == null
+                    ? 'Latency not measured yet'
+                    : 'Latency $ms milliseconds${onFallback ? ', through a fallback address' : ''}',
+                excludeSemantics: true,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: (onFallback ? scheme.tertiaryContainer : scheme.secondaryContainer),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                      color: onFallback ? scheme.onTertiaryContainer : scheme.onSecondaryContainer,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

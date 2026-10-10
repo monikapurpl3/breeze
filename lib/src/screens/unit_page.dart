@@ -117,16 +117,33 @@ class UnitPage extends StatelessWidget {
               ),
               Expanded(
                 // A heading, so a screen reader can jump unit to unit.
-                child: Semantics(
-                  header: true,
-                  child: Text(
-                    state.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        state.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ),
+                    // Switched on from the Nerd screen's Internal tab.
+                    if (AppScope.of(context).internal.showUnitIp && state.ip.isNotEmpty)
+                      SelectableText(
+                        state.ip,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: scheme.onSurfaceVariant,
+                          fontFeatures: const [FontFeature.tabularFigures()],
                         ),
-                  ),
+                      ),
+                  ],
                 ),
               ),
               if (onTimer != null)

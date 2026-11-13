@@ -12,12 +12,16 @@ class FanControl extends StatefulWidget {
     required this.accent,
     required this.onChanged,
     this.enabled = true,
+    this.fill = false,
   });
 
   final int value; // 20/40/60/80/100, or 102 = auto
   final Color accent;
   final ValueChanged<int> onChanged;
   final bool enabled;
+
+  /// A tablet's: on a card as tall as it is made, the slider thicker.
+  final bool fill;
 
   @override
   State<FanControl> createState() => _FanControlState();
@@ -48,16 +52,19 @@ class _FanControlState extends State<FanControl> {
         ? scheme.onSurfaceVariant.withValues(alpha: 0.35)
         : accent;
 
-    return Column(
+    final fill = widget.fill;
+    final body = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: fill ? MainAxisAlignment.spaceEvenly : MainAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.air, size: 20, color: scheme.onSurfaceVariant),
+            Icon(Icons.air, size: fill ? 26 : 20, color: scheme.onSurfaceVariant),
             const SizedBox(width: 8),
             Text(
               'Fan',
               style: TextStyle(
+                fontSize: fill ? 18 : null,
                 fontWeight: FontWeight.w600,
                 color: scheme.onSurface,
               ),
@@ -80,13 +87,13 @@ class _FanControlState extends State<FanControl> {
             Expanded(
               child: SliderTheme(
                 data: SliderThemeData(
-                  trackHeight: 6,
+                  trackHeight: fill ? 14 : 6,
                   activeTrackColor: sliderColor,
                   inactiveTrackColor: sliderColor.withValues(alpha: 0.18),
                   thumbColor: sliderColor,
                   overlayColor: accent.withValues(alpha: 0.15),
-                  thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 10,
+                  thumbShape: RoundSliderThumbShape(
+                    enabledThumbRadius: fill ? 15 : 10,
                   ),
                   // The label below is for TalkBack; no bubble shows it.
                   showValueIndicator: ShowValueIndicator.never,
@@ -122,16 +129,25 @@ class _FanControlState extends State<FanControl> {
             children: [
               Text(
                 'Low',
-                style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
+                style: TextStyle(fontSize: fill ? 14 : 12, color: scheme.onSurfaceVariant),
               ),
               Text(
                 'High',
-                style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
+                style: TextStyle(fontSize: fill ? 14 : 12, color: scheme.onSurfaceVariant),
               ),
             ],
           ),
         ),
       ],
+    );
+    if (!fill) return body;
+    return Container(
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
+      child: body,
     );
   }
 }

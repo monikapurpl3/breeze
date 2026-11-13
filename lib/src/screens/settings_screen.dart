@@ -126,6 +126,13 @@ ${c.profiles.length} saved — tap to switch'''
               onSelectionChanged: (s) => c.setThemeMode(s.first),
             ),
           ),
+          SwitchListTile(
+            secondary: const Icon(Icons.contrast),
+            title: const Text('Pure black'),
+            subtitle: const Text('Black backgrounds whenever the dark theme shows — kind to OLED screens'),
+            value: c.pureBlack,
+            onChanged: c.setPureBlack,
+          ),
           ListTile(
             leading: const Icon(Icons.thermostat_outlined),
             title: const Text('Temperature unit'),

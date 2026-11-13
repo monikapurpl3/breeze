@@ -139,7 +139,11 @@ class ClimateBar extends StatelessWidget {
     required this.target,
     required this.accent,
     required this.unit,
+    this.thick = false,
   });
+
+  /// Bigger reading, thicker bar: a tablet's.
+  final bool thick;
 
   final double? indoor;
   final double? outdoor;
@@ -176,11 +180,11 @@ class ClimateBar extends StatelessWidget {
         children: [
           Text(
             parts.join('  /  '),
-            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
+            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: thick ? 17 : 14),
           ),
           if (model.usable) ...[
-            const SizedBox(height: 6),
-            _Bar(model: model, accent: accent),
+            SizedBox(height: thick ? 8 : 6),
+            _Bar(model: model, accent: accent, height: thick ? 14 : 8),
           ],
         ],
       ),
@@ -189,10 +193,11 @@ class ClimateBar extends StatelessWidget {
 }
 
 class _Bar extends StatelessWidget {
-  const _Bar({required this.model, required this.accent});
+  const _Bar({required this.model, required this.accent, this.height = 8});
 
   final ClimateBarModel model;
   final Color accent;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -200,9 +205,9 @@ class _Bar extends StatelessWidget {
     final darker = model.darker;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(5),
+      borderRadius: BorderRadius.circular(height / 2 + 1),
       child: SizedBox(
-        height: 8,
+        height: height,
         child: Stack(
           children: [
             // The track itself is the warmest reading: full width == scale max.

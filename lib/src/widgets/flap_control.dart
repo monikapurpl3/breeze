@@ -18,12 +18,16 @@ class FlapControl extends StatelessWidget {
     required this.accent,
     required this.onChanged,
     this.enabled = true,
+    this.fill = false,
   });
 
   final String value;
   final Color accent;
   final ValueChanged<String> onChanged;
   final bool enabled;
+
+  /// As tall as it is made (68 at least), the icons bigger: a tablet's.
+  final bool fill;
 
   bool get _vertical => value == 'VERTICAL' || value == 'BOTH';
   bool get _horizontal => value == 'HORIZONTAL' || value == 'BOTH';
@@ -46,7 +50,8 @@ class FlapControl extends StatelessWidget {
     return Opacity(
       opacity: enabled ? 1 : 0.4,
       child: Container(
-        height: 68,
+        height: fill ? null : 68,
+        constraints: fill ? const BoxConstraints(minHeight: 68) : null,
         decoration: BoxDecoration(
           color: scheme.surfaceContainerHighest.withValues(alpha: 0.45),
           borderRadius: BorderRadius.circular(34),
@@ -65,6 +70,7 @@ class FlapControl extends StatelessWidget {
                 on: _vertical,
                 accent: accent,
                 enabled: enabled,
+                big: fill,
                 borderRadius: const BorderRadius.only(
                   topLeft: radius,
                   bottomLeft: radius,
@@ -87,6 +93,7 @@ class FlapControl extends StatelessWidget {
                 on: _horizontal,
                 accent: accent,
                 enabled: enabled,
+                big: fill,
                 borderRadius: const BorderRadius.only(
                   topRight: radius,
                   bottomRight: radius,
@@ -110,7 +117,10 @@ class _Half extends StatelessWidget {
     required this.enabled,
     required this.borderRadius,
     required this.onTap,
+    this.big = false,
   });
+
+  final bool big;
 
   final IconData icon;
   final String label;
@@ -155,18 +165,21 @@ class _Half extends StatelessWidget {
                   }
                 : null,
             customBorder: RoundedRectangleBorder(borderRadius: borderRadius),
-            child: Row(
+            // Big, the icon goes above the label: the half is tall then,
+            // and "Horizontal flap" gets the whole width of it.
+            child: Flex(
+              direction: big ? Axis.vertical : Axis.horizontal,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 26, color: fg),
-                const SizedBox(width: 10),
+                Icon(icon, size: big ? 32 : 26, color: fg),
+                big ? const SizedBox(height: 6) : const SizedBox(width: 10),
                 Flexible(
                   child: Text(
                     label,
                     maxLines: 2,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: big ? 16 : 14,
                       height: 1.15,
                       fontWeight: on ? FontWeight.w700 : FontWeight.w500,
                       color: fg,

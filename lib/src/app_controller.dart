@@ -29,11 +29,13 @@ class AppController extends ChangeNotifier {
   static const _kTheme = 'pref_theme_mode'; // 'system' | 'light' | 'dark'
   static const _kUnit = 'pref_temp_unit'; // 'C' | 'F'
   static const _kBeep = 'pref_beep'; // whether commands make the unit chirp
+  static const _kPureBlack = 'pref_pure_black'; // AMOLED black in the dark theme
   static const _kLastUnit =
       'pref_last_unit_id'; // last unit page the user was on
   ThemeMode themeMode = ThemeMode.system;
   String tempUnit = 'C';
   bool beep = false;
+  bool pureBlack = false;
   // Which unit page to restore on launch (by unit id, so it survives
   // reordering; the home screen falls back gracefully if it's gone). Null =
   // no preference yet → start on the first unit.
@@ -82,6 +84,7 @@ class AppController extends ChangeNotifier {
         : ThemeMode.system;
     tempUnit = p.getString(_kUnit) == 'F' ? 'F' : 'C';
     beep = p.getBool(_kBeep) ?? false;
+    pureBlack = p.getBool(_kPureBlack) ?? false;
     lastUnitId = p.getString(_kLastUnit);
   }
 
@@ -103,6 +106,13 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     final p = await SharedPreferences.getInstance();
     await p.setBool(_kBeep, value);
+  }
+
+  Future<void> setPureBlack(bool value) async {
+    pureBlack = value;
+    notifyListeners();
+    final p = await SharedPreferences.getInstance();
+    await p.setBool(_kPureBlack, value);
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {

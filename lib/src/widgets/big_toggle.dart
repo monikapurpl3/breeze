@@ -14,6 +14,7 @@ class BigToggle extends StatelessWidget {
     required this.accent,
     required this.onChanged,
     this.enabled = true,
+    this.fill = false,
   });
 
   final String label;
@@ -22,6 +23,9 @@ class BigToggle extends StatelessWidget {
   final Color accent;
   final ValueChanged<bool> onChanged;
   final bool enabled;
+
+  /// As tall as it is made, its contents bigger and centred: a tablet's.
+  final bool fill;
 
   @override
   Widget build(BuildContext context) {
@@ -83,12 +87,13 @@ class BigToggle extends StatelessWidget {
               // words like "Turbo" never wrap even at half-screen or large font
               // scales. Reads as a big tappable switch.
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min,
                 children: [
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(icon, color: fg, size: 24),
+                      Icon(icon, color: fg, size: fill ? 30 : 24),
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
@@ -97,7 +102,7 @@ class BigToggle extends StatelessWidget {
                           softWrap: false,
                           overflow: TextOverflow.fade,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: fill ? 20 : 16,
                             fontWeight: FontWeight.w600,
                             color: fg,
                           ),
@@ -105,15 +110,19 @@ class BigToggle extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Switch(
-                    value: value,
-                    activeThumbColor: accent,
-                    onChanged: enabled
-                        ? (v) {
-                            Haptics.select();
-                            onChanged(v);
-                          }
-                        : null,
+                  if (fill) const SizedBox(height: 10),
+                  Transform.scale(
+                    scale: fill ? 1.3 : 1,
+                    child: Switch(
+                      value: value,
+                      activeThumbColor: accent,
+                      onChanged: enabled
+                          ? (v) {
+                              Haptics.select();
+                              onChanged(v);
+                            }
+                          : null,
+                    ),
                   ),
                 ],
               ),

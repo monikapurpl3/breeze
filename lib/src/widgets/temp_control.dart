@@ -24,6 +24,7 @@ class TempControl extends StatefulWidget {
     this.indoor,
     this.outdoor,
     this.enabled = true,
+    this.fill = false,
   });
 
   final double value;
@@ -33,6 +34,10 @@ class TempControl extends StatefulWidget {
   final String unit;
   final ValueChanged<double> onChanged;
   final bool enabled;
+
+  /// A tablet's: the readout grows into all the height it is given, the
+  /// slider, bar and buttons thicker.
+  final bool fill;
 
   @override
   State<TempControl> createState() => _TempControlState();
@@ -92,6 +97,8 @@ class _TempControlState extends State<TempControl> {
     final scheme = Theme.of(context).colorScheme;
     final accent = widget.accent;
     final shown = _shown.clamp(kMinTemp, kMaxTemp);
+    final fill = widget.fill;
+    Widget grow(Widget w) => fill ? Expanded(child: w) : w;
 
     // Sit above centre rather than dead-centre in the slack: the flap pill
     // freed vertical space, and pure centring spent half of it above the
@@ -100,12 +107,12 @@ class _TempControlState extends State<TempControl> {
     return Align(
       alignment: const Alignment(0, -0.4),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min,
         children: [
           // Big readout. Read as "Target temperature, 23.5 °C" rather than a
           // bare number, and a live region, so a change -- from the buttons,
           // or from another phone -- is spoken without moving focus.
-          Semantics(
+          grow(Semantics(
             label: 'Target temperature',
             value: fmtTemp(shown, widget.unit),
             liveRegion: true,
@@ -124,7 +131,7 @@ class _TempControlState extends State<TempControl> {
                 ),
               ),
             ),
-          ),
+          )),
           const SizedBox(height: 2),
           if (widget.indoor != null || widget.outdoor != null)
             Padding(
@@ -135,6 +142,7 @@ class _TempControlState extends State<TempControl> {
                 target: shown.toDouble(),
                 accent: accent,
                 unit: widget.unit,
+                thick: fill,
               ),
             )
           else
@@ -142,10 +150,11 @@ class _TempControlState extends State<TempControl> {
               'target',
               style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
             ),
-          const SizedBox(height: 10),
+          SizedBox(height: fill ? 14 : 10),
           Row(
             children: [
               _StepButton(
+                big: fill,
                 icon: Icons.remove,
                 label: 'Lower the target temperature',
                 accent: accent,
@@ -156,15 +165,18 @@ class _TempControlState extends State<TempControl> {
               Expanded(
                 child: SliderTheme(
                   data: SliderThemeData(
-                    trackHeight: 8,
+                    trackHeight: fill ? 16 : 8,
                     activeTrackColor: accent,
                     inactiveTrackColor: accent.withValues(alpha: 0.18),
                     thumbColor: accent,
                     overlayColor: accent.withValues(alpha: 0.15),
-                    thumbShape: const RoundSliderThumbShape(
-                      enabledThumbRadius: 12,
+                    thumbShape: RoundSliderThumbShape(
+                      enabledThumbRadius: fill ? 18 : 12,
                     ),
                     showValueIndicator: ShowValueIndicator.never,
+                    // 28 half-degree notches: drawn, wherever the track is
+                    // long enough, as a row of dots that is only noise.
+                    tickMarkShape: SliderTickMarkShape.noTickMark,
                   ),
                   child: Slider(
                     // Named, and read in degrees: it said "57 percent". No
@@ -194,6 +206,7 @@ class _TempControlState extends State<TempControl> {
                 ),
               ),
               _StepButton(
+                big: fill,
                 icon: Icons.add,
                 label: 'Raise the target temperature',
                 accent: accent,
@@ -217,7 +230,9 @@ class _StepButton extends StatelessWidget {
     this.onTap,
     this.onHoldStart,
     this.onHoldEnd,
+    this.big = false,
   });
+  final bool big;
   final IconData icon;
   final String label;
   final Color accent;
@@ -243,8 +258,8 @@ class _StepButton extends StatelessWidget {
         onLongPressEnd: onHoldEnd == null ? null : (_) => onHoldEnd!(),
         onLongPressCancel: onHoldEnd,
         child: SizedBox(
-          width: 52,
-          height: 52,
+          width: big ? 66 : 52,
+          height: big ? 66 : 52,
           child: Material(
             color: onTap == null
                 ? scheme.surfaceContainerHighest.withValues(alpha: 0.4)
@@ -264,7 +279,7 @@ class _StepButton extends StatelessWidget {
                           accent.withValues(alpha: 0.16),
                         ]),
                       ),
-                size: 26,
+                size: big ? 32 : 26,
               ),
             ),
           ),

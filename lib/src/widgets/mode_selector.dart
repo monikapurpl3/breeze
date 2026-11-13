@@ -4,7 +4,8 @@ import '../models.dart';
 import '../theme.dart';
 import '../haptics.dart';
 
-const _modeIcons = <String, IconData>{
+/// Each mode's icon: the mode selector's, and the units list's.
+const kModeIcons = <String, IconData>{
   'AUTO': Icons.auto_mode,
   'COOL': Icons.ac_unit,
   'DRY': Icons.water_drop_outlined,
@@ -21,11 +22,21 @@ class ModeSelector extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.enabled = true,
+    this.rows = 1,
+    this.fill = false,
   });
 
   final String value;
   final ValueChanged<String> onChanged;
   final bool enabled;
+
+  /// One row of five, or two (three, then two) where the selector has a
+  /// narrow column to itself: each mode then gets a bigger tile.
+  final int rows;
+
+  /// Tiles as tall as the selector is made, with bigger icons and labels: a
+  /// tablet's, which has the height to spare.
+  final bool fill;
 
   @override
   Widget build(BuildContext context) {
@@ -42,28 +53,43 @@ class ModeSelector extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         padding: const EdgeInsets.all(4),
-        child: Row(
-          children: [
-            for (final m in kModes)
-              Expanded(
-                child: _Segment(
-                  selected: m == value,
-                  accent: accentForMode(m, scheme),
-                  icon: _modeIcons[m] ?? Icons.tune,
-                  label: kModeLabels[m] ?? m.toLowerCase(),
-                  onTap: enabled
-                      ? () {
-                          Haptics.select();
-                          onChanged(m);
-                        }
-                      : null,
-                ),
+        child: rows < 2
+            ? _row(kModes, scheme)
+            : Column(
+                mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min,
+                children: [
+                  _grow(_row(kModes.sublist(0, 3), scheme)),
+                  const SizedBox(height: 4),
+                  _grow(_row(kModes.sublist(3), scheme)),
+                ],
               ),
-          ],
-        ),
       ),
     );
   }
+
+  Widget _grow(Widget row) => fill ? Expanded(child: row) : row;
+
+  Widget _row(List<String> modes, ColorScheme scheme) => Row(
+        crossAxisAlignment: fill ? CrossAxisAlignment.stretch : CrossAxisAlignment.center,
+        children: [
+          for (final m in modes)
+            Expanded(
+              child: _Segment(
+                selected: m == value,
+                accent: accentForMode(m, scheme),
+                icon: kModeIcons[m] ?? Icons.tune,
+                label: kModeLabels[m] ?? m.toLowerCase(),
+                fill: fill,
+                onTap: enabled
+                    ? () {
+                        Haptics.select();
+                        onChanged(m);
+                      }
+                    : null,
+              ),
+            ),
+        ],
+      );
 }
 
 class _Segment extends StatelessWidget {
@@ -72,9 +98,11 @@ class _Segment extends StatelessWidget {
     required this.accent,
     required this.icon,
     required this.label,
+    this.fill = false,
     this.onTap,
   });
 
+  final bool fill;
   final bool selected;
   final Color accent;
   final IconData icon;
@@ -110,16 +138,17 @@ class _Segment extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min,
                 children: [
-                  Icon(icon, size: 22, color: fg),
-                  const SizedBox(height: 3),
+                  Icon(icon, size: fill ? 30 : 22, color: fg),
+                  SizedBox(height: fill ? 6 : 3),
                   Text(
                     label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: fill ? 14 : 11,
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                       color: fg,
                     ),

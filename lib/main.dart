@@ -9,6 +9,7 @@ import 'src/home_widget_service.dart';
 import 'src/screens/home_screen.dart';
 import 'src/screens/onboarding_screen.dart';
 import 'src/screens/pairing_screen.dart';
+import 'src/theme.dart';
 import 'src/native_licenses.dart';
 import 'src/secure_store.dart';
 import 'src/widgets/loading_cat.dart';
@@ -62,7 +63,9 @@ class BreezeApp extends StatelessWidget {
                         custom ? i.schemeVariant : DynamicSchemeVariant.tonalSpot,
                   );
               final light = custom ? seeded(Brightness.light) : (lightDynamic ?? seeded(Brightness.light));
-              final dark = custom ? seeded(Brightness.dark) : (darkDynamic ?? seeded(Brightness.dark));
+              final dark0 = custom ? seeded(Brightness.dark) : (darkDynamic ?? seeded(Brightness.dark));
+              // Settings' "Pure black": the same palette, on black.
+              final dark = controller.pureBlack ? pureBlack(dark0) : dark0;
               return MaterialApp(
                 title: 'Breeze',
                 debugShowCheckedModeBanner: false,

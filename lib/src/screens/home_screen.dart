@@ -8,8 +8,12 @@ import '../app_scope.dart';
 import '../control_feedback.dart';
 import '../control_ledger.dart';
 import '../home_widget_service.dart';
+import '../layout.dart';
 import '../models.dart';
+import '../theme.dart';
+import '../util.dart';
 import '../widgets/loading_cat.dart';
+import '../widgets/mode_selector.dart' show kModeIcons;
 import '../widgets/timer_sheet.dart';
 import 'diagnostics_screen.dart';
 import 'programs_screen.dart';
@@ -63,6 +67,11 @@ class _HomeScreenState extends State<HomeScreen> {
   // (see _initialPageIndex) so a relaunch reopens where the user left off.
   PageController? _pageController;
   int _page = 0;
+  /// Whether [_page] has been set from the last unit viewed yet.
+  bool _pageResolved = false;
+  /// Whether the units list was showing beside a unit last time: coming back
+  /// to the pager, it has to open on the unit chosen there.
+  bool _listShown = false;
 
   static const _fastPoll = Duration(seconds: 5);
   static const _slowPoll = Duration(seconds: 20); // when offline
@@ -603,10 +612,14 @@ class _HomeScreenState extends State<HomeScreen> {
   /// first unit if it's gone. Clamped so a removal never leaves a dangling
   /// page. No-op when the position is already correct.
   void _reconcilePage() {
-    if (!mounted) return;
-    final c = _pageController;
-    if (c == null || !c.hasClients || _units.isEmpty) return;
+    if (!mounted || _units.isEmpty) return;
     final target = _initialPageIndex().clamp(0, _units.length - 1);
+    final c = _pageController;
+    if (c == null || !c.hasClients) {
+      // The units list beside a unit: no pager to move, only the choice.
+      if (_pageResolved && _page != target) setState(() => _page = target);
+      return;
+    }
     final current = (c.page ?? c.initialPage.toDouble()).round();
     if (current != target || current >= _units.length) {
       c.jumpToPage(target);
@@ -704,57 +717,114 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     }
-    // Position the pager on the last-viewed unit the first time we build it,
-    // so it opens already on the right page (constructing with initialPage =
-    // no flicker). Resolved once; later changes go through _reconcilePage.
-    if (_pageController == null) {
+    // Open on the last-viewed unit, whichever way the units are shown.
+    // Resolved once; later changes go through _reconcilePage.
+    if (!_pageResolved) {
       _page = _initialPageIndex();
-      _pageController = PageController(initialPage: _page);
+      _pageResolved = true;
     }
-    return Column(
+    return LayoutBuilder(builder: (context, box) {
+      // A tablet, an open foldable: the units listed beside the one chosen.
+      if (useListDetail(box.biggest)) {
+        _listShown = true;
+        return _listDetail(box.biggest);
+      }
+      // The pager, constructed on the right page (no flicker) -- and again
+      // after the list, which may have chosen another unit meanwhile.
+      if (_pageController == null || _listShown) {
+        _pageController?.dispose();
+        _pageController = PageController(initialPage: _page.clamp(0, _units.length - 1));
+        _listShown = false;
+      }
+      return Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: _units.length,
+              onPageChanged: (i) {
+                Haptics.tick(); // a notch, like flipping to the next card
+                setState(() => _page = i);
+                // Remember where we are so the next launch reopens here.
+                if (i >= 0 && i < _units.length) {
+                  AppScope.of(context).setLastUnitId(_units[i].id);
+                }
+              },
+              itemBuilder: (context, i) => _unitPageAt(i),
+            ),
+          ),
+          if (_units.length > 1) _dots(context),
+        ],
+      );
+    });
+  }
+
+  /// Unit [i]'s page, the same in the pager and beside the list.
+  Widget _unitPageAt(int i) {
+    final u = _units[i];
+    final s = _states[u.id];
+    if (s == null) {
+      return LoadingCat(label: 'Connecting to ${u.name}…');
+    }
+    return UnitPage(
+      key: ValueKey(u.id),
+      state: s,
+      // Discreet indicator only while a user-initiated command for
+      // this unit is in flight — never during idle background polls.
+      refreshing: _ledger.isBusy(u.id),
+      onControl: (delta) => _control(u.id, delta),
+      onRename: () => _rename(u.id, s.name),
+      onRemove: () => _removeUnit(u.id, s.name),
+      sleepTimer: _timers[u.id],
+      startTimer: _starts[u.id],
+      startsSupported: _startsSupported,
+      // Null when the server has no timers: the button then does
+      // not appear at all, instead of appearing and failing.
+      onTimer: _timersSupported
+          ? (choice) => _onTimer(u.id, choice)
+          : null,
+    );
+  }
+
+  /// Every unit in a list, the chosen one beside it. On a foldable bent like
+  /// a book, the hinge is the border between them, so nothing sits across it.
+  Widget _listDetail(Size body) {
+    final hinge = verticalSeparator(context);
+    final listWidth = hinge?.left ?? listPaneWidth(body);
+    final chosen = _page.clamp(0, _units.length - 1);
+    return Row(
       children: [
-        Expanded(
-          child: PageView.builder(
-            controller: _pageController,
+        SizedBox(
+          width: listWidth,
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount: _units.length,
-            onPageChanged: (i) {
-              Haptics.tick(); // a notch, like flipping to the next card
-              setState(() => _page = i);
-              // Remember where we are so the next launch reopens here.
-              if (i >= 0 && i < _units.length) {
-                AppScope.of(context).setLastUnitId(_units[i].id);
-              }
-            },
             itemBuilder: (context, i) {
               final u = _units[i];
-              final s = _states[u.id];
-              if (s == null) {
-                return LoadingCat(label: 'Connecting to ${u.name}…');
-              }
-              return UnitPage(
-                key: ValueKey(u.id),
-                state: s,
-                // Discreet indicator only while a user-initiated command for
-                // this unit is in flight — never during idle background polls.
-                refreshing: _ledger.isBusy(u.id),
-                onControl: (delta) => _control(u.id, delta),
-                onRename: () => _rename(u.id, s.name),
-                onRemove: () => _removeUnit(u.id, s.name),
-                sleepTimer: _timers[u.id],
-                startTimer: _starts[u.id],
-                startsSupported: _startsSupported,
-                // Null when the server has no timers: the button then does
-                // not appear at all, instead of appearing and failing.
-                onTimer: _timersSupported
-                    ? (choice) => _onTimer(u.id, choice)
-                    : null,
+              return _UnitTile(
+                name: _states[u.id]?.name ?? u.name,
+                state: _states[u.id],
+                busy: _ledger.isBusy(u.id),
+                chosen: i == chosen,
+                onTap: () => _choose(i),
               );
             },
           ),
         ),
-        if (_units.length > 1) _dots(context),
+        if (hinge != null)
+          SizedBox(width: hinge.width)
+        else
+          const VerticalDivider(width: 1),
+        Expanded(child: _unitPageAt(chosen)),
       ],
     );
+  }
+
+  void _choose(int i) {
+    if (i == _page) return;
+    Haptics.tick();
+    setState(() => _page = i);
+    AppScope.of(context).setLastUnitId(_units[i].id);
   }
 
   void _goToPage(int i) {
@@ -807,6 +877,137 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: page < _units.length - 1 ? () => _goToPage(page + 1) : null,
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// One unit in the list beside the chosen one: its mode as colour and icon,
+/// what it is doing in words, and the room's temperature. A real button, read
+/// as one sentence, and said to be the selected one when it is.
+class _UnitTile extends StatelessWidget {
+  const _UnitTile({
+    required this.name,
+    required this.state,
+    required this.busy,
+    required this.chosen,
+    required this.onTap,
+  });
+
+  final String name;
+  final UnitState? state;
+  final bool busy;
+  final bool chosen;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
+    final unit = AppScope.of(context).tempUnit;
+    final s = state;
+    final online = s?.online ?? false;
+    final on = online && s!.powerState;
+    final accent = s == null
+        ? scheme.outline
+        : !online
+            ? scheme.error
+            : accentForMode(s.operationalMode, scheme);
+    final what = s == null
+        ? 'connecting…'
+        : !online
+            ? 'offline'
+            : on
+                ? '${kModeLabels[s.operationalMode] ?? s.operationalMode.toLowerCase()}, ${fmtTemp(s.targetTemperature, unit)}'
+                : 'off';
+    final indoor = s?.indoorTemperature;
+    final background = chosen ? scheme.secondaryContainer : Colors.transparent;
+    final foreground = chosen ? scheme.onSecondaryContainer : scheme.onSurface;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+      child: Semantics(
+        button: true,
+        selected: chosen,
+        label: [name, what, if (indoor != null) 'room ${fmtTemp(indoor, unit)}'].join(', '),
+        onTap: onTap,
+        excludeSemantics: true,
+        child: Material(
+          color: background,
+          borderRadius: BorderRadius.circular(28),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 64),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 10, 16, 10),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: accent.withValues(alpha: on ? 0.22 : 0.10),
+                      ),
+                      child: Icon(
+                        on ? (kModeIcons[s.operationalMode] ?? Icons.power_settings_new) : Icons.power_settings_new,
+                        size: 22,
+                        color: on ? accent : scheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: text.titleMedium?.copyWith(
+                              color: foreground,
+                              fontWeight: chosen ? FontWeight.w600 : FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            what,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: text.bodyMedium?.copyWith(
+                              color: !online && s != null ? scheme.error : scheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (busy)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: accent),
+                        ),
+                      ),
+                    if (indoor != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Text(
+                          fmtTemp(indoor, unit),
+                          style: text.titleMedium?.copyWith(
+                            color: foreground,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

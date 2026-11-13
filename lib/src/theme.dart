@@ -20,6 +20,26 @@ Color accentForMode(String mode, ColorScheme scheme) {
   return semantic == null ? scheme.primary : semantic.harmonizeWith(scheme.primary);
 }
 
+/// A dark [scheme] on true black, for OLED screens: the background is #000,
+/// and the containers that sit on it are black lifted by a whisper of the
+/// palette's own tint, so cards, sheets and the selected tab still read as
+/// layers. Every accent, and every text colour, is left as it was: only what
+/// is behind them changes.
+ColorScheme pureBlack(ColorScheme scheme) {
+  const black = Color(0xFF000000);
+  Color lift(double a) => Color.alphaBlend(scheme.surfaceTint.withValues(alpha: a), black);
+  return scheme.copyWith(
+    surface: black,
+    surfaceDim: black,
+    surfaceBright: lift(0.14),
+    surfaceContainerLowest: black,
+    surfaceContainerLow: lift(0.04),
+    surfaceContainer: lift(0.06),
+    surfaceContainerHigh: lift(0.09),
+    surfaceContainerHighest: lift(0.12),
+  );
+}
+
 const List<String> kWeekdayShort = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 /// [accent] made dark (or light) enough to READ as text: at least 4.5:1, the

@@ -1,0 +1,11 @@
+{
+  "@@locale": "en",
+  "language": "Language",
+  "languageSystem": "System default",
+  "@language": {
+    "description": "Settings: the title of the language picker, and of the list it opens."
+  },
+  "@languageSystem": {
+    "description": "Settings, language picker: follow the phone's own language."
+  }
+}

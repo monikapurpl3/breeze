@@ -1,3 +1,4 @@
+import 'package:breeze/src/l10n.dart';
 import 'package:breeze/src/models.dart';
 import 'package:breeze/src/native_licenses.dart';
 import 'package:breeze/src/widgets/timer_sheet.dart';
@@ -120,6 +121,8 @@ void main() {
       bool startsSupported = true,
     }) async {
       await tester.pumpWidget(MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: appSupportedLocales,
         home: Builder(
           builder: (context) => TextButton(
             onPressed: () async => onResult(await TimerSheet.show(

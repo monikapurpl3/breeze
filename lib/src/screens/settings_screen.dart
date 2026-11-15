@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../app_info.dart';
 import '../app_scope.dart';
 import '../haptics.dart';
+import '../l10n.dart';
 import 'nerd_screen.dart';
 import 'servers_screen.dart';
 
@@ -70,6 +71,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  /// The language a tag names, by its own name; "System default" for none.
+  String _languageName(BuildContext context, String? tag) {
+    if (tag == null) return context.l10n.languageSystem;
+    for (final l in appLanguages) {
+      if (l.tag == tag) return l.name;
+    }
+    return tag;
+  }
+
+  Future<void> _pickLanguage(BuildContext context, String? current) async {
+    final c = AppScope.of(context);
+    // A one-element list, so "chose System default" (null) differs from
+    // "closed the dialog" (no list at all).
+    final chosen = await showDialog<List<String?>>(
+      context: context,
+      builder: (ctx) {
+        Widget option(String? tag, String name) => ListTile(
+              title: Text(name),
+              selected: tag == current,
+              trailing: tag == current ? const Icon(Icons.check) : null,
+              onTap: () => Navigator.pop(ctx, [tag]),
+            );
+        return SimpleDialog(
+          title: Text(ctx.l10n.language),
+          children: [
+            option(null, ctx.l10n.languageSystem),
+            for (final l in appLanguages) option(l.tag, l.name),
+          ],
+        );
+      },
+    );
+    if (chosen == null || chosen.first == current) return;
+    Haptics.select();
+    await c.setLanguage(chosen.first);
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = AppScope.of(context);
@@ -108,6 +145,12 @@ ${c.profiles.length} saved — tap to switch'''
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Text('Display', style: Theme.of(context).textTheme.labelLarge
                 ?.copyWith(color: scheme.primary)),
+          ),
+          ListTile(
+            leading: const Icon(Icons.translate),
+            title: Text(context.l10n.language),
+            subtitle: Text(_languageName(context, c.language)),
+            onTap: () => _pickLanguage(context, c.language),
           ),
           ListTile(
             leading: const Icon(Icons.brightness_6_outlined),

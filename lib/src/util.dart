@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'l10n.dart' show decimalSeparator;
+
 String hhmm(TimeOfDay t) =>
     '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
@@ -24,6 +26,6 @@ double toF(double c) => c * 9 / 5 + 32;
 /// With [showUnit] the result ends in °C/°F, otherwise just a degree sign.
 String fmtTemp(double celsius, String unit, {bool showUnit = true}) {
   final f = unit == 'F';
-  final v = (f ? toF(celsius) : celsius).toStringAsFixed(1);
+  final v = (f ? toF(celsius) : celsius).toStringAsFixed(1).replaceAll('.', decimalSeparator);
   return showUnit ? '$v°${f ? 'F' : 'C'}' : '$v°';
 }

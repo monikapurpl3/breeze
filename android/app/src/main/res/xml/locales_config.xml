@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The languages Breeze speaks, for Android 13's per-app language setting:
+     the same seven as lib/l10n/*.arb and Settings' picker. Serbian is
+     Cyrillic, Chinese is Simplified. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="fr" />
+    <locale android:name="hr" />
+    <locale android:name="it" />
+    <locale android:name="sl" />
+    <locale android:name="sr" />
+    <locale android:name="zh" />
+</locale-config>

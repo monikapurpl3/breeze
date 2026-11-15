@@ -11,6 +11,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:breeze/src/l10n.dart';
 import 'package:breeze/src/models.dart';
 import 'package:breeze/src/widgets/big_toggle.dart';
 import 'package:breeze/src/widgets/fan_control.dart';
@@ -27,6 +28,8 @@ SemanticsNode _slider(WidgetTester tester) => find.semantics
     .single;
 
 Widget _host(Widget child, Brightness brightness) => MaterialApp(
+  localizationsDelegates: appLocalizationsDelegates,
+  supportedLocales: appSupportedLocales,
   theme: ThemeData(
     colorSchemeSeed: const Color(0xFF00897B),
     brightness: brightness,

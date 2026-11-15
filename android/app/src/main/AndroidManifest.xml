@@ -12,6 +12,7 @@
         android:name="android.hardware.type.automotive"
         android:required="false"/>
     <application
+        android:localeConfig="@xml/locales_config"
         android:label="Breeze"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"

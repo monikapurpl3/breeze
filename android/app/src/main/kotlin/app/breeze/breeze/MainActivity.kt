@@ -1,7 +1,9 @@
 package app.breeze.breeze
 
+import android.app.LocaleManager
 import android.content.Context
 import android.os.Build
+import android.os.LocaleList
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -21,6 +23,27 @@ class MainActivity : FlutterActivity() {
                     result.notImplemented()
                 }
             }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "app.breeze/locale")
+            .setMethodCallHandler { call, result ->
+                if (call.method == "set") {
+                    setAppLanguage(call.arguments as? String ?: "")
+                    result.success(null)
+                } else {
+                    result.notImplemented()
+                }
+            }
+    }
+
+    /**
+     * The language chosen in Settings, as Android's per-app language (13 and
+     * newer), so the home-screen widget and Android Auto -- native text the
+     * app's own translations never reach -- follow it. Empty: the phone's.
+     * Older Android has no per-app language; there they follow the phone.
+     */
+    private fun setAppLanguage(tag: String) {
+        if (Build.VERSION.SDK_INT < 33) return
+        getSystemService(LocaleManager::class.java).applicationLocales =
+            if (tag.isEmpty()) LocaleList.getEmptyLocaleList() else LocaleList.forLanguageTags(tag)
     }
 
     private fun vibrator(): Vibrator? =

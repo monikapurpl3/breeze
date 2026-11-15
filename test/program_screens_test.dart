@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:breeze/src/l10n.dart';
 import 'package:breeze/src/api_client.dart';
 import 'package:breeze/src/app_controller.dart';
 import 'package:breeze/src/app_scope.dart';
@@ -73,6 +74,8 @@ Future<AppController> _controller() async {
 Widget _host(AppController c, Widget child, double scale) => AppScope(
       controller: c,
       child: MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: appSupportedLocales,
         builder: (context, app) => MediaQuery(
           data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
           child: app!,

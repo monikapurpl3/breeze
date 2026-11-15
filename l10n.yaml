@@ -1,0 +1,14 @@
+# Translations: `flutter gen-l10n` (run by every build, since pubspec sets
+# flutter: generate: true) turns lib/l10n/app_<lang>.arb into lib/l10n/gen/.
+#
+# app_en.arb is the template: every message is defined there, with an
+# @description saying where it appears, and every other language carries the
+# same keys. Serbian is app_sr.arb in Cyrillic; Chinese is app_zh.arb in
+# Simplified characters.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-dir: lib/l10n/gen
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+# AppLocalizations.of(context) is never null: the delegate is always present.
+nullable-getter: false

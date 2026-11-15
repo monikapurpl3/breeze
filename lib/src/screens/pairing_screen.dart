@@ -179,10 +179,18 @@ class _PairingScreenState extends State<PairingScreen> {
                   else
                     Column(
                       children: [
-                        LinearProgressIndicator(
-                          semanticsLabel: l.pairingTimeLeft,
-                          semanticsValue: l.pairingSeconds(_remaining),
-                          value: c.expiresIn == 0 ? null : _remaining / c.expiresIn,
+                        // Spoken as "Time left, 45 seconds", as before. Not
+                        // through the bar's own semanticsValue: a bar with a
+                        // value is a progress bar to Flutter 3.50, whose value
+                        // must be a number from 0 to 100, and asserts so.
+                        Semantics(
+                          label: l.pairingTimeLeft,
+                          value: l.pairingSeconds(_remaining),
+                          child: ExcludeSemantics(
+                            child: LinearProgressIndicator(
+                              value: c.expiresIn == 0 ? null : _remaining / c.expiresIn,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(l.pairingExpiresIn(_remaining),

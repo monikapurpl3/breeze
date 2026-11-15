@@ -55,7 +55,13 @@ class _NerdScreenState extends State<NerdScreen> {
   @override
   void initState() {
     super.initState();
-    unawaited(_load());
+    // After the first frame (which already shows the spinner): _load looks
+    // AppScope up, and an inherited-widget lookup during initState asserts in
+    // a debug build -- the error went into the unawaited future, and the tab
+    // spun for ever there.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(_load());
+    });
   }
 
   Future<void> _load() async {

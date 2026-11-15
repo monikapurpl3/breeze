@@ -1,3 +1,4 @@
+import 'l10n.dart' show AppLocalizations;
 import 'models.dart';
 
 /// Explains, in words, a change the air conditioner refused.
@@ -15,51 +16,47 @@ import 'models.dart';
 ///
 /// Kept word for word in step with the web panel's `static/js/feedback.js`, so
 /// the two clients say the same thing about the same refusal.
-String? notAppliedMessage(UnitState s) {
+String? notAppliedMessage(AppLocalizations l, UnitState s) {
   final fields = s.notApplied;
   if (fields.isEmpty) return null;
   final reasons = <String>[];
   for (final f in fields) {
-    final r = _reasonFor(f, s);
+    final r = _reasonFor(l, f, s);
     if (!reasons.contains(r)) reasons.add(r);
   }
-  return "The air conditioner didn't accept ${_joinNames(fields)}"
-      ' — the unit refused it, not Breeze Core. ${reasons.join(' ')}';
+  return l.controlNotApplied(_joinNames(l, fields), reasons.join(' '));
 }
 
-const _names = {
-  'swing_mode': 'the flap change',
-  'eco': 'eco',
-  'turbo': 'turbo',
-  'fan_speed': 'the fan speed',
-  'target_temperature': 'the temperature',
-  'operational_mode': 'the mode',
-  'power_state': 'the power change',
-};
+String _nameOf(AppLocalizations l, String field) => switch (field) {
+      'swing_mode' => l.controlNameSwing,
+      'eco' => l.controlNameEco,
+      'turbo' => l.controlNameTurbo,
+      'fan_speed' => l.controlNameFanSpeed,
+      'target_temperature' => l.controlNameTemperature,
+      'operational_mode' => l.controlNameMode,
+      'power_state' => l.controlNamePower,
+      _ => field.replaceAll('_', ' '),
+    };
 
-String _joinNames(List<String> fields) {
-  final n = [for (final f in fields) _names[f] ?? f.replaceAll('_', ' ')];
-  if (n.length <= 1) return n.isEmpty ? 'the change' : n.first;
-  return '${n.sublist(0, n.length - 1).join(', ')} and ${n.last}';
+String _joinNames(AppLocalizations l, List<String> fields) {
+  final n = [for (final f in fields) _nameOf(l, f)];
+  if (n.length <= 1) return n.isEmpty ? l.controlNameChange : n.first;
+  final rest = n.sublist(1, n.length - 1).fold(n.first, l.controlNamesList);
+  return l.controlNamesAnd(rest, n.last);
 }
 
-String _reasonFor(String field, UnitState s) {
+String _reasonFor(AppLocalizations l, String field, UnitState s) {
   final heating = s.operationalMode == 'HEAT';
   switch (field) {
     case 'swing_mode':
-      if (!s.powerState) return 'Units only move their flaps while they are running.';
-      if (heating) {
-        return 'While heating, it holds its flaps still until warm air is coming out, '
-            'which can take a few minutes after switching on or into heating. Try again shortly.';
-      }
-      return 'It may need a moment before it will take this. Try again shortly.';
+      if (!s.powerState) return l.controlReasonSwingOff;
+      if (heating) return l.controlReasonSwingHeating;
+      return l.controlReasonSwingWait;
     case 'eco':
-      return heating
-          ? 'Many units offer eco only while cooling, not while heating.'
-          : 'Many units offer eco only in some modes.';
+      return heating ? l.controlReasonEcoHeating : l.controlReasonEcoModes;
     case 'turbo':
-      return 'Many units offer turbo only in some modes.';
+      return l.controlReasonTurboModes;
     default:
-      return 'It does not take this in its current mode.';
+      return l.controlReasonOther;
   }
 }

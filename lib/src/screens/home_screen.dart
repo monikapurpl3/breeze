@@ -7,6 +7,7 @@ import '../app_scope.dart';
 import '../control_feedback.dart';
 import '../control_ledger.dart';
 import '../home_widget_service.dart';
+import '../l10n.dart';
 import '../layout.dart';
 import '../models.dart';
 import '../theme.dart';
@@ -174,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<bool> _guard(Future<void> Function() body) async {
     final controller = AppScope.of(context);
     final messenger = ScaffoldMessenger.of(context);
+    final l = context.l10n;
     try {
       await body();
       return true;
@@ -185,14 +187,14 @@ class _HomeScreenState extends State<HomeScreen> {
         final discarded = await controller.handleUnauthorized(e);
         if (!discarded) {
           _reauthing = false;
-          messenger.showSnackBar(SnackBar(content: Text(e.message)));
+          messenger.showSnackBar(SnackBar(content: Text(l.homeErrorDetail(e.message))));
         }
       } else if (e.upgradeRequired) {
         if (!await controller.attemptUpgrade()) {
-          messenger.showSnackBar(SnackBar(content: Text(e.message)));
+          messenger.showSnackBar(SnackBar(content: Text(l.homeErrorDetail(e.message))));
         }
       } else {
-        messenger.showSnackBar(SnackBar(content: Text(e.message)));
+        messenger.showSnackBar(SnackBar(content: Text(l.homeErrorDetail(e.message))));
       }
       return false;
     }
@@ -204,6 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!mounted) return;
     final controller = AppScope.of(context);
     final messenger = ScaffoldMessenger.of(context);
+    final l = context.l10n;
     if (e.unauthorized && !_reauthing) {
       _reauthing = true;
       final discarded = await controller.handleUnauthorized(e);
@@ -219,14 +222,14 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     if (e.upgradeRequired) {
       final ok = await controller.attemptUpgrade();
-      if (!ok && !silent) messenger.showSnackBar(SnackBar(content: Text(e.message)));
+      if (!ok && !silent) messenger.showSnackBar(SnackBar(content: Text(l.homeErrorDetail(e.message))));
       return;
     }
     if (e.status == 0) {
       if (mounted) setState(() => _offline = true);
       return;
     }
-    if (!silent) messenger.showSnackBar(SnackBar(content: Text(e.message)));
+    if (!silent) messenger.showSnackBar(SnackBar(content: Text(l.homeErrorDetail(e.message))));
   }
 
   /// Pull every unit's state. Prefers the one-shot batch endpoint; falls
@@ -286,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _loading = false;
           _offline = !ok;
-          _error = (!ok && _states.isEmpty) ? 'Could not load your units.' : null;
+          _error = (!ok && _states.isEmpty) ? context.l10n.homeLoadFailed : null;
           if (_page >= _units.length) _page = _units.isEmpty ? 0 : _units.length - 1;
         });
         // The unit list may have changed (added/removed/reordered) — snap the
@@ -339,6 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Carry out what the timer sheet chose for one unit.
   Future<void> _onTimer(String unitId, TimerChoice choice) async {
+    final l = context.l10n;
     try {
       switch (choice) {
         case CancelTimer(:final timer):
@@ -346,17 +350,17 @@ class _HomeScreenState extends State<HomeScreen> {
           if (mounted) {
             setState(() => (timer.isStart ? _starts : _timers).remove(unitId));
           }
-          _toast(timer.isStart ? 'Scheduled start cancelled' : 'Timer cancelled');
+          _toast(timer.isStart ? l.homeStartCancelled : l.homeTimerCancelled);
         case SleepFor(:final minutes):
           final t = await _api.createTimer(unitId, minutes);
           if (mounted) setState(() => _timers[unitId] = t);
           // The server decided the moment, so quote its answer rather than the
           // minutes that were asked for.
-          _toast('Switching off at ${t.firesAtClock}');
+          _toast(l.homeSwitchingOffAt(t.firesAtClock));
         case StartAt(:final days, :final at):
           final t = await _api.createStartTimer(unitId, days, at);
           if (mounted) setState(() => _starts[unitId] = t);
-          _toast('Switching on ${t.whenLabel}');
+          _toast(l.homeSwitchingOn(t.whenLabel(l)));
       }
     } on ApiException catch (e) {
       // A time already gone today comes back as a 422 whose message says so,
@@ -378,7 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
         content: Text(message),
         duration: duration,
         persist: keep,
-        action: keep ? SnackBarAction(label: 'OK', onPressed: () {}) : null,
+        action: keep ? SnackBarAction(label: context.l10n.actionOk, onPressed: () {}) : null,
       ));
   }
 
@@ -422,7 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() => _states[id] = show);
         // The unit answered but may have refused part of it. Say so, and whose
         // doing it was, rather than let the control silently spring back.
-        final note = notAppliedMessage(show);
+        final note = notAppliedMessage(context.l10n, show);
         if (note != null) {
           Haptics.failure(); // felt, too, not only seen or heard
           _toast(note, duration: const Duration(seconds: 8), keepForReader: true);
@@ -449,21 +453,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _rename(String id, String current) async {
+    final l = context.l10n;
     final ctrl = TextEditingController(text: current);
     final name = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Rename unit'),
+        title: Text(l.homeRenameTitle),
         content: TextField(
           controller: ctrl,
           autofocus: true,
           maxLength: 64,
-          decoration: const InputDecoration(labelText: 'Name'),
+          decoration: InputDecoration(labelText: l.homeNameField),
           onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, ctrl.text.trim()), child: const Text('Save')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.actionCancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, ctrl.text.trim()), child: Text(l.actionSave)),
         ],
       ),
     );
@@ -473,14 +478,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _removeUnit(String id, String name) async {
+    final l = context.l10n;
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Remove unit'),
-        content: Text('Remove "$name" from the server? You can add it back later.'),
+        title: Text(l.homeRemoveTitle),
+        content: Text(l.homeRemoveBody(name)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Remove')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.actionCancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l.actionRemove)),
         ],
       ),
     );
@@ -496,6 +502,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ---- adding units: scan or manual --------------------------------------
 
   Future<void> _addUnit() async {
+    final l = context.l10n;
     final choice = await showModalBottomSheet<String>(
       context: context,
       showDragHandle: true,
@@ -505,14 +512,14 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.wifi_find),
-              title: const Text('Scan the network'),
-              subtitle: const Text('Find units by looking for open AC ports'),
+              title: Text(l.homeAddScanTitle),
+              subtitle: Text(l.homeAddScanSubtitle),
               onTap: () => Navigator.pop(ctx, 'scan'),
             ),
             ListTile(
               leading: const Icon(Icons.keyboard),
-              title: const Text('Enter IP address'),
-              subtitle: const Text('Add a unit manually by its LAN IP'),
+              title: Text(l.homeAddIpTitle),
+              subtitle: Text(l.homeAddIpSubtitle),
               onTap: () => Navigator.pop(ctx, 'ip'),
             ),
             const SizedBox(height: 8),
@@ -542,12 +549,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _addByIp({String? prefillIp}) async {
+    final l = context.l10n;
     final ipC = TextEditingController(text: prefillIp ?? '');
     final nameC = TextEditingController();
     final go = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Add unit by IP'),
+        title: Text(l.homeAddByIpTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -555,18 +563,18 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: ipC,
               autofocus: true,
               keyboardType: TextInputType.visiblePassword,
-              decoration: const InputDecoration(labelText: 'Unit IP address', hintText: '192.168.1.73'),
+              decoration: InputDecoration(labelText: l.homeUnitIpField, hintText: '192.168.1.73'),
             ),
             TextField(
               controller: nameC,
               maxLength: 64,
-              decoration: const InputDecoration(labelText: 'Name (optional)'),
+              decoration: InputDecoration(labelText: l.homeNameOptionalField),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Add')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.actionCancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l.actionAdd)),
         ],
       ),
     );
@@ -579,10 +587,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _addResolvedIp(String ip, String? name) async {
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
-    messenger.showSnackBar(const SnackBar(content: Text('Discovering unit…')));
+    final l = context.l10n;
+    messenger.showSnackBar(SnackBar(content: Text(l.homeDiscovering)));
     final ok = await _guard(() async {
       final u = await _api.addUnitByIp(ip, (name == null || name.isEmpty) ? null : name);
-      messenger.showSnackBar(SnackBar(content: Text('Added "${u['name']}"')));
+      messenger.showSnackBar(SnackBar(content: Text(l.homeAdded('${u['name']}'))));
     });
     if (ok && mounted) await _loadAll();
   }
@@ -630,27 +639,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return Scaffold(
       appBar: AppBar(
         title: const _Title(),
         actions: [
           IconButton(
-            tooltip: 'Add unit',
+            tooltip: l.homeTooltipAddUnit,
             icon: const Icon(Icons.add),
             onPressed: _addUnit,
           ),
           IconButton(
-            tooltip: 'Programs',
+            tooltip: l.homeTooltipPrograms,
             icon: const Icon(Icons.schedule),
             onPressed: () => _open(ProgramsScreen(units: _units)),
           ),
           IconButton(
-            tooltip: 'Diagnostics',
+            tooltip: l.homeTooltipDiagnostics,
             icon: const Icon(Icons.troubleshoot),
             onPressed: () => _open(const DiagnosticsScreen()),
           ),
           IconButton(
-            tooltip: 'Settings',
+            tooltip: l.homeTooltipSettings,
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => _open(const SettingsScreen()),
           ),
@@ -682,11 +692,11 @@ class _HomeScreenState extends State<HomeScreen> {
               // otherwise only the banner's colour says why.
               child: Semantics(
                 liveRegion: true,
-                child: Text('Can’t reach the server — retrying…',
+                child: Text(context.l10n.homeOfflineBanner,
                     style: TextStyle(color: scheme.onErrorContainer)),
               ),
             ),
-            TextButton(onPressed: _loadAll, child: const Text('Retry')),
+            TextButton(onPressed: _loadAll, child: Text(context.l10n.actionRetry)),
           ],
         ),
       ),
@@ -694,27 +704,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBody() {
+    final l = context.l10n;
     if (_loading && _states.isEmpty) {
       // Live: after pairing the screen changes under a screen-reader user
       // with nothing said; this is what tells them it worked.
-      return const LoadingCat(
-        label: 'Reaching your Breeze Core server…',
+      return LoadingCat(
+        label: l.homeReachingServer,
         live: true,
       );
     }
     if (_error != null && _states.isEmpty) {
       return _CenteredMessage(
         text: _error!,
-        action: FilledButton(onPressed: _loadAll, child: const Text('Retry')),
+        action: FilledButton(onPressed: _loadAll, child: Text(l.actionRetry)),
       );
     }
     if (_units.isEmpty) {
       return _CenteredMessage(
-        text: 'No units yet.',
+        text: l.homeNoUnits,
         action: FilledButton.icon(
           onPressed: _addUnit,
           icon: const Icon(Icons.add),
-          label: const Text('Add a unit'),
+          label: Text(l.homeAddAUnit),
         ),
       );
     }
@@ -765,7 +776,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final u = _units[i];
     final s = _states[u.id];
     if (s == null) {
-      return LoadingCat(label: 'Connecting to ${u.name}…');
+      return LoadingCat(label: context.l10n.homeConnectingTo(u.name));
     }
     return UnitPage(
       key: ValueKey(u.id),
@@ -839,6 +850,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // between units, which Switch Access, Voice Access and a shaky finger all
   // find hard. The position is said as words, and again when it changes.
   Widget _dots(BuildContext context) {
+    final l = context.l10n;
     final scheme = Theme.of(context).colorScheme;
     final page = _page.clamp(0, _units.length - 1);
     return Padding(
@@ -847,13 +859,13 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
-            tooltip: 'Previous unit',
+            tooltip: l.homePreviousUnit,
             icon: const Icon(Icons.chevron_left),
             onPressed: page > 0 ? () => _goToPage(page - 1) : null,
           ),
           Semantics(
             liveRegion: true,
-            label: 'Unit ${page + 1} of ${_units.length}, ${_units[page].name}',
+            label: l.homeUnitPosition(page + 1, _units.length, _units[page].name),
             excludeSemantics: true,
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -873,7 +885,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           IconButton(
-            tooltip: 'Next unit',
+            tooltip: l.homeNextUnit,
             icon: const Icon(Icons.chevron_right),
             onPressed: page < _units.length - 1 ? () => _goToPage(page + 1) : null,
           ),
@@ -903,6 +915,7 @@ class _UnitTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
     final unit = AppScope.of(context).tempUnit;
@@ -915,12 +928,12 @@ class _UnitTile extends StatelessWidget {
             ? scheme.error
             : accentForMode(s.operationalMode, scheme);
     final what = s == null
-        ? 'connecting…'
+        ? l.homeTileConnecting
         : !online
-            ? 'offline'
+            ? l.stateOffline
             : on
-                ? '${kModeLabels[s.operationalMode] ?? s.operationalMode.toLowerCase()}, ${fmtTemp(s.targetTemperature, unit)}'
-                : 'off';
+                ? l.homeTileOn(modeLabel(l, s.operationalMode), fmtTemp(s.targetTemperature, unit))
+                : l.stateOff;
     final indoor = s?.indoorTemperature;
     final background = chosen ? scheme.secondaryContainer : Colors.transparent;
     final foreground = chosen ? scheme.onSecondaryContainer : scheme.onSurface;
@@ -930,7 +943,7 @@ class _UnitTile extends StatelessWidget {
       child: Semantics(
         button: true,
         selected: chosen,
-        label: [name, what, if (indoor != null) 'room ${fmtTemp(indoor, unit)}'].join(', '),
+        label: [name, what, if (indoor != null) l.homeTileRoom(fmtTemp(indoor, unit))].join(', '),
         onTap: onTap,
         excludeSemantics: true,
         child: Material(
@@ -1044,8 +1057,10 @@ class _Title extends StatelessWidget {
               ].join(' · ');
               return Semantics(
                 label: ms == null
-                    ? 'Latency not measured yet'
-                    : 'Latency $ms milliseconds${onFallback ? ', through a fallback address' : ''}',
+                    ? context.l10n.homeLatencyUnmeasured
+                    : onFallback
+                        ? context.l10n.homeLatencyFallback(ms)
+                        : context.l10n.homeLatency(ms),
                 excludeSemantics: true,
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -1134,8 +1149,9 @@ class _ScanDialogState extends State<_ScanDialog> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
     return AlertDialog(
-      title: const Text('Scan for units'),
+      title: Text(l.homeScanTitle),
       content: SizedBox(
         width: 320,
         child: _body(scheme),
@@ -1143,39 +1159,38 @@ class _ScanDialogState extends State<_ScanDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, '__manual__'),
-          child: const Text('Enter IP instead'),
+          child: Text(l.homeScanEnterIp),
         ),
         if (!_loading)
-          TextButton(onPressed: _run, child: const Text('Rescan')),
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          TextButton(onPressed: _run, child: Text(l.homeScanRescan)),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.actionClose)),
       ],
     );
   }
 
   Widget _body(ColorScheme scheme) {
+    final l = context.l10n;
     if (_loading) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Scanning the network…'),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(l.homeScanning),
           ],
         ),
       );
     }
     if (_tooOld) {
-      return const Text(
-          'This server is older than 3.0 and can’t scan. Add the unit by its IP instead.');
+      return Text(l.homeScanTooOld);
     }
     if (_error != null) {
-      return Text('Scan failed: $_error');
+      return Text(l.homeScanFailed(_error!));
     }
     if (_found.isEmpty) {
-      return const Text('No units found. Make sure they’re powered on and on this network, '
-          'or add one by its IP.');
+      return Text(l.homeScanNoneFound);
     }
     return ClipRect(
       child: ListView(
@@ -1196,7 +1211,7 @@ class _ScanDialogState extends State<_ScanDialog> {
       leading: Icon(known ? Icons.check_circle : Icons.ac_unit,
           color: known ? scheme.primary : scheme.onSurfaceVariant),
       title: Text(ip),
-      subtitle: Text(known ? 'already added' : 'port $port open'),
+      subtitle: Text(known ? context.l10n.homeScanAlreadyAdded : context.l10n.homeScanPortOpen('$port')),
       enabled: !known,
       onTap: known ? null : () => Navigator.pop(context, ip),
     );

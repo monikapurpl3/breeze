@@ -42,7 +42,7 @@ jobs:
         with:
           # The version the Android releases are built with, so both apps run
           # the same Dart.
-          flutter-version: 3.44.4
+          flutter-version: 3.50.0
           channel: stable
           cache: true
       - name: Toolchain

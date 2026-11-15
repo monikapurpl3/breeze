@@ -6,6 +6,18 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<!-- The languages Breeze speaks (lib/l10n): without this list iOS offers
+	     the app in English only, whatever the phone's language. -->
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>hr</string>
+		<string>sr</string>
+		<string>sl</string>
+		<string>fr</string>
+		<string>it</string>
+		<string>zh-Hans</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>Breeze</string>
 	<key>CFBundleExecutable</key>

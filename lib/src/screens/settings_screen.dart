@@ -64,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ..showSnackBar(SnackBar(
           duration: const Duration(milliseconds: 700),
           content: Text(left == 1
-              ? 'One more tap…'
+              ? "One more tap, and you're a nerd…"
               : '$left taps until you are a nerd'),
         ));
     }
@@ -128,15 +128,15 @@ ${c.profiles.length} saved — tap to switch'''
           ),
           SwitchListTile(
             secondary: const Icon(Icons.contrast),
-            title: const Text('Pure black'),
-            subtitle: const Text('Black backgrounds whenever the dark theme shows — kind to OLED screens'),
+            title: const Text('AMOLED Black'),
+            subtitle: const Text('Supported devices only'),
             value: c.pureBlack,
             onChanged: c.setPureBlack,
           ),
           ListTile(
             leading: const Icon(Icons.thermostat_outlined),
             title: const Text('Temperature unit'),
-            subtitle: const Text('Display only — the server always uses Celsius'),
+            subtitle: const Text('Display only, the server always uses Celsius'),
             trailing: SegmentedButton<String>(
               segments: const [
                 ButtonSegment(value: 'C', label: Text('°C')),

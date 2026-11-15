@@ -11,6 +11,7 @@ import 'package:material_ui/material_ui.dart';
 import '../app_controller.dart';
 import '../app_scope.dart';
 import '../haptics.dart';
+import '../l10n.dart';
 import '../secure_store.dart';
 
 /// Back to the screen this was opened from, unless the app has just changed
@@ -38,16 +39,17 @@ class ServersScreen extends StatelessWidget {
     final c = AppScope.of(context);
     final scheme = Theme.of(context).colorScheme;
     final profiles = c.profiles;
+    final l = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Servers')),
+      appBar: AppBar(title: Text(l.serversTitle)),
       body: ListView(
         padding: const EdgeInsets.only(bottom: 24),
         children: [
           if (profiles.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(24),
-              child: Text('No servers saved yet.'),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(l.serversEmpty),
             ),
           for (final p in profiles)
             _ServerTile(
@@ -68,8 +70,8 @@ class ServersScreen extends StatelessWidget {
           const Divider(height: 24),
           ListTile(
             leading: Icon(Icons.add_circle_outline, color: scheme.primary),
-            title: const Text('Add a server'),
-            subtitle: const Text('Pair with another Breeze Core; this one stays saved'),
+            title: Text(l.serversAdd),
+            subtitle: Text(l.serversAddHint),
             onTap: () {
               Haptics.tick();
               // Settings as well as this screen, or onboarding opens under it.
@@ -88,20 +90,20 @@ class ServersScreen extends StatelessWidget {
     final name = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Rename server'),
+        title: Text(ctx.l10n.serversRenameTitle),
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(
-            labelText: 'Name',
-            helperText: 'Just a label on this phone',
+          decoration: InputDecoration(
+            labelText: ctx.l10n.serversName,
+            helperText: ctx.l10n.serversNameHelper,
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.actionCancel)),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Save'),
+            child: Text(ctx.l10n.actionSave),
           ),
         ],
       ),
@@ -116,19 +118,16 @@ class ServersScreen extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Forget ${p.name}?'),
-        content: const Text(
-          'This phone will erase that server\'s address, access key and device '
-          'credential. Pairing again needs an admin on that network.',
-        ),
+        title: Text(ctx.l10n.serversForgetTitle(p.name)),
+        content: Text(ctx.l10n.serversForgetBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.l10n.actionCancel)),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(ctx).colorScheme.error,
             ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Forget'),
+            child: Text(ctx.l10n.serversForget),
           ),
         ],
       ),
@@ -165,6 +164,7 @@ class _ServerTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
     return ListTile(
       leading: Icon(
         active ? Icons.check_circle : Icons.dns_outlined,
@@ -174,16 +174,15 @@ class _ServerTile extends StatelessWidget {
           style: TextStyle(fontWeight: active ? FontWeight.w600 : FontWeight.normal)),
       subtitle: Text(
         '${profile.url}\n'
-        '${profile.hasCredential ? 'paired' : 'not paired'} · '
-        'auth v${profile.authVersion} · as "${profile.label}"',
+        '${l.serversDetail(profile.hasCredential ? l.serversPaired : l.serversNotPaired, profile.authVersion, profile.label)}',
       ),
       isThreeLine: true,
       onTap: onTap,
       trailing: PopupMenuButton<String>(
         onSelected: (v) => v == 'rename' ? onRename() : onForget(),
-        itemBuilder: (_) => const [
-          PopupMenuItem(value: 'rename', child: Text('Rename')),
-          PopupMenuItem(value: 'forget', child: Text('Forget')),
+        itemBuilder: (_) => [
+          PopupMenuItem(value: 'rename', child: Text(l.actionRename)),
+          PopupMenuItem(value: 'forget', child: Text(l.serversForget)),
         ],
       ),
     );

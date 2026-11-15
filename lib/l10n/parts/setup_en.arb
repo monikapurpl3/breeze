@@ -1,0 +1,961 @@
+{
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Settings screen: the app bar title."
+  },
+  "settingsServer": "Server",
+  "@settingsServer": {
+    "description": "Settings: the row showing the server this app talks to; its address is underneath. Opens the list of saved servers."
+  },
+  "settingsServersSaved": "{count, plural, one{{count} saved — tap to switch} other{{count} saved — tap to switch}}",
+  "@settingsServersSaved": {
+    "description": "Settings, Server row, second line when more than one server is saved: how many are saved, and that tapping the row switches between them.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsThisDevice": "This device",
+  "@settingsThisDevice": {
+    "description": "Settings: the row showing this phone's name on the server (the name itself is underneath)."
+  },
+  "settingsDisplay": "Display",
+  "@settingsDisplay": {
+    "description": "Settings: section heading for display preferences (language, theme, units)."
+  },
+  "settingsTheme": "Theme",
+  "@settingsTheme": {
+    "description": "Settings: the light/dark theme setting."
+  },
+  "settingsThemeHint": "Follow system, or force light / dark",
+  "@settingsThemeHint": {
+    "description": "Settings, Theme: what the choice below does."
+  },
+  "settingsThemeSystem": "System",
+  "@settingsThemeSystem": {
+    "description": "Settings, Theme: a segment of a three-way button; follow the phone. Very short: three share one row."
+  },
+  "settingsThemeLight": "Light",
+  "@settingsThemeLight": {
+    "description": "Settings, Theme: segment; always the light theme. Very short."
+  },
+  "settingsThemeDark": "Dark",
+  "@settingsThemeDark": {
+    "description": "Settings, Theme: segment; always the dark theme. Very short."
+  },
+  "settingsPureBlack": "AMOLED Black",
+  "@settingsPureBlack": {
+    "description": "Settings: switch for a pure black background in the dark theme, for AMOLED screens."
+  },
+  "settingsPureBlackHint": "Supported devices only",
+  "@settingsPureBlackHint": {
+    "description": "Settings, AMOLED Black: it only takes effect on some phones."
+  },
+  "settingsTempUnit": "Temperature unit",
+  "@settingsTempUnit": {
+    "description": "Settings: Celsius or Fahrenheit. A °C / °F button sits beside it, so space is tight."
+  },
+  "settingsTempUnitHint": "Display only, the server always uses Celsius",
+  "@settingsTempUnitHint": {
+    "description": "Settings, Temperature unit: the choice only changes what is shown; the server always works in Celsius."
+  },
+  "settingsBehaviour": "Behaviour",
+  "@settingsBehaviour": {
+    "description": "Settings: section heading for how the app behaves."
+  },
+  "settingsBeep": "Beep on control",
+  "@settingsBeep": {
+    "description": "Settings: switch; the air conditioner beeps when it receives a command."
+  },
+  "settingsBeepHint": "Make the unit chirp when it accepts a command",
+  "@settingsBeepHint": {
+    "description": "Settings, Beep on control: explanation."
+  },
+  "settingsRepair": "Re-pair this device",
+  "@settingsRepair": {
+    "description": "Settings: start pairing this phone with the server again."
+  },
+  "settingsRepairHint": "Get a new pairing code and re-authorise",
+  "@settingsRepairHint": {
+    "description": "Settings, Re-pair: explanation."
+  },
+  "settingsRepairTitle": "Re-pair device?",
+  "@settingsRepairTitle": {
+    "description": "Settings, Re-pair: title of the confirmation dialog."
+  },
+  "settingsRepairBody": "This forgets the current access token and starts pairing again.",
+  "@settingsRepairBody": {
+    "description": "Settings, Re-pair: body of the confirmation dialog."
+  },
+  "settingsForgetServer": "Forget this server",
+  "@settingsForgetServer": {
+    "description": "Settings: remove the current server from this phone (shown in red)."
+  },
+  "settingsForgetServerHint": "Erase its address, key and credential from this phone",
+  "@settingsForgetServerHint": {
+    "description": "Settings, Forget this server: explanation."
+  },
+  "settingsForgetServerTitle": "Forget this server?",
+  "@settingsForgetServerTitle": {
+    "description": "Settings, Forget this server: title of the confirmation dialog."
+  },
+  "settingsForgetServerBody": "This erases the stored server address, access key and device credential. Other saved servers are untouched.",
+  "@settingsForgetServerBody": {
+    "description": "Settings, Forget this server: body of the confirmation dialog."
+  },
+  "settingsConfirm": "Confirm",
+  "@settingsConfirm": {
+    "description": "Settings: the button that confirms re-pairing or forgetting a server."
+  },
+  "settingsLicences": "Licences",
+  "@settingsLicences": {
+    "description": "Settings: opens the open-source licences page."
+  },
+  "settingsLicencesHint": "Open-source licences for this app",
+  "@settingsLicencesHint": {
+    "description": "Settings, Licences: explanation."
+  },
+  "settingsLegalese": "AGPL-3.0-or-later. A client for a self-hosted Breeze Core server; requests are signed per-device with an Ed25519 key that never leaves this phone.",
+  "@settingsLegalese": {
+    "description": "Licences page: the short legal note under the app name. \"AGPL-3.0-or-later\" is a licence identifier; keep it as it is."
+  },
+  "settingsNerdOneMoreTap": "One more tap, and you're a nerd…",
+  "@settingsNerdOneMoreTap": {
+    "description": "Settings: snack bar after the sixth tap on the version row; the seventh opens the hidden Nerd screen. Playful."
+  },
+  "settingsNerdTapsLeft": "{count, plural, one{{count} tap until you are a nerd} other{{count} taps until you are a nerd}}",
+  "@settingsNerdTapsLeft": {
+    "description": "Settings: snack bar counting down the taps on the version row that open the hidden Nerd screen (shown for 3 and 2). Playful.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serversTitle": "Servers",
+  "@serversTitle": {
+    "description": "Servers screen (saved servers): the app bar title."
+  },
+  "serversEmpty": "No servers saved yet.",
+  "@serversEmpty": {
+    "description": "Servers screen: shown when no server is saved."
+  },
+  "serversAdd": "Add a server",
+  "@serversAdd": {
+    "description": "Servers screen: the row that adds another server; also the title of the setup screen opened from it."
+  },
+  "serversAddHint": "Pair with another Breeze Core; this one stays saved",
+  "@serversAddHint": {
+    "description": "Servers screen, Add a server: explanation. The current server stays saved."
+  },
+  "serversRenameTitle": "Rename server",
+  "@serversRenameTitle": {
+    "description": "Servers screen: title of the rename dialog."
+  },
+  "serversName": "Name",
+  "@serversName": {
+    "description": "Servers screen, rename dialog: the name field."
+  },
+  "serversNameHelper": "Just a label on this phone",
+  "@serversNameHelper": {
+    "description": "Servers screen, rename dialog: under the name field; the name is only shown on this phone, not sent to the server."
+  },
+  "serversForgetTitle": "Forget {name}?",
+  "@serversForgetTitle": {
+    "description": "Servers screen: title of the dialog that removes a saved server. {name} is the server's name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "serversForgetBody": "This phone will erase that server's address, access key and device credential. Pairing again needs an admin on that network.",
+  "@serversForgetBody": {
+    "description": "Servers screen: body of the dialog that removes a saved server."
+  },
+  "serversForget": "Forget",
+  "@serversForget": {
+    "description": "Servers screen: menu item and dialog button that remove a saved server from this phone."
+  },
+  "serversPaired": "paired",
+  "@serversPaired": {
+    "description": "Servers screen, a server's details: this phone is paired with it. Lower case; fills {status} in serversDetail."
+  },
+  "serversNotPaired": "not paired",
+  "@serversNotPaired": {
+    "description": "Servers screen, a server's details: this phone is not paired with it (yet, or any more). Lower case."
+  },
+  "serversDetail": "{status} · auth v{version} · as \"{label}\"",
+  "@serversDetail": {
+    "description": "Servers screen, second line of a saved server: whether this phone is paired ({status}: serversPaired or serversNotPaired), the auth scheme version (\"auth v2\"; keep \"auth v\" as is), and the name this phone has on that server ({label}, never translated).",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "version": {
+        "type": "int"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingTitle": "Pair this device",
+  "@pairingTitle": {
+    "description": "Pairing screen: the app bar title, while the phone waits for an admin to approve it. A \"Change server\" button shares the bar, so keep it short."
+  },
+  "pairingChangeServer": "Change server",
+  "@pairingChangeServer": {
+    "description": "Pairing screen: app bar button; go back and use another server."
+  },
+  "pairingYourCode": "Your pairing code",
+  "@pairingYourCode": {
+    "description": "Pairing screen: heading above the pairing code."
+  },
+  "pairingGettingCode": "Getting a pairing code",
+  "@pairingGettingCode": {
+    "description": "Pairing screen, screen reader: the code has not arrived yet."
+  },
+  "pairingCodeSpoken": "Pairing code {code}",
+  "@pairingCodeSpoken": {
+    "description": "Pairing screen, screen reader: the pairing code, spelled out character by character ({code}, never translated).",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingCopyCode": "Copy the code",
+  "@pairingCopyCode": {
+    "description": "Pairing screen: tooltip of the button that copies the code."
+  },
+  "pairingCodeExpired": "Code expired",
+  "@pairingCodeExpired": {
+    "description": "Pairing screen: the code ran out of time (shown in red)."
+  },
+  "pairingNewCode": "Get a new code",
+  "@pairingNewCode": {
+    "description": "Pairing screen: button; ask the server for a fresh code."
+  },
+  "pairingNewCodeFailed": "Could not get a new code: {error}",
+  "@pairingNewCodeFailed": {
+    "description": "Pairing screen: snack bar; asking for a new code failed. {error} is a technical message in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingTimeLeft": "Time left",
+  "@pairingTimeLeft": {
+    "description": "Pairing screen, screen reader: the name of the countdown bar."
+  },
+  "pairingSeconds": "{count, plural, one{{count} second} other{{count} seconds}}",
+  "@pairingSeconds": {
+    "description": "Pairing screen, screen reader: the countdown bar's value, in seconds.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pairingExpiresIn": "expires in {seconds}s · waiting for approval…",
+  "@pairingExpiresIn": {
+    "description": "Pairing screen: small line under the countdown bar. {seconds} with the unit symbol \"s\"; lower case.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "pairingExpiresInSpoken": "{count, plural, one{Expires in {count} second. Waiting for approval.} other{Expires in {count} seconds. Waiting for approval.}}",
+  "@pairingExpiresInSpoken": {
+    "description": "Pairing screen, screen reader: the same line as pairingExpiresIn, in words.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pairingSecondsLeftWarning": "{count, plural, one{{count} second left on the pairing code.} other{{count} seconds left on the pairing code.}}",
+  "@pairingSecondsLeftWarning": {
+    "description": "Pairing screen, screen reader: said once, shortly before the code expires.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pairingInstructions": "Enter this code in your server’s approval tool within the time limit. Approval must be done by an administrator on the local network.",
+  "@pairingInstructions": {
+    "description": "Pairing screen: what to do with the code."
+  },
+  "onboardingCancelAdd": "Cancel adding a server",
+  "@onboardingCancelAdd": {
+    "description": "Setup screen, when adding a second server: tooltip of the close button."
+  },
+  "onboardingWelcome": "Welcome to Breeze",
+  "@onboardingWelcome": {
+    "description": "Setup screen (first run): the big heading."
+  },
+  "onboardingTagline": "Control your air conditioning from anywhere — without handing it to the cloud.",
+  "@onboardingTagline": {
+    "description": "Setup screen: the line under the heading."
+  },
+  "onboardingStep1Title": "Point it at your server",
+  "@onboardingStep1Title": {
+    "description": "Setup screen, step 1 of 3: tell the app where the server is."
+  },
+  "onboardingStep1Body": "Its address and access key.",
+  "@onboardingStep1Body": {
+    "description": "Setup screen, step 1: what to enter."
+  },
+  "onboardingStep2Title": "Get a pairing code",
+  "@onboardingStep2Title": {
+    "description": "Setup screen, step 2 of 3."
+  },
+  "onboardingStep2Body": "Shown on the next screen.",
+  "@onboardingStep2Body": {
+    "description": "Setup screen, step 2: where the code appears."
+  },
+  "onboardingStep3Title": "Someone approves it",
+  "@onboardingStep3Title": {
+    "description": "Setup screen, step 3 of 3: someone approves the pairing code."
+  },
+  "onboardingStep3Body": "An admin on your home network — this keeps strangers out.",
+  "@onboardingStep3Body": {
+    "description": "Setup screen, step 3: who approves, and why."
+  },
+  "onboardingServerAddress": "Server address",
+  "@onboardingServerAddress": {
+    "description": "Setup screen: label of the server address field."
+  },
+  "onboardingServerAddressHelper": "Or a LAN address like 192.168.1.10:8420",
+  "@onboardingServerAddressHelper": {
+    "description": "Setup screen: one line under the server address field. Keep the example address as it is."
+  },
+  "onboardingAccessKey": "Access key",
+  "@onboardingAccessKey": {
+    "description": "Setup screen: label of the access key field."
+  },
+  "onboardingAccessKeyHelper": "From your server's config.json",
+  "@onboardingAccessKeyHelper": {
+    "description": "Setup screen: one line under the access key field; where to find the key. config.json is a file name."
+  },
+  "onboardingShowKey": "Show",
+  "@onboardingShowKey": {
+    "description": "Setup screen: tooltip of the eye button that shows the access key."
+  },
+  "onboardingHideKey": "Hide",
+  "@onboardingHideKey": {
+    "description": "Setup screen: tooltip of the eye button that hides the access key again."
+  },
+  "onboardingDeviceName": "Name for this device",
+  "@onboardingDeviceName": {
+    "description": "Setup screen: label of the field for this phone's name on the server."
+  },
+  "onboardingDeviceNameHelper": "How this phone appears in the server's device list",
+  "@onboardingDeviceNameHelper": {
+    "description": "Setup screen: one line under the device name field."
+  },
+  "onboardingSuggestName": "Suggest another name",
+  "@onboardingSuggestName": {
+    "description": "Setup screen: tooltip of the dice button that suggests a different random device name."
+  },
+  "onboardingKeyRejected": "That access key was rejected.",
+  "@onboardingKeyRejected": {
+    "description": "Setup screen: error; the server refused the access key."
+  },
+  "onboardingConnectFailed": "Could not connect: {detail}",
+  "@onboardingConnectFailed": {
+    "description": "Setup screen: error; the server could not be reached or refused. {detail} is a technical message in English.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingErrorSpoken": "Error: {error}",
+  "@onboardingErrorSpoken": {
+    "description": "Setup screen, screen reader: announces an error ({error}, the text shown).",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingConnecting": "Connecting…",
+  "@onboardingConnecting": {
+    "description": "Setup screen: the main button while connecting."
+  },
+  "onboardingContinue": "Continue",
+  "@onboardingContinue": {
+    "description": "Setup screen: the main button."
+  },
+  "onboardingPrivacy": "Encrypted over HTTPS. This phone gets its own key, which never leaves the device.",
+  "@onboardingPrivacy": {
+    "description": "Setup screen: small print under the button, beside a lock icon."
+  },
+  "nerdNotConnected": "Not connected to a server.",
+  "@nerdNotConnected": {
+    "description": "Nerd screen: shown instead of the details when no server is set up."
+  },
+  "nerdLoadFailed": "Could not ask the server: {detail}",
+  "@nerdLoadFailed": {
+    "description": "Nerd screen: asking the server for its details failed. {detail} is a technical message in English.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdTryAgain": "Try again",
+  "@nerdTryAgain": {
+    "description": "Nerd screen: button under an error."
+  },
+  "nerdCopyAll": "Copy all",
+  "@nerdCopyAll": {
+    "description": "Nerd screen: tooltip; copy every detail on the screen."
+  },
+  "nerdCopied": "Copied everything to the clipboard",
+  "@nerdCopied": {
+    "description": "Nerd screen: snack bar after Copy all."
+  },
+  "nerdRefresh": "Refresh",
+  "@nerdRefresh": {
+    "description": "Nerd screen and its JSON views: tooltip; load again from the server."
+  },
+  "nerdTabSystem": "System",
+  "@nerdTabSystem": {
+    "description": "Nerd screen: first tab; facts about the app, the connection and the server."
+  },
+  "nerdTabInternal": "Internal",
+  "@nerdTabInternal": {
+    "description": "Nerd screen: second tab; internal settings that change how the app looks and connects."
+  },
+  "nerdWompWomp": "womp womp update your server",
+  "@nerdWompWomp": {
+    "description": "Nerd screen: big playful heading when the server is too old for it (\"womp womp\" is a sad-trombone sound). Lower case, no full stop."
+  },
+  "nerdNeedsNewer": "This screen needs Breeze Core 3.0.5 or newer.",
+  "@nerdNeedsNewer": {
+    "description": "Nerd screen: under womp womp, when the server did not say its version."
+  },
+  "nerdServerTooOld": "This server is on {version}. The Nerd screen needs Breeze Core 3.0.5 or newer.",
+  "@nerdServerTooOld": {
+    "description": "Nerd screen: under womp womp; {version} is the server's version number.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdSectionApp": "This app",
+  "@nerdSectionApp": {
+    "description": "Nerd screen: section heading (shown in capitals); this app."
+  },
+  "nerdSectionConnection": "Connection",
+  "@nerdSectionConnection": {
+    "description": "Nerd screen: section heading; the connection to the server."
+  },
+  "nerdSectionServer": "Server",
+  "@nerdSectionServer": {
+    "description": "Nerd screen: section heading; the Breeze Core server."
+  },
+  "nerdSectionHost": "Host",
+  "@nerdSectionHost": {
+    "description": "Nerd screen: section heading; the machine the server runs on."
+  },
+  "nerdSectionServerComponents": "Server components",
+  "@nerdSectionServerComponents": {
+    "description": "Nerd screen: section heading; the server's software components and their versions."
+  },
+  "nerdSectionAppComponents": "App components",
+  "@nerdSectionAppComponents": {
+    "description": "Nerd screen: section heading; the app's software components and their versions."
+  },
+  "nerdSectionUnits": "Air conditioners",
+  "@nerdSectionUnits": {
+    "description": "Nerd screen: section heading; the air conditioners the server knows."
+  },
+  "nerdSectionDevices": "Enrolled devices",
+  "@nerdSectionDevices": {
+    "description": "Nerd screen: section heading; phones and other clients paired with the server."
+  },
+  "nerdSectionPrograms": "Programs & scheduler",
+  "@nerdSectionPrograms": {
+    "description": "Nerd screen: section heading; saved programs and the server's scheduler that runs them."
+  },
+  "nerdSectionSettings": "Settings",
+  "@nerdSectionSettings": {
+    "description": "Nerd screen: section heading; the server's settings."
+  },
+  "nerdSectionStorage": "Storage",
+  "@nerdSectionStorage": {
+    "description": "Nerd screen: section heading; the server's files on disk."
+  },
+  "nerdSectionFeatures": "Advertised features",
+  "@nerdSectionFeatures": {
+    "description": "Nerd screen: section heading; the features and auth versions the server says it supports."
+  },
+  "nerdVersion": "Version",
+  "@nerdVersion": {
+    "description": "Nerd screen: row label; a version number."
+  },
+  "nerdPackage": "Package",
+  "@nerdPackage": {
+    "description": "Nerd screen: row label; the app's package name."
+  },
+  "nerdPlatform": "Platform",
+  "@nerdPlatform": {
+    "description": "Nerd screen: row label; the operating system the app runs on."
+  },
+  "nerdDartSdkConstraint": "Dart SDK constraint",
+  "@nerdDartSdkConstraint": {
+    "description": "Nerd screen: row label; the Dart SDK version range the app was built for."
+  },
+  "nerdFlutterConstraint": "Flutter constraint",
+  "@nerdFlutterConstraint": {
+    "description": "Nerd screen: row label; the Flutter version range the app was built for."
+  },
+  "nerdServerUrl": "Server URL",
+  "@nerdServerUrl": {
+    "description": "Nerd screen: row label; the server's main address."
+  },
+  "nerdAnsweringNow": "Answering now",
+  "@nerdAnsweringNow": {
+    "description": "Nerd screen: row label; the address that is answering now, when it is not the main one."
+  },
+  "nerdFallbackValue": "{url} (a fallback)",
+  "@nerdFallbackValue": {
+    "description": "Nerd screen: value of \"Answering now\"; {url} is a fallback address.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdLatency": "Latency",
+  "@nerdLatency": {
+    "description": "Nerd screen: row label; round-trip time to the server."
+  },
+  "nerdLatencyValue": "{ms} ms (this request)",
+  "@nerdLatencyValue": {
+    "description": "Nerd screen: value of Latency, in milliseconds, for the request that loaded this screen.",
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdAuthVersion": "Auth version",
+  "@nerdAuthVersion": {
+    "description": "Nerd screen: row label; which authentication scheme this phone uses."
+  },
+  "nerdAuthSigned": "v{version} — Ed25519 signed",
+  "@nerdAuthSigned": {
+    "description": "Nerd screen: value of Auth version for v2 and later: requests are signed with an Ed25519 key.",
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdAuthBearer": "v{version} — bearer token",
+  "@nerdAuthBearer": {
+    "description": "Nerd screen: value of Auth version for v1: a bearer token (an HTTP term).",
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdSeenAs": "Seen by server as",
+  "@nerdSeenAs": {
+    "description": "Nerd screen: row label; this phone's IP address as the server sees it."
+  },
+  "nerdPrivateNetwork": "On a private network",
+  "@nerdPrivateNetwork": {
+    "description": "Nerd screen: row label; whether this phone is on a private network (yes / no)."
+  },
+  "nerdReachedVia": "Reached via",
+  "@nerdReachedVia": {
+    "description": "Nerd screen: row label; the URL the request arrived on."
+  },
+  "nerdHostHeader": "Host header",
+  "@nerdHostHeader": {
+    "description": "Nerd screen: row label; the HTTP Host header (\"Host\" is the header's name; keep it)."
+  },
+  "nerdScheme": "Scheme",
+  "@nerdScheme": {
+    "description": "Nerd screen: row label; http or https."
+  },
+  "nerdHttpVersion": "HTTP version",
+  "@nerdHttpVersion": {
+    "description": "Nerd screen: row label."
+  },
+  "nerdBehindProxy": "Behind proxy",
+  "@nerdBehindProxy": {
+    "description": "Nerd screen: row label; whether the server is set up to sit behind a reverse proxy (yes / no)."
+  },
+  "nerdBuildCommit": "Build commit",
+  "@nerdBuildCommit": {
+    "description": "Nerd screen: row label; the git commit the server was built from."
+  },
+  "nerdUptime": "Uptime",
+  "@nerdUptime": {
+    "description": "Nerd screen: row label; how long the server has been running."
+  },
+  "nerdStarted": "Started",
+  "@nerdStarted": {
+    "description": "Nerd screen: row label; when the server started (a date and time)."
+  },
+  "nerdInstalled": "Installed",
+  "@nerdInstalled": {
+    "description": "Nerd screen: row label; when the server was installed (a date and time)."
+  },
+  "nerdServerTime": "Server time",
+  "@nerdServerTime": {
+    "description": "Nerd screen: row label; the server's clock."
+  },
+  "nerdTimeZone": "Time zone",
+  "@nerdTimeZone": {
+    "description": "Nerd screen: row label; the server's time zone."
+  },
+  "nerdProcessId": "Process id",
+  "@nerdProcessId": {
+    "description": "Nerd screen: row label; the server process's id."
+  },
+  "nerdMemory": "Memory (RSS)",
+  "@nerdMemory": {
+    "description": "Nerd screen: row label; the server process's memory use (RSS is a technical term; keep it)."
+  },
+  "nerdOs": "Operating system",
+  "@nerdOs": {
+    "description": "Nerd screen: row label; the server machine's operating system."
+  },
+  "nerdKernel": "Kernel",
+  "@nerdKernel": {
+    "description": "Nerd screen: row label; the operating system kernel."
+  },
+  "nerdKernelBuild": "Kernel build",
+  "@nerdKernelBuild": {
+    "description": "Nerd screen: row label; the kernel's build string."
+  },
+  "nerdInitSystem": "Init system",
+  "@nerdInitSystem": {
+    "description": "Nerd screen: row label; e.g. systemd, OpenRC (\"init\" is a technical term)."
+  },
+  "nerdHostname": "Hostname",
+  "@nerdHostname": {
+    "description": "Nerd screen: row label; the server machine's network name."
+  },
+  "nerdArchitecture": "Architecture",
+  "@nerdArchitecture": {
+    "description": "Nerd screen: row label; CPU architecture, e.g. x86_64."
+  },
+  "nerdCores": "Cores",
+  "@nerdCores": {
+    "description": "Nerd screen: row label; number of CPU cores."
+  },
+  "nerdByteOrder": "Byte order",
+  "@nerdByteOrder": {
+    "description": "Nerd screen: row label; little or big endian."
+  },
+  "nerdMachineUptime": "Machine uptime",
+  "@nerdMachineUptime": {
+    "description": "Nerd screen: row label; how long the server machine has been running."
+  },
+  "nerdLocalAddresses": "Local addresses",
+  "@nerdLocalAddresses": {
+    "description": "Nerd screen: row label; the server machine's own IP addresses."
+  },
+  "nerdFrozenBundle": "Frozen bundle",
+  "@nerdFrozenBundle": {
+    "description": "Nerd screen: row label; whether the server runs as a frozen (bundled) Python program (yes / no)."
+  },
+  "nerdNotInstalled": "not installed",
+  "@nerdNotInstalled": {
+    "description": "Nerd screen: value for a server component that is not installed. Lower case."
+  },
+  "nerdPrograms": "Programs",
+  "@nerdPrograms": {
+    "description": "Nerd screen: row label; how many programs are saved, by kind."
+  },
+  "nerdSchedulerRunning": "Scheduler running",
+  "@nerdSchedulerRunning": {
+    "description": "Nerd screen: row label; whether the server's scheduler is running (yes / no)."
+  },
+  "nerdTick": "Tick",
+  "@nerdTick": {
+    "description": "Nerd screen: row label; how often the scheduler wakes up, in seconds."
+  },
+  "nerdRuns": "Runs",
+  "@nerdRuns": {
+    "description": "Nerd screen: row label; how many times the scheduler has run."
+  },
+  "nerdErrors": "Errors",
+  "@nerdErrors": {
+    "description": "Nerd screen: row label; how many scheduler runs failed."
+  },
+  "nerdLastRun": "Last run",
+  "@nerdLastRun": {
+    "description": "Nerd screen: row label; when the scheduler last ran."
+  },
+  "nerdFeatures": "Features",
+  "@nerdFeatures": {
+    "description": "Nerd screen: row label; the features the server says it has."
+  },
+  "nerdAuthVersions": "Auth versions",
+  "@nerdAuthVersions": {
+    "description": "Nerd screen: row label; the authentication scheme versions the server accepts."
+  },
+  "nerdUnits": "Units",
+  "@nerdUnits": {
+    "description": "Nerd screen: row label when the server has no air conditioners."
+  },
+  "nerdNoneConfigured": "none configured",
+  "@nerdNoneConfigured": {
+    "description": "Nerd screen: value; no air conditioners are set up. Lower case."
+  },
+  "nerdUnitFallback": "unit",
+  "@nerdUnitFallback": {
+    "description": "Nerd screen: row label for an air conditioner that has no name. Lower case."
+  },
+  "nerdV3Credentials": "V3 credentials",
+  "@nerdV3Credentials": {
+    "description": "Nerd screen: row under an air conditioner; whether the server has its V3 protocol credentials (yes / no). \"V3\" is a protocol version; keep it."
+  },
+  "nerdConnectionCached": "connection cached",
+  "@nerdConnectionCached": {
+    "description": "Nerd screen: row under an air conditioner; whether the server keeps a connection to it open (yes / no). Lower case."
+  },
+  "nerdHistorySamples": "history samples",
+  "@nerdHistorySamples": {
+    "description": "Nerd screen: row under an air conditioner; how many history readings are stored. Lower case."
+  },
+  "nerdModes": "modes",
+  "@nerdModes": {
+    "description": "Nerd screen: row under an air conditioner; the modes it supports. Lower case."
+  },
+  "nerdSwing": "swing",
+  "@nerdSwing": {
+    "description": "Nerd screen: row under an air conditioner; the flap swing settings it supports. Lower case."
+  },
+  "nerdFanSpeeds": "fan speeds",
+  "@nerdFanSpeeds": {
+    "description": "Nerd screen: row under an air conditioner; the fan speeds it supports. Lower case."
+  },
+  "nerdTempRange": "temp range",
+  "@nerdTempRange": {
+    "description": "Nerd screen: row under an air conditioner; the lowest and highest target temperature. Lower case."
+  },
+  "nerdEcoTurbo": "eco / turbo",
+  "@nerdEcoTurbo": {
+    "description": "Nerd screen: row under an air conditioner; whether it has eco and turbo (yes / no each). Names, usually not translated."
+  },
+  "nerdCapabilities": "capabilities",
+  "@nerdCapabilities": {
+    "description": "Nerd screen: row under an air conditioner; what it can do. Lower case."
+  },
+  "nerdCapabilitiesNotCached": "not cached — open the unit once, then refresh",
+  "@nerdCapabilitiesNotCached": {
+    "description": "Nerd screen: value of capabilities when the server hasn't read them yet, and how to fix that."
+  },
+  "nerdDevices": "Devices",
+  "@nerdDevices": {
+    "description": "Nerd screen: row label when no devices are paired."
+  },
+  "nerdNoneEnrolled": "none enrolled",
+  "@nerdNoneEnrolled": {
+    "description": "Nerd screen: value; no phones or clients are paired. Lower case."
+  },
+  "nerdDeviceFallback": "device",
+  "@nerdDeviceFallback": {
+    "description": "Nerd screen: row label for a paired device that has no name. Lower case."
+  },
+  "nerdExpiredTag": "EXPIRED",
+  "@nerdExpiredTag": {
+    "description": "Nerd screen: tag after a paired device's auth version when its credential has expired. Capitals, as a warning."
+  },
+  "nerdEnrolled": "enrolled",
+  "@nerdEnrolled": {
+    "description": "Nerd screen: row under a paired device; when it was paired (a date). Lower case."
+  },
+  "nerdLastUsed": "last used",
+  "@nerdLastUsed": {
+    "description": "Nerd screen: row under a paired device; when it was last used (a date). Lower case."
+  },
+  "nerdExpires": "expires",
+  "@nerdExpires": {
+    "description": "Nerd screen: row under a paired device; when its credential expires. Lower case."
+  },
+  "nerdNever": "never",
+  "@nerdNever": {
+    "description": "Nerd screen: value of expires; the credential never expires. Lower case."
+  },
+  "nerdExpiresIn": "{when} (in {duration})",
+  "@nerdExpiresIn": {
+    "description": "Nerd screen: value of expires; {when} is a date and time, {duration} how long until then (e.g. \"3d 4h 5m\").",
+    "placeholders": {
+      "when": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdMissing": "missing ({path})",
+  "@nerdMissing": {
+    "description": "Nerd screen: value for a server file that does not exist; {path} is its path. Lower case.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdSizeMode": "size / mode",
+  "@nerdSizeMode": {
+    "description": "Nerd screen: row under a server file; its size and permission bits. Lower case."
+  },
+  "nerdModified": "modified",
+  "@nerdModified": {
+    "description": "Nerd screen: row under a server file; when it last changed. Lower case."
+  },
+  "nerdYes": "yes",
+  "@nerdYes": {
+    "description": "Nerd screen: value; yes. Lower case."
+  },
+  "nerdNo": "no",
+  "@nerdNo": {
+    "description": "Nerd screen: value; no. Lower case."
+  },
+  "nerdNone": "none",
+  "@nerdNone": {
+    "description": "Nerd screen: value; an empty list. Lower case."
+  },
+  "nerdDurationDays": "{d}d {h}h {m}m",
+  "@nerdDurationDays": {
+    "description": "Nerd screen: a duration of a day or more, with short unit symbols (days, hours, minutes).",
+    "placeholders": {
+      "d": {
+        "type": "int"
+      },
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdDurationHours": "{h}h {m}m",
+  "@nerdDurationHours": {
+    "description": "Nerd screen: a duration of an hour or more (hours, minutes).",
+    "placeholders": {
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdDurationMinutes": "{m}m {s}s",
+  "@nerdDurationMinutes": {
+    "description": "Nerd screen: a duration of a minute or more (minutes, seconds).",
+    "placeholders": {
+      "m": {
+        "type": "int"
+      },
+      "s": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdDurationSeconds": "{s}s",
+  "@nerdDurationSeconds": {
+    "description": "Nerd screen: a duration under a minute (seconds).",
+    "placeholders": {
+      "s": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdLanLoopbackOnly": "The server only listens on its own machine ({host}), behind a proxy, so nothing on the LAN can reach it directly.",
+  "@nerdLanLoopbackOnly": {
+    "description": "Nerd screen, Internal tab: why no LAN fallback address could be learned: the server only listens on its own machine ({host}, an address like 127.0.0.1).",
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdLanNoAddress": "The server did not report a LAN address.",
+  "@nerdLanNoAddress": {
+    "description": "Nerd screen, Internal tab: why no LAN fallback address could be learned."
+  },
+  "jsonCopy": "Copy the JSON",
+  "@jsonCopy": {
+    "description": "JSON view (Nerd screen, Internal tab): tooltip; copy the JSON shown."
+  },
+  "jsonCopied": "Copied to the clipboard",
+  "@jsonCopied": {
+    "description": "JSON view: snack bar after copying."
+  },
+  "jsonNotOnServer": "This server does not have that yet.",
+  "@jsonNotOnServer": {
+    "description": "JSON view: the server is too old to have this list."
+  },
+  "jsonLoadFailed": "Could not ask the server: {detail}",
+  "@jsonLoadFailed": {
+    "description": "JSON view: loading failed. {detail} is a technical message in English.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "jsonFilterAll": "All ({count})",
+  "@jsonFilterAll": {
+    "description": "JSON view: filter chip showing every item; {count} is how many.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jsonFilterFavourites": "Favourites ({count})",
+  "@jsonFilterFavourites": {
+    "description": "JSON view: filter chip; only favourites (saved scenes); {count} is how many.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jsonFilterSchedules": "Schedules ({count})",
+  "@jsonFilterSchedules": {
+    "description": "JSON view: filter chip; only schedules; {count} is how many.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jsonFilterCurves": "Curves ({count})",
+  "@jsonFilterCurves": {
+    "description": "JSON view: filter chip; only curves (temperature over a day); {count} is how many.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jsonEmpty": "Nothing here: []",
+  "@jsonEmpty": {
+    "description": "JSON view: nothing to show; \"[]\" is an empty JSON list, keep it."
+  }
+}

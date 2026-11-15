@@ -28,8 +28,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: Text(title),
             content: Text(body),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-              FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Confirm')),
+              TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.l10n.actionCancel)),
+              FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(ctx.l10n.settingsConfirm)),
             ],
           ),
         ) ??
@@ -65,8 +65,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ..showSnackBar(SnackBar(
           duration: const Duration(milliseconds: 700),
           content: Text(left == 1
-              ? "One more tap, and you're a nerd…"
-              : '$left taps until you are a nerd'),
+              ? context.l10n.settingsNerdOneMoreTap
+              : context.l10n.settingsNerdTapsLeft(left)),
         ));
     }
   }
@@ -112,18 +112,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final c = AppScope.of(context);
     final scheme = Theme.of(context).colorScheme;
     final server = c.api?.baseUrl ?? '—';
+    final l = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l.settingsTitle)),
       body: ListView(
         children: [
           const SizedBox(height: 8),
           ListTile(
             leading: const Icon(Icons.dns_outlined),
-            title: const Text('Server'),
+            title: Text(l.settingsServer),
             subtitle: Text(c.profiles.length > 1
                 ? '''$server
-${c.profiles.length} saved — tap to switch'''
+${l.settingsServersSaved(c.profiles.length)}'''
                 : server),
             isThreeLine: c.profiles.length > 1,
             trailing: const Icon(Icons.chevron_right),
@@ -136,14 +137,14 @@ ${c.profiles.length} saved — tap to switch'''
           ),
           ListTile(
             leading: const Icon(Icons.smartphone_outlined),
-            title: const Text('This device'),
+            title: Text(l.settingsThisDevice),
             subtitle: Text(c.deviceLabel),
           ),
           const Divider(),
           // --- Display preferences ---
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Text('Display', style: Theme.of(context).textTheme.labelLarge
+            child: Text(l.settingsDisplay, style: Theme.of(context).textTheme.labelLarge
                 ?.copyWith(color: scheme.primary)),
           ),
           ListTile(
@@ -154,16 +155,16 @@ ${c.profiles.length} saved — tap to switch'''
           ),
           ListTile(
             leading: const Icon(Icons.brightness_6_outlined),
-            title: const Text('Theme'),
-            subtitle: const Text('Follow system, or force light / dark'),
+            title: Text(l.settingsTheme),
+            subtitle: Text(l.settingsThemeHint),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: SegmentedButton<ThemeMode>(
-              segments: const [
-                ButtonSegment(value: ThemeMode.system, label: Text('System'), icon: Icon(Icons.phone_android)),
-                ButtonSegment(value: ThemeMode.light, label: Text('Light'), icon: Icon(Icons.light_mode)),
-                ButtonSegment(value: ThemeMode.dark, label: Text('Dark'), icon: Icon(Icons.dark_mode)),
+              segments: [
+                ButtonSegment(value: ThemeMode.system, label: Text(l.settingsThemeSystem), icon: const Icon(Icons.phone_android)),
+                ButtonSegment(value: ThemeMode.light, label: Text(l.settingsThemeLight), icon: const Icon(Icons.light_mode)),
+                ButtonSegment(value: ThemeMode.dark, label: Text(l.settingsThemeDark), icon: const Icon(Icons.dark_mode)),
               ],
               selected: {c.themeMode},
               onSelectionChanged: (s) => c.setThemeMode(s.first),
@@ -171,15 +172,15 @@ ${c.profiles.length} saved — tap to switch'''
           ),
           SwitchListTile(
             secondary: const Icon(Icons.contrast),
-            title: const Text('AMOLED Black'),
-            subtitle: const Text('Supported devices only'),
+            title: Text(l.settingsPureBlack),
+            subtitle: Text(l.settingsPureBlackHint),
             value: c.pureBlack,
             onChanged: c.setPureBlack,
           ),
           ListTile(
             leading: const Icon(Icons.thermostat_outlined),
-            title: const Text('Temperature unit'),
-            subtitle: const Text('Display only, the server always uses Celsius'),
+            title: Text(l.settingsTempUnit),
+            subtitle: Text(l.settingsTempUnitHint),
             trailing: SegmentedButton<String>(
               segments: const [
                 ButtonSegment(value: 'C', label: Text('°C')),
@@ -193,24 +194,24 @@ ${c.profiles.length} saved — tap to switch'''
           // --- Behaviour ---
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Text('Behaviour', style: Theme.of(context).textTheme.labelLarge
+            child: Text(l.settingsBehaviour, style: Theme.of(context).textTheme.labelLarge
                 ?.copyWith(color: scheme.primary)),
           ),
           SwitchListTile(
             secondary: const Icon(Icons.volume_up_outlined),
-            title: const Text('Beep on control'),
-            subtitle: const Text('Make the unit chirp when it accepts a command'),
+            title: Text(l.settingsBeep),
+            subtitle: Text(l.settingsBeepHint),
             value: c.beep,
             onChanged: c.setBeep,
           ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.refresh),
-            title: const Text('Re-pair this device'),
-            subtitle: const Text('Get a new pairing code and re-authorise'),
+            title: Text(l.settingsRepair),
+            subtitle: Text(l.settingsRepairHint),
             onTap: () async {
-              if (await _confirm(context, 'Re-pair device?',
-                  'This forgets the current access token and starts pairing again.')) {
+              if (await _confirm(context, l.settingsRepairTitle,
+                  l.settingsRepairBody)) {
                 if (!context.mounted) return;
                 final nav = Navigator.of(context);
                 await c.unpair();
@@ -220,12 +221,11 @@ ${c.profiles.length} saved — tap to switch'''
           ),
           ListTile(
             leading: Icon(Icons.swap_horiz, color: scheme.error),
-            title: Text('Forget this server', style: TextStyle(color: scheme.error)),
-            subtitle: const Text('Erase its address, key and credential from this phone'),
+            title: Text(l.settingsForgetServer, style: TextStyle(color: scheme.error)),
+            subtitle: Text(l.settingsForgetServerHint),
             onTap: () async {
-              if (await _confirm(context, 'Forget this server?',
-                  'This erases the stored server address, access key and device '
-                  'credential. Other saved servers are untouched.')) {
+              if (await _confirm(context, l.settingsForgetServerTitle,
+                  l.settingsForgetServerBody)) {
                 if (!context.mounted) return;
                 final nav = Navigator.of(context);
                 await c.changeServer();
@@ -242,18 +242,15 @@ ${c.profiles.length} saved — tap to switch'''
           ),
           ListTile(
             leading: const Icon(Icons.description_outlined),
-            title: const Text('Licences'),
-            subtitle: const Text('Open-source licences for this app'),
+            title: Text(l.settingsLicences),
+            subtitle: Text(l.settingsLicencesHint),
             onTap: () {
               Haptics.tick();
               showLicensePage(
                 context: context,
                 applicationName: 'Breeze',
                 applicationVersion: AppInfo.version,
-                applicationLegalese:
-                    'AGPL-3.0-or-later. A client for a self-hosted Breeze Core '
-                    'server; requests are signed per-device with an Ed25519 key '
-                    'that never leaves this phone.',
+                applicationLegalese: l.settingsLegalese,
               );
             },
           ),

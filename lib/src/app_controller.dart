@@ -11,6 +11,7 @@ import 'api_client.dart';
 import 'device_signer.dart';
 import 'haptics.dart';
 import 'internal_prefs.dart';
+import 'l10n.dart';
 import 'widgets/loading_cat.dart';
 import 'models.dart';
 import 'secure_store.dart';
@@ -514,8 +515,9 @@ class AppController extends ChangeNotifier {
   /// Returns why there is nothing to keep, or null when addresses were
   /// learned. A server bound only to loopback sits behind a proxy on its own
   /// machine: nothing on the LAN can reach it directly, so there is no LAN
-  /// address worth trying.
-  Future<String?> learnLanAddresses() async {
+  /// address worth trying. The reason is in [l10n]'s language; English when
+  /// none is given.
+  Future<String?> learnLanAddresses([AppLocalizations? l10n]) async {
     final sys = await api!.systemInfo();
     final net = (sys['network'] as Map?)?.cast<String, dynamic>() ?? const {};
     final urls = lanUrlsFrom(net);
@@ -523,10 +525,10 @@ class AppController extends ChangeNotifier {
     await _refreshAlternates();
     if (urls.isNotEmpty) return null;
     final host = net['bind_host']?.toString() ?? '';
+    final l = l10n ?? lookupAppLocalizations(const Locale('en'));
     return _isLoopback(host)
-        ? 'The server only listens on its own machine ($host), behind a proxy, '
-            'so nothing on the LAN can reach it directly.'
-        : 'The server did not report a LAN address.';
+        ? l.nerdLanLoopbackOnly(host)
+        : l.nerdLanNoAddress;
   }
 
   /// `http://ip:port` for each address the server can be reached at on its

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter/services.dart';
 
+import '../haptics.dart';
 import '../app_info.dart';
 import '../api_client.dart';
 import '../app_scope.dart';
@@ -469,7 +469,11 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
       fails > 0 ? 'Problems found' : (warns > 0 ? 'Passed with warnings' : 'All checks passed'),
       fails > 0 ? '$fails problem(s), $warns warning(s)' : (warns > 0 ? '$warns warning(s)' : 'no issues'),
     );
-    HapticFeedback.mediumImpact();
+    if (fails > 0) {
+      Haptics.failure();
+    } else {
+      Haptics.success();
+    }
   }
 
   static String _pad2(int n) => n.toString().padLeft(2, '0');

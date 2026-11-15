@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter/services.dart';
 
 import '../api_client.dart';
 import '../app_scope.dart';
@@ -408,7 +407,9 @@ class _HomeScreenState extends State<HomeScreen> {
     // The beep preference rides on every command (server default is silent).
     delta.beep = AppScope.of(context).beep;
     final prev = _states[id];
-    HapticFeedback.selectionClick();
+    // No haptic here: each control gives its own (Haptics.select, toggle,
+    // tick), and a second one for the same tap cut the first short once
+    // they reached the vibrator.
     // Optimistic: reflect the change instantly, reconcile on the reply.
     final ticket = _ledger.begin(id);
     setState(() {

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
+import '../l10n.dart';
 import '../models.dart';
 import '../util.dart';
 
@@ -47,7 +48,7 @@ class Dial extends StatelessWidget {
                 ).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
-                'indoor',
+                context.l10n.tempIndoorCaption,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: scheme.onSurfaceVariant,
                   letterSpacing: 1.2,
@@ -55,7 +56,7 @@ class Dial extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'target ${fmtTemp(target, tempUnit)}',
+                context.l10n.tempTargetValue(fmtTemp(target, tempUnit)),
                 style: Theme.of(
                   context,
                 ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),

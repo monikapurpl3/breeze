@@ -12,13 +12,14 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 import '../api_client.dart';
 import '../app_info.dart';
 import '../app_scope.dart';
 import '../haptics.dart';
+import '../l10n.dart';
 import 'internal_tab.dart';
 
 /// Server version this screen needs. Below it, the endpoint doesn't exist.
@@ -46,7 +47,7 @@ class NerdScreen extends StatefulWidget {
 class _NerdScreenState extends State<NerdScreen> {
   Map<String, dynamic>? _sys;
   String? _serverVersion;
-  String? _error;
+  String Function(AppLocalizations l)? _error;
   bool _tooOld = false;
   bool _loading = true;
   int? _latencyMs;
@@ -54,7 +55,13 @@ class _NerdScreenState extends State<NerdScreen> {
   @override
   void initState() {
     super.initState();
-    unawaited(_load());
+    // After the first frame (which already shows the spinner): _load looks
+    // AppScope up, and an inherited-widget lookup during initState asserts in
+    // a debug build -- the error went into the unawaited future, and the tab
+    // spun for ever there.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(_load());
+    });
   }
 
   Future<void> _load() async {
@@ -66,7 +73,7 @@ class _NerdScreenState extends State<NerdScreen> {
     if (api == null) {
       setState(() {
         _loading = false;
-        _error = 'Not connected to a server.';
+        _error = (l) => l.nerdNotConnected;
       });
       return;
     }
@@ -103,14 +110,14 @@ class _NerdScreenState extends State<NerdScreen> {
         if (e.status == 404) {
           _tooOld = true;
         } else {
-          _error = e.message;
+          _error = (l) => l.nerdLoadFailed(e.message);
         }
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = e.toString();
+        _error = (l) => l.nerdLoadFailed(e.toString());
       });
     }
   }
@@ -129,25 +136,25 @@ class _NerdScreenState extends State<NerdScreen> {
           listenable: tabs,
           builder: (context, _) => Scaffold(
             appBar: AppBar(
-              title: const Text('Nerd'),
+              title: Text(context.l10n.nerdTitle),
               actions: [
                 if (tabs.index == 0) ...[
                   IconButton(
-                    tooltip: 'Copy all',
+                    tooltip: context.l10n.nerdCopyAll,
                     icon: const Icon(Icons.copy_all_outlined),
                     onPressed: _sys == null ? null : _copyAll,
                   ),
                   IconButton(
-                    tooltip: 'Refresh',
+                    tooltip: context.l10n.nerdRefresh,
                     icon: const Icon(Icons.refresh),
                     onPressed: _loading ? null : _load,
                   ),
                 ],
               ],
-              bottom: const TabBar(
+              bottom: TabBar(
                 tabs: [
-                  Tab(icon: Icon(Icons.memory), text: 'System'),
-                  Tab(icon: Icon(Icons.tune), text: 'Internal'),
+                  Tab(icon: const Icon(Icons.memory), text: context.l10n.nerdTabSystem),
+                  Tab(icon: const Icon(Icons.tune), text: context.l10n.nerdTabInternal),
                 ],
               ),
             ),
@@ -163,7 +170,7 @@ class _NerdScreenState extends State<NerdScreen> {
   Widget _body() {
     if (_loading) return const Center(child: CircularProgressIndicator());
     if (_tooOld) return _WompWomp(version: _serverVersion);
-    if (_error != null) return _Problem(message: _error!, onRetry: _load);
+    if (_error != null) return _Problem(message: _error!(context.l10n), onRetry: _load);
     final sys = _sys;
     if (sys == null) return const SizedBox.shrink();
     return ListView(
@@ -188,157 +195,163 @@ class _NerdScreenState extends State<NerdScreen> {
     final python = _map(server['python']);
     final process = _map(sys['process']);
     final api = AppScope.of(context).api;
+    final l = context.l10n;
+    final authVersion = api?.authVersion ?? 1;
 
     return [
-      _Section('This app', [
-        _Row('Version', AppInfo.version),
-        _Row('Package', AppInfo.packageName),
-        _Row('Platform', '${AppInfo.os} · ${AppInfo.osVersion}'),
+      _Section(l.nerdSectionApp, [
+        _Row(l.nerdVersion, AppInfo.version),
+        _Row(l.nerdPackage, AppInfo.packageName),
+        _Row(l.nerdPlatform, '${AppInfo.os} · ${AppInfo.osVersion}'),
         _Row('Dart', AppInfo.dartVersion),
-        if (AppInfo.sdks['dart'] != null) _Row('Dart SDK constraint', AppInfo.sdks['dart']),
-        if (AppInfo.sdks['flutter'] != null) _Row('Flutter constraint', AppInfo.sdks['flutter']),
+        if (AppInfo.sdks['dart'] != null) _Row(l.nerdDartSdkConstraint, AppInfo.sdks['dart']),
+        if (AppInfo.sdks['flutter'] != null) _Row(l.nerdFlutterConstraint, AppInfo.sdks['flutter']),
       ]),
-      _Section('Connection', [
-        _Row('Server URL', api?.baseUrl),
+      _Section(l.nerdSectionConnection, [
+        _Row(l.nerdServerUrl, api?.baseUrl),
         if (api != null && api.currentUrl.value != api.baseUrl)
-          _Row('Answering now', '${api.currentUrl.value} (a fallback)'),
-        _Row('Latency', _latencyMs == null ? null : '$_latencyMs ms (this request)'),
-        _Row('Auth version', 'v${api?.authVersion ?? 1}'
-            '${(api?.authVersion ?? 1) >= 2 ? ' — Ed25519 signed' : ' — bearer token'}'),
-        _Row('Seen by server as', conn['client_ip']?.toString()),
-        _Row('On a private network', _yesNo(conn['client_is_private'])),
-        _Row('Reached via', conn['request_url']?.toString()),
-        _Row('Host header', conn['host_header']?.toString()),
-        _Row('Scheme', conn['scheme']?.toString()),
-        _Row('HTTP version', conn['http_version']?.toString()),
+          _Row(l.nerdAnsweringNow, l.nerdFallbackValue(api.currentUrl.value)),
+        _Row(l.nerdLatency, _latencyMs == null ? null : l.nerdLatencyValue(_latencyMs!)),
+        _Row(l.nerdAuthVersion, authVersion >= 2
+            ? l.nerdAuthSigned(authVersion)
+            : l.nerdAuthBearer(authVersion)),
+        _Row(l.nerdSeenAs, conn['client_ip']?.toString()),
+        _Row(l.nerdPrivateNetwork, _yesNo(conn['client_is_private'])),
+        _Row(l.nerdReachedVia, conn['request_url']?.toString()),
+        _Row(l.nerdHostHeader, conn['host_header']?.toString()),
+        _Row(l.nerdScheme, conn['scheme']?.toString()),
+        _Row(l.nerdHttpVersion, conn['http_version']?.toString()),
         _Row('X-Forwarded-For', conn['forwarded_for']?.toString()),
-        _Row('Behind proxy', _yesNo(conn['behind_proxy_enabled'])),
+        _Row(l.nerdBehindProxy, _yesNo(conn['behind_proxy_enabled'])),
       ]),
-      _Section('Server', [
-        _Row('Version', '${server['name']} ${server['version']}'),
-        _Row('Build commit', server['commit']?.toString()),
-        _Row('Uptime', _duration(server['uptime_seconds'])),
-        _Row('Started', _when(server['started_at'])),
-        _Row('Installed', _when(server['installed_at'])),
-        _Row('Server time', _when(server['server_time'])),
-        _Row('Time zone', '${server['timezone'] ?? '?'} '
+      _Section(l.nerdSectionServer, [
+        _Row(l.nerdVersion, '${server['name']} ${server['version']}'),
+        _Row(l.nerdBuildCommit, server['commit']?.toString()),
+        _Row(l.nerdUptime, _duration(server['uptime_seconds'])),
+        _Row(l.nerdStarted, _when(server['started_at'])),
+        _Row(l.nerdInstalled, _when(server['installed_at'])),
+        _Row(l.nerdServerTime, _when(server['server_time'])),
+        _Row(l.nerdTimeZone, '${server['timezone'] ?? '?'} '
             '(UTC${_offset(server['utc_offset_seconds'])})'),
-        _Row('Process id', process['pid']?.toString()),
-        _Row('Memory (RSS)', _bytes(process['rss_bytes'])),
+        _Row(l.nerdProcessId, process['pid']?.toString()),
+        _Row(l.nerdMemory, _bytes(process['rss_bytes'])),
       ]),
-      _Section('Host', [
-        _Row('Operating system', os['pretty_name']?.toString()),
-        _Row('Kernel', '${os['system'] ?? ''} ${os['kernel'] ?? ''}'.trim()),
-        _Row('Kernel build', os['kernel_version']?.toString()),
-        _Row('Init system', init['detail'] == null
+      _Section(l.nerdSectionHost, [
+        _Row(l.nerdOs, os['pretty_name']?.toString()),
+        _Row(l.nerdKernel, '${os['system'] ?? ''} ${os['kernel'] ?? ''}'.trim()),
+        _Row(l.nerdKernelBuild, os['kernel_version']?.toString()),
+        _Row(l.nerdInitSystem, init['detail'] == null
             ? init['name']?.toString()
             : '${init['name']} — ${init['detail']}'),
-        _Row('Hostname', os['hostname']?.toString()),
-        _Row('Architecture', cpu['arch']?.toString()),
+        _Row(l.nerdHostname, os['hostname']?.toString()),
+        _Row(l.nerdArchitecture, cpu['arch']?.toString()),
         _Row('CPU', cpu['model']?.toString()),
-        _Row('Cores', cpu['cores']?.toString()),
-        _Row('Byte order', cpu['endianness']?.toString()),
+        _Row(l.nerdCores, cpu['cores']?.toString()),
+        _Row(l.nerdByteOrder, cpu['endianness']?.toString()),
         _Row('libc', os['libc']?.toString()),
-        _Row('Machine uptime', _duration(sys['machine_uptime_seconds'])),
-        _Row('Local addresses', _list(net['local_addresses'])),
+        _Row(l.nerdMachineUptime, _duration(sys['machine_uptime_seconds'])),
+        _Row(l.nerdLocalAddresses, _list(net['local_addresses'])),
       ]),
-      _Section('Server components', [
+      _Section(l.nerdSectionServerComponents, [
         _Row('Python', '${python['version']} (${python['implementation']})'),
-        _Row('Frozen bundle', _yesNo(python['frozen'])),
+        _Row(l.nerdFrozenBundle, _yesNo(python['frozen'])),
         for (final e in _map(sys['components']).entries)
-          _Row(e.key, e.value?.toString() ?? 'not installed'),
+          _Row(e.key, e.value?.toString() ?? l.nerdNotInstalled),
       ]),
-      _Section('App components', [
+      _Section(l.nerdSectionAppComponents, [
         for (final e in (AppInfo.packages.entries.toList()
           ..sort((a, b) => a.key.compareTo(b.key))))
           _Row(e.key, e.value),
       ]),
-      _Section('Air conditioners', _units(sys['units'])),
-      _Section('Enrolled devices', _devices(sys['devices'])),
-      _Section('Programs & scheduler', [
-        _Row('Programs', '${programs['total'] ?? 0} '
+      _Section(l.nerdSectionUnits, _units(sys['units'])),
+      _Section(l.nerdSectionDevices, _devices(sys['devices'])),
+      _Section(l.nerdSectionPrograms, [
+        _Row(l.nerdPrograms, '${programs['total'] ?? 0} '
             '(${_byKind(programs['by_kind'])})'),
-        _Row('Scheduler running', _yesNo(scheduler['running'])),
-        _Row('Tick', scheduler['tick_seconds'] == null
+        _Row(l.nerdSchedulerRunning, _yesNo(scheduler['running'])),
+        _Row(l.nerdTick, scheduler['tick_seconds'] == null
             ? null
             : '${scheduler['tick_seconds']} s'),
-        _Row('Runs', scheduler['runs']?.toString()),
-        _Row('Errors', scheduler['errors']?.toString()),
-        _Row('Last run', scheduler['last_run']?.toString()),
+        _Row(l.nerdRuns, scheduler['runs']?.toString()),
+        _Row(l.nerdErrors, scheduler['errors']?.toString()),
+        _Row(l.nerdLastRun, scheduler['last_run']?.toString()),
       ]),
-      _Section('Settings', [
+      _Section(l.nerdSectionSettings, [
         for (final e in settings.entries)
           _Row(_humanise(e.key), e.value is bool
               ? _yesNo(e.value)
               : (e.value is List ? _list(e.value) : e.value?.toString())),
       ]),
-      _Section('Storage', [
+      _Section(l.nerdSectionStorage, [
         for (final e in storage.entries) ..._storageRows(e.key, _map(e.value)),
       ]),
-      _Section('Advertised features', [
-        _Row('Features', _list(server['features'])),
-        _Row('Auth versions', _list(server['auth_versions'])),
+      _Section(l.nerdSectionFeatures, [
+        _Row(l.nerdFeatures, _list(server['features'])),
+        _Row(l.nerdAuthVersions, _list(server['auth_versions'])),
       ]),
     ];
   }
 
   List<Widget> _units(dynamic raw) {
+    final l = context.l10n;
     final units = (raw as List?) ?? const [];
-    if (units.isEmpty) return [const _Row('Units', 'none configured')];
+    if (units.isEmpty) return [_Row(l.nerdUnits, l.nerdNoneConfigured)];
     final out = <Widget>[];
     for (final u in units.cast<Map<String, dynamic>>()) {
       final caps = _map(u['capabilities']);
       out.addAll([
-        _Row(u['name']?.toString() ?? 'unit', '${u['ip']}:${u['port']}'),
+        _Row(u['name']?.toString() ?? l.nerdUnitFallback, '${u['ip']}:${u['port']}'),
         _Row('  id', u['id']?.toString()),
-        _Row('  V3 credentials', _yesNo(u['has_v3_credentials'])),
-        _Row('  connection cached', _yesNo(u['connected'])),
-        if (u['samples'] != null) _Row('  history samples', u['samples'].toString()),
+        _Row('  ${l.nerdV3Credentials}', _yesNo(u['has_v3_credentials'])),
+        _Row('  ${l.nerdConnectionCached}', _yesNo(u['connected'])),
+        if (u['samples'] != null) _Row('  ${l.nerdHistorySamples}', u['samples'].toString()),
         if (caps.isNotEmpty) ...[
-          _Row('  modes', _list(caps['operational_modes'])),
-          _Row('  swing', _list(caps['swing_modes'])),
-          _Row('  fan speeds', _list(caps['fan_speeds'])),
-          _Row('  temp range', caps['min_target_temperature'] == null
+          _Row('  ${l.nerdModes}', _list(caps['operational_modes'])),
+          _Row('  ${l.nerdSwing}', _list(caps['swing_modes'])),
+          _Row('  ${l.nerdFanSpeeds}', _list(caps['fan_speeds'])),
+          _Row('  ${l.nerdTempRange}', caps['min_target_temperature'] == null
               ? null
               : '${caps['min_target_temperature']}–${caps['max_target_temperature']} °C'),
-          _Row('  eco / turbo',
+          _Row('  ${l.nerdEcoTurbo}',
               '${_yesNo(caps['supports_eco'])} / ${_yesNo(caps['supports_turbo'])}'),
         ] else
-          const _Row('  capabilities',
-              'not cached — open the unit once, then refresh'),
+          _Row('  ${l.nerdCapabilities}',
+              l.nerdCapabilitiesNotCached),
       ]);
     }
     return out;
   }
 
   List<Widget> _devices(dynamic raw) {
+    final l = context.l10n;
     final devices = (raw as List?) ?? const [];
-    if (devices.isEmpty) return [const _Row('Devices', 'none enrolled')];
+    if (devices.isEmpty) return [_Row(l.nerdDevices, l.nerdNoneEnrolled)];
     final out = <Widget>[];
     for (final d in devices.cast<Map<String, dynamic>>()) {
       final expiresIn = d['expires_in_seconds'];
       out.addAll([
-        _Row(d['label']?.toString() ?? 'device',
-            'auth v${d['auth_version']}${d['expired'] == true ? ' · EXPIRED' : ''}'),
+        _Row(d['label']?.toString() ?? l.nerdDeviceFallback,
+            'auth v${d['auth_version']}${d['expired'] == true ? ' · ${l.nerdExpiredTag}' : ''}'),
         _Row('  id', d['token_id']?.toString()),
-        _Row('  enrolled', _when(d['created_at'])),
-        _Row('  last used', _when(d['last_used'])),
-        _Row('  expires', expiresIn == null
-            ? 'never'
-            : '${_when(d['expires_at'])} (in ${_duration(expiresIn)})'),
+        _Row('  ${l.nerdEnrolled}', _when(d['created_at'])),
+        _Row('  ${l.nerdLastUsed}', _when(d['last_used'])),
+        _Row('  ${l.nerdExpires}', expiresIn == null
+            ? l.nerdNever
+            : l.nerdExpiresIn('${_when(d['expires_at'])}', '${_duration(expiresIn)}')),
       ]);
     }
     return out;
   }
 
   List<Widget> _storageRows(String name, Map<String, dynamic> f) {
+    final l = context.l10n;
     if (f['exists'] != true) {
-      return [_Row(name, 'missing (${f['path']})')];
+      return [_Row(name, l.nerdMissing('${f['path']}'))];
     }
     return [
       _Row(name, f['path']?.toString()),
-      _Row('  size / mode', '${_bytes(f['size_bytes'])} · ${f['mode']}'),
-      _Row('  modified', _when(f['modified_at'])),
+      _Row('  ${l.nerdSizeMode}', '${_bytes(f['size_bytes'])} · ${f['mode']}'),
+      _Row('  ${l.nerdModified}', _when(f['modified_at'])),
     ];
   }
 
@@ -348,15 +361,16 @@ class _NerdScreenState extends State<NerdScreen> {
       v is Map ? Map<String, dynamic>.from(v) : <String, dynamic>{};
 
   String? _list(dynamic v) {
-    if (v is List) return v.isEmpty ? 'none' : v.join(', ');
+    if (v is List) return v.isEmpty ? context.l10n.nerdNone : v.join(', ');
     return v?.toString();
   }
 
-  String _yesNo(dynamic v) => v == null ? '?' : (v == true ? 'yes' : 'no');
+  String _yesNo(dynamic v) =>
+      v == null ? '?' : (v == true ? context.l10n.nerdYes : context.l10n.nerdNo);
 
   String _byKind(dynamic v) {
     final m = _map(v);
-    if (m.isEmpty) return 'none';
+    if (m.isEmpty) return context.l10n.nerdNone;
     return m.entries.map((e) => '${e.value} ${e.key}').join(', ');
   }
 
@@ -382,10 +396,11 @@ class _NerdScreenState extends State<NerdScreen> {
     s %= 3600;
     final m = s ~/ 60;
     s %= 60;
-    if (d > 0) return '${d}d ${h}h ${m}m';
-    if (h > 0) return '${h}h ${m}m';
-    if (m > 0) return '${m}m ${s}s';
-    return '${s}s';
+    final l = context.l10n;
+    if (d > 0) return l.nerdDurationDays(d, h, m);
+    if (h > 0) return l.nerdDurationHours(h, m);
+    if (m > 0) return l.nerdDurationMinutes(m, s);
+    return l.nerdDurationSeconds(s);
   }
 
   String _offset(dynamic seconds) {
@@ -399,8 +414,8 @@ class _NerdScreenState extends State<NerdScreen> {
   String? _bytes(dynamic v) {
     if (v is! num) return null;
     if (v < 1024) return '$v B';
-    if (v < 1024 * 1024) return '${(v / 1024).toStringAsFixed(1)} KiB';
-    return '${(v / 1024 / 1024).toStringAsFixed(1)} MiB';
+    if (v < 1024 * 1024) return '${fmtDecimal(v / 1024, 1)} KiB';
+    return '${fmtDecimal(v / 1024 / 1024, 1)} MiB';
   }
 
   /// The point of this screen is usually to paste it somewhere, so make that
@@ -416,7 +431,7 @@ class _NerdScreenState extends State<NerdScreen> {
     Clipboard.setData(ClipboardData(text: b.toString()));
     Haptics.success();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Copied everything to the clipboard')),
+      SnackBar(content: Text(context.l10n.nerdCopied)),
     );
   }
 }
@@ -436,15 +451,14 @@ class _WompWomp extends StatelessWidget {
           children: [
             Icon(Icons.sentiment_dissatisfied, size: 72, color: scheme.outline),
             const SizedBox(height: 20),
-            Text('womp womp update your server',
+            Text(context.l10n.nerdWompWomp,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 12),
             Text(
               version == null
-                  ? 'This screen needs Breeze Core 3.0.5 or newer.'
-                  : 'This server is on $version. The Nerd screen needs '
-                      'Breeze Core 3.0.5 or newer.',
+                  ? context.l10n.nerdNeedsNewer
+                  : context.l10n.nerdServerTooOld(version!),
               textAlign: TextAlign.center,
               style: TextStyle(color: scheme.onSurfaceVariant),
             ),
@@ -473,7 +487,7 @@ class _Problem extends StatelessWidget {
             const SizedBox(height: 16),
             Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 20),
-            FilledButton.tonal(onPressed: onRetry, child: const Text('Try again')),
+            FilledButton.tonal(onPressed: onRetry, child: Text(context.l10n.nerdTryAgain)),
           ],
         ),
       ),

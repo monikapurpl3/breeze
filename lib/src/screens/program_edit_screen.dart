@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' show DateFormat;
+import 'package:material_ui/material_ui.dart';
 
 import '../api_client.dart';
 import '../app_scope.dart';
 import '../haptics.dart';
+import '../l10n.dart';
 import '../models.dart';
 import '../theme.dart';
 import '../util.dart';
@@ -30,29 +32,44 @@ IconData kindIcon(String kind) => switch (kind) {
       _ => Icons.star_rounded,
     };
 
-String kindName(String kind) => switch (kind) {
-      'schedule' => 'Schedule',
-      'curve' => 'Curve',
-      _ => 'Favourite',
+String kindName(AppLocalizations l, String kind) => switch (kind) {
+      'schedule' => l.programKindSchedule,
+      'curve' => l.programKindCurve,
+      _ => l.programKindFavourite,
     };
 
-String _kindBlurb(String kind) => switch (kind) {
-      'schedule' => 'Scenes at set times on the days you pick. The server runs '
-          'them, so they happen with the phone off. Times are the server\'s.',
-      'curve' => 'A target temperature that follows the day, adjusted by the '
-          'server as the hours pass, through midnight and round again.',
-      _ => 'A scene saved for one tap: apply it from Programs whenever you want it.',
+String _kindBlurb(AppLocalizations l, String kind) => switch (kind) {
+      'schedule' => l.programBlurbSchedule,
+      'curve' => l.programBlurbCurve,
+      _ => l.programBlurbFavourite,
     };
 
-const _weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+/// The days' names in [l]'s language, Monday first: "Mon" when [short], "M"
+/// when [narrow], else "Monday". From intl's tables, which the Material
+/// localizations load for every language the app speaks -- English as en_US,
+/// the one intl has built in, so it works before they load too, as in a unit
+/// test.
+List<String> weekdayNames(AppLocalizations l, {bool short = false, bool narrow = false}) {
+  final locale = l.localeName == 'en' ? 'en_US' : l.localeName;
+  final s = DateFormat(null, locale).dateSymbols;
+  final names = narrow
+      ? s.STANDALONENARROWWEEKDAYS
+      : short
+          ? s.STANDALONESHORTWEEKDAYS
+          : s.STANDALONEWEEKDAYS;
+  return [...names.skip(1), names.first]; // intl starts on Sunday
+}
 
-/// "Every day", "Weekdays", "Weekends", or the days themselves.
-String daysLabel(List<int> days) {
+/// "Every day", "Weekdays", "Weekends", or the days themselves -- in [l]'s
+/// language, or English without one.
+String daysLabel(List<int> days, [AppLocalizations? l]) {
+  l ??= lookupAppLocalizations(const Locale('en'));
   final d = {...days};
-  if (d.isEmpty || d.length == 7) return 'Every day';
-  if (d.length == 5 && d.containsAll([0, 1, 2, 3, 4])) return 'Weekdays';
-  if (d.length == 2 && d.containsAll([5, 6])) return 'Weekends';
-  return (d.toList()..sort()).map((i) => kWeekdayShort[i]).join(', ');
+  if (d.isEmpty || d.length == 7) return l.programDaysEveryDay;
+  if (d.length == 5 && d.containsAll([0, 1, 2, 3, 4])) return l.programDaysWeekdays;
+  if (d.length == 2 && d.containsAll([5, 6])) return l.programDaysWeekends;
+  final names = weekdayNames(l, short: true);
+  return (d.toList()..sort()).map((i) => names[i]).join(l.programDaysSeparator);
 }
 
 ClimateSettings _defaultScene() => ClimateSettings(
@@ -110,15 +127,15 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
   Future<void> _save() async {
     final name = _name.text.trim();
     if (name.isEmpty) {
-      _snack('Give the program a name.');
+      _snack(context.l10n.programNeedsName);
       return;
     }
     if (_kind == 'schedule' && _schedule.isEmpty) {
-      _snack('Add at least one time.');
+      _snack(context.l10n.programNeedsTime);
       return;
     }
     if (_kind == 'curve' && _curve.points.length < 2) {
-      _snack('A curve needs at least two points.');
+      _snack(context.l10n.programNeedsTwoPoints);
       return;
     }
     final prog = Program(
@@ -153,9 +170,10 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.existing == null ? 'New program' : 'Edit program'),
+        title: Text(widget.existing == null ? l.programNew : l.programEditTitle),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -165,7 +183,7 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
                   ? const SizedBox(
                       width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.check),
-              label: const Text('Save'),
+              label: Text(l.actionSave),
             ),
           ),
         ],
@@ -178,11 +196,11 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
             textCapitalization: TextCapitalization.sentences,
             style: Theme.of(context).textTheme.titleLarge,
             decoration: InputDecoration(
-              labelText: 'Name',
+              labelText: l.programName,
               hintText: switch (_kind) {
-                'schedule' => 'Weekday mornings',
-                'curve' => 'Summer nights',
-                _ => 'Cosy evening',
+                'schedule' => l.programNameHintSchedule,
+                'curve' => l.programNameHintCurve,
+                _ => l.programNameHintFavourite,
               },
               filled: true,
               prefixIcon: Icon(kindIcon(_kind)),
@@ -196,11 +214,11 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
           _KindPicker(value: _kind, onChanged: (k) => setState(() => _kind = k)),
           Padding(
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
-            child: Text(_kindBlurb(_kind), style: _hint(context)),
+            child: Text(_kindBlurb(l, _kind), style: _hint(context)),
           ),
           const SizedBox(height: 12),
           _Section(
-            title: 'Units',
+            title: l.programUnits,
             child: _UnitPicker(
               units: widget.units,
               selected: _units,
@@ -212,20 +230,20 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
           // it gets no switch (and keeps whatever value it had).
           if (_kind != 'favourite')
             _Section(
-              title: 'Running',
+              title: l.programRunning,
               child: SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: Text(_enabled ? 'On' : 'Off'),
+                title: Text(_enabled ? l.programOn : l.programOff),
                 subtitle: Text(_kind == 'schedule'
-                    ? 'Off keeps the times, but nothing happens at them'
-                    : 'Off keeps the curve, but the server stops following it'),
+                    ? l.programOffKeepsTimes
+                    : l.programOffKeepsCurve),
                 value: _enabled,
                 onChanged: (v) => setState(() => _enabled = v),
               ),
             ),
           if (_kind == 'favourite')
             _Section(
-              title: 'Scene',
+              title: l.programScene,
               child: SceneEditor(initial: _favourite, onChanged: (s) => _favourite = s),
             ),
           if (_kind == 'schedule') ..._scheduleSection(),
@@ -239,18 +257,19 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
 
   List<Widget> _scheduleSection() {
     final sorted = [..._schedule]..sort((a, b) => minutesOf(a.time).compareTo(minutesOf(b.time)));
+    final l = context.l10n;
     return [
       Padding(
         padding: const EdgeInsets.fromLTRB(4, 16, 4, 8),
         child: _Heading(
-          'Times',
-          trailing: '${_schedule.length} ${_schedule.length == 1 ? 'time' : 'times'}',
+          l.programTimes,
+          trailing: l.programTimesCount(_schedule.length),
         ),
       ),
       if (sorted.isEmpty)
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Text('No times yet.', textAlign: TextAlign.center, style: _hint(context)),
+          child: Text(l.programNoTimesYet, textAlign: TextAlign.center, style: _hint(context)),
         ),
       for (final entry in sorted)
         _EntryCard(
@@ -265,7 +284,7 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
       FilledButton.tonalIcon(
         onPressed: _addEntry,
         icon: const Icon(Icons.add_alarm),
-        label: const Text('Add a time'),
+        label: Text(l.programAddTime),
       ),
     ];
   }
@@ -279,7 +298,7 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
     final t = await showTimePicker(
       context: context,
       initialTime: const TimeOfDay(hour: 7, minute: 0),
-      helpText: 'When should it happen?',
+      helpText: context.l10n.programAddTimeHelp,
     );
     if (t == null) return;
     final last = _schedule.isEmpty ? null : _schedule.last;
@@ -307,13 +326,14 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
           children: [
             Semantics(
               header: true,
-              child: Text('At ${entry.time}, ${daysLabel(entry.days).toLowerCase()}',
+              child: Text(
+                  ctx.l10n.programSceneAt(entry.time, daysLabel(entry.days, ctx.l10n).toLowerCase()),
                   style: Theme.of(ctx).textTheme.titleLarge),
             ),
             const SizedBox(height: 16),
             SceneEditor(initial: entry.settings, onChanged: (s) => entry.settings = s),
             const SizedBox(height: 20),
-            FilledButton(onPressed: () => Navigator.pop(ctx), child: const Text('Done')),
+            FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.actionDone)),
           ],
         ),
       ),
@@ -327,13 +347,14 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
     final scheme = Theme.of(context).colorScheme;
     final accent = accentForMode(_curve.operationalMode, scheme);
     final pts = [..._curve.points]..sort((a, b) => minutesOf(a.time).compareTo(minutesOf(b.time)));
+    final l = context.l10n;
     return [
       _Section(
-        title: 'Through the day',
+        title: l.curveThroughTheDay,
         child: CurveChart(points: _curve.points, accent: accent),
       ),
       _Section(
-        title: 'Mode and fan',
+        title: l.curveModeAndFan,
         child: Column(
           children: [
             ModeSelector(
@@ -350,7 +371,7 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
         ),
       ),
       _Section(
-        title: 'Points',
+        title: l.curvePoints,
         trailing: '${pts.length}',
         child: Column(
           children: [
@@ -380,7 +401,7 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
                   final t = await showTimePicker(
                     context: context,
                     initialTime: const TimeOfDay(hour: 12, minute: 0),
-                    helpText: 'A point at what time?',
+                    helpText: l.curveAddPointHelp,
                   );
                   if (t == null) return;
                   final at = hhmm(t);
@@ -392,7 +413,7 @@ class _ProgramEditScreenState extends State<ProgramEditScreen> {
                       )));
                 },
                 icon: const Icon(Icons.add),
-                label: const Text('Add a point'),
+                label: Text(l.curveAddPoint),
               ),
             ),
           ],
@@ -421,13 +442,16 @@ class _Heading extends StatelessWidget {
       header: true,
       child: Row(
         children: [
-          Text(title.toUpperCase(),
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: scheme.primary,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.1,
-                  )),
-          const Spacer(),
+          // Expanded rather than a Spacer after it: a long translation wraps
+          // at large text sizes instead of running off the card.
+          Expanded(
+            child: Text(title.toUpperCase(),
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.1,
+                    )),
+          ),
           if (trailing != null)
             Text(trailing!, style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12)),
         ],
@@ -484,7 +508,7 @@ class _KindPicker extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Semantics(
       container: true,
-      label: 'Kind of program',
+      label: context.l10n.programKindLabel,
       child: Row(
         children: [
           for (final k in _kinds)
@@ -526,7 +550,7 @@ class _KindPicker extends StatelessWidget {
                                 FittedBox(
                                   fit: BoxFit.scaleDown,
                                   child: Text(
-                                    kindName(k),
+                                    kindName(context.l10n, k),
                                     maxLines: 1,
                                     softWrap: false,
                                     style: TextStyle(
@@ -566,7 +590,7 @@ class _UnitPicker extends StatelessWidget {
       runSpacing: 4,
       children: [
         ChoiceChip(
-          label: const Text('All units'),
+          label: Text(context.l10n.programAllUnits),
           selected: selected.isEmpty,
           onSelected: (_) {
             selected.clear();
@@ -606,6 +630,7 @@ class _EntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
     final on = entry.settings.powerState != false;
     final accent = on
         ? accentForMode(entry.settings.operationalMode ?? 'COOL', scheme)
@@ -636,7 +661,7 @@ class _EntryCard extends StatelessWidget {
                       children: [
                         Semantics(
                           button: true,
-                          label: 'Time ${entry.time}, change',
+                          label: l.programTimeChange(entry.time),
                           excludeSemantics: true,
                           child: InkWell(
                             onTap: onPickTime,
@@ -655,13 +680,13 @@ class _EntryCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Text(daysLabel(entry.days),
+                          child: Text(daysLabel(entry.days, l),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(color: scheme.onSurfaceVariant)),
                         ),
                         IconButton(
-                          tooltip: 'Delete the ${entry.time} time',
+                          tooltip: l.programDeleteTime(entry.time),
                           icon: const Icon(Icons.delete_outline),
                           onPressed: onDelete,
                         ),
@@ -676,7 +701,7 @@ class _EntryCard extends StatelessWidget {
                         TextButton.icon(
                           onPressed: onEditScene,
                           icon: const Icon(Icons.tune, size: 18),
-                          label: const Text('Scene'),
+                          label: Text(l.programScene),
                         ),
                       ],
                     ),
@@ -702,6 +727,16 @@ class _DayPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final everyDay = days.isEmpty;
+    final names = weekdayNames(context.l10n);
+    // A day's button: its narrow name where those tell the seven apart (一,
+    // 二 ... in Chinese), else two letters, "Mo", "Tu", from the short name.
+    final narrow = weekdayNames(context.l10n, narrow: true);
+    final initials = narrow.toSet().length == 7
+        ? narrow
+        : [
+            for (final n in weekdayNames(context.l10n, short: true))
+              n.substring(0, 1).toUpperCase() + n.substring(1, n.length < 2 ? n.length : 2),
+          ];
     // Each day takes a seventh of the row, so the touch target is as wide as
     // the card allows -- 48 or more on a phone like a Galaxy S25+ -- rather
     // than a fixed size that is too small on one phone and overflows another.
@@ -712,7 +747,7 @@ class _DayPicker extends StatelessWidget {
           child: Semantics(
             button: true,
             selected: days.contains(d),
-            label: _weekdays[d],
+            label: names[d],
             excludeSemantics: true,
             child: InkWell(
               customBorder: const CircleBorder(),
@@ -741,7 +776,7 @@ class _DayPicker extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      _weekdays[d].substring(0, 2),
+                      initials[d],
                       style: TextStyle(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w600,
@@ -780,6 +815,7 @@ class _PointRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
     final ink = readableAccent(accent, scheme,
         on: layeredOnSurface(scheme, [scheme.surfaceContainerLow, accent.withValues(alpha: 0.16)]));
     return Padding(
@@ -796,7 +832,7 @@ class _PointRow extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 child: Semantics(
                   button: true,
-                  label: 'Point at ${point.time}, change the time',
+                  label: l.curvePointChangeTime(point.time),
                   excludeSemantics: true,
                   child: Material(
                     color: accent.withValues(alpha: 0.16),
@@ -830,7 +866,7 @@ class _PointRow extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Lower the ${point.time} point',
+            tooltip: l.curvePointLower(point.time),
             icon: const Icon(Icons.remove),
             onPressed: point.temperature <= kMinTemp ? null : () => onStep(-0.5),
           ),
@@ -846,14 +882,14 @@ class _PointRow extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Raise the ${point.time} point',
+            tooltip: l.curvePointRaise(point.time),
             icon: const Icon(Icons.add),
             onPressed: point.temperature >= kMaxTemp ? null : () => onStep(0.5),
           ),
           IconButton(
             tooltip: onDelete == null
-                ? 'A curve needs two points'
-                : 'Delete the ${point.time} point',
+                ? l.curveNeedsTwoPoints
+                : l.curvePointDelete(point.time),
             icon: const Icon(Icons.delete_outline),
             onPressed: onDelete,
           ),

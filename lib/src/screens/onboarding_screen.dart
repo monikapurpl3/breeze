@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../api_client.dart';
 import '../app_scope.dart';
 import '../device_name.dart';
 import '../haptics.dart';
+import '../l10n.dart';
 
 /// First run. This is the only screen a new user sees before anything works, so
 /// it explains what's about to happen rather than presenting three bare fields:
@@ -55,6 +56,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   Future<void> _connect() async {
     final c = AppScope.of(context);
+    final l = context.l10n;
     setState(() {
       _busy = true;
       _error = null;
@@ -67,12 +69,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       Haptics.failure();
       setState(
         () => _error = e.unauthorized
-            ? 'That access key was rejected.'
-            : e.message,
+            ? l.onboardingKeyRejected
+            : l.onboardingConnectFailed(e.message),
       );
     } catch (e) {
       Haptics.failure();
-      setState(() => _error = '$e');
+      setState(() => _error = l.onboardingConnectFailed('$e'));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -84,6 +86,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     final text = Theme.of(context).textTheme;
 
     final c = AppScope.of(context);
+    final l = context.l10n;
     return Scaffold(
       // When this screen is reached from Settings > Servers > Add, the user
       // already has a working server: give them a way back that doesn't
@@ -91,9 +94,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       appBar: c.addingServer
           ? AppBar(
               backgroundColor: Colors.transparent,
-              title: const Text('Add a server'),
+              title: Text(l.serversAdd),
               leading: IconButton(
-                tooltip: 'Cancel adding a server',
+                tooltip: l.onboardingCancelAdd,
                 icon: const Icon(Icons.close),
                 onPressed: c.cancelAddServer,
               ),
@@ -146,13 +149,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           keyboardType: TextInputType.url,
                           autocorrect: false,
                           textInputAction: TextInputAction.next,
-                          decoration: const InputDecoration(
-                            labelText: 'Server address',
+                          decoration: InputDecoration(
+                            labelText: l.onboardingServerAddress,
                             hintText: 'https://climate.example.com',
                             helperText:
-                                'Or a LAN address like 192.168.1.10:8420',
-                            prefixIcon: Icon(Icons.dns_outlined),
-                            border: OutlineInputBorder(),
+                                l.onboardingServerAddressHelper,
+                            prefixIcon: const Icon(Icons.dns_outlined),
+                            border: const OutlineInputBorder(),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -163,12 +166,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           enableSuggestions: false,
                           textInputAction: TextInputAction.next,
                           decoration: InputDecoration(
-                            labelText: 'Access key',
-                            helperText: 'From your server\'s config.json',
+                            labelText: l.onboardingAccessKey,
+                            helperText: l.onboardingAccessKeyHelper,
                             prefixIcon: const Icon(Icons.key_outlined),
                             border: const OutlineInputBorder(),
                             suffixIcon: IconButton(
-                              tooltip: _obscure ? 'Show' : 'Hide',
+                              tooltip: _obscure ? l.onboardingShowKey : l.onboardingHideKey,
                               icon: Icon(
                                 _obscure
                                     ? Icons.visibility
@@ -185,13 +188,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           textInputAction: TextInputAction.done,
                           onSubmitted: (_) => _busy ? null : _connect(),
                           decoration: InputDecoration(
-                            labelText: 'Name for this device',
+                            labelText: l.onboardingDeviceName,
                             helperText:
-                                'How this phone appears in the server\'s device list',
+                                l.onboardingDeviceNameHelper,
                             prefixIcon: const Icon(Icons.smartphone_outlined),
                             border: const OutlineInputBorder(),
                             suffixIcon: IconButton(
-                              tooltip: 'Suggest another name',
+                              tooltip: l.onboardingSuggestName,
                               icon: const Icon(Icons.casino_outlined),
                               onPressed: _reroll,
                             ),
@@ -204,7 +207,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           Semantics(
                             liveRegion: true,
                             container: true,
-                            label: 'Error: $_error',
+                            label: l.onboardingErrorSpoken(_error!),
                             excludeSemantics: true,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -248,7 +251,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                   ),
                                 )
                               : const Icon(Icons.arrow_forward),
-                          label: Text(_busy ? 'Connecting…' : 'Continue'),
+                          label: Text(_busy ? l.onboardingConnecting : l.onboardingContinue),
                           style: FilledButton.styleFrom(
                             minimumSize: const Size.fromHeight(52),
                           ),
@@ -265,8 +268,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             const SizedBox(width: 6),
                             Flexible(
                               child: Text(
-                                'Encrypted over HTTPS. This phone gets its own key, '
-                                'which never leaves the device.',
+                                l.onboardingPrivacy,
                                 style: text.bodySmall?.copyWith(
                                   color: scheme.onSurfaceVariant,
                                 ),
@@ -299,14 +301,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       ),
       const SizedBox(height: 16),
       Text(
-        'Welcome to Breeze',
+        context.l10n.onboardingWelcome,
         textAlign: TextAlign.center,
         style: text.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
       ),
       const SizedBox(height: 6),
       Text(
-        'Control your air conditioning from anywhere — '
-        'without handing it to the cloud.',
+        context.l10n.onboardingTagline,
         textAlign: TextAlign.center,
         style: text.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
       ),
@@ -327,24 +328,24 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           scheme,
           text,
           '1',
-          'Point it at your server',
-          'Its address and access key.',
+          context.l10n.onboardingStep1Title,
+          context.l10n.onboardingStep1Body,
         ),
         const SizedBox(height: 10),
         _step(
           scheme,
           text,
           '2',
-          'Get a pairing code',
-          'Shown on the next screen.',
+          context.l10n.onboardingStep2Title,
+          context.l10n.onboardingStep2Body,
         ),
         const SizedBox(height: 10),
         _step(
           scheme,
           text,
           '3',
-          'Someone approves it',
-          'An admin on your home network — this keeps strangers out.',
+          context.l10n.onboardingStep3Title,
+          context.l10n.onboardingStep3Body,
         ),
       ],
     ),

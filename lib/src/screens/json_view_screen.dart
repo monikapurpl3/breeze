@@ -5,11 +5,12 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 import '../api_client.dart';
 import '../haptics.dart';
+import '../l10n.dart';
 
 class JsonViewScreen extends StatefulWidget {
   const JsonViewScreen({
@@ -55,11 +56,11 @@ class _JsonViewScreenState extends State<JsonViewScreen> {
     } on ApiException catch (e) {
       if (mounted) {
         setState(() => _error = e.status == 404
-            ? 'This server does not have that yet.'
-            : e.message);
+            ? context.l10n.jsonNotOnServer
+            : context.l10n.jsonLoadFailed(e.message));
       }
     } catch (e) {
-      if (mounted) setState(() => _error = '$e');
+      if (mounted) setState(() => _error = context.l10n.jsonLoadFailed('$e'));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -77,24 +78,34 @@ class _JsonViewScreenState extends State<JsonViewScreen> {
     Clipboard.setData(ClipboardData(text: _text));
     Haptics.success();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Copied to the clipboard')),
+      SnackBar(content: Text(context.l10n.jsonCopied)),
     );
   }
+
+  /// A filter chip's label: the kind's name, and how many there are. A kind
+  /// this app has no name for shows as the server spells it.
+  String _kindLabel(AppLocalizations l, String k, int n) => switch (k) {
+        'favourite' => l.jsonFilterFavourites(n),
+        'schedule' => l.jsonFilterSchedules(n),
+        'curve' => l.jsonFilterCurves(n),
+        _ => '${k[0].toUpperCase()}${k.substring(1)}s ($n)',
+      };
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
           IconButton(
-            tooltip: 'Copy the JSON',
+            tooltip: l.jsonCopy,
             icon: const Icon(Icons.copy_all_outlined),
             onPressed: _items == null ? null : _copy,
           ),
           IconButton(
-            tooltip: 'Refresh',
+            tooltip: l.nerdRefresh,
             icon: const Icon(Icons.refresh),
             onPressed: _loading ? null : _reload,
           ),
@@ -110,15 +121,14 @@ class _JsonViewScreenState extends State<JsonViewScreen> {
                 spacing: 8,
                 children: [
                   ChoiceChip(
-                    label: Text('All (${_items!.length})'),
+                    label: Text(l.jsonFilterAll(_items!.length)),
                     selected: _kind == null,
                     onSelected: (_) => setState(() => _kind = null),
                   ),
                   for (final k in widget.kinds)
                     ChoiceChip(
-                      label: Text(
-                          '${k[0].toUpperCase()}${k.substring(1)}s '
-                          '(${_items!.where((e) => e is Map && e['kind'] == k).length})'),
+                      label: Text(_kindLabel(l, k,
+                          _items!.where((e) => e is Map && e['kind'] == k).length)),
                       selected: _kind == k,
                       onSelected: (_) => setState(() => _kind = k),
                     ),
@@ -145,7 +155,7 @@ class _JsonViewScreenState extends State<JsonViewScreen> {
     }
     if (_shown.isEmpty) {
       return Center(
-        child: Text('Nothing here: []',
+        child: Text(context.l10n.jsonEmpty,
             style: TextStyle(color: scheme.onSurfaceVariant)),
       );
     }

@@ -1,10 +1,11 @@
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'src/app_controller.dart';
 import 'src/app_info.dart';
 import 'src/app_scope.dart';
 import 'src/internal_prefs.dart';
+import 'src/l10n.dart';
 import 'src/home_widget_service.dart';
 import 'src/screens/home_screen.dart';
 import 'src/screens/onboarding_screen.dart';
@@ -73,6 +74,19 @@ class BreezeApp extends StatelessWidget {
                 theme: ThemeData(colorScheme: light, useMaterial3: true),
                 darkTheme: ThemeData(colorScheme: dark, useMaterial3: true),
                 home: const _Gate(),
+                // Settings' language, or the phone's while none is chosen.
+                locale: controller.locale,
+                localizationsDelegates: appLocalizationsDelegates,
+                supportedLocales: appSupportedLocales,
+                onGenerateTitle: (context) {
+                  // Runs whenever the resolved language changes: the moment
+                  // to switch the decimal separator for every number shown,
+                  // and the cat facts' language, which the Internal tab's
+                  // preview reads without a loading screen to set it.
+                  applyDecimalSeparator(Localizations.localeOf(context));
+                  CatFacts.language = AppLocalizations.of(context);
+                  return 'Breeze';
+                },
               );
             },
           ),

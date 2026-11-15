@@ -3,13 +3,15 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_client.dart';
 import 'device_signer.dart';
 import 'haptics.dart';
 import 'internal_prefs.dart';
+import 'l10n.dart';
 import 'widgets/loading_cat.dart';
 import 'models.dart';
 import 'secure_store.dart';
@@ -30,12 +32,20 @@ class AppController extends ChangeNotifier {
   static const _kUnit = 'pref_temp_unit'; // 'C' | 'F'
   static const _kBeep = 'pref_beep'; // whether commands make the unit chirp
   static const _kPureBlack = 'pref_pure_black'; // AMOLED black in the dark theme
+  static const _kLanguage = 'pref_language'; // a tag from appLanguages; absent = the system's
   static const _kLastUnit =
       'pref_last_unit_id'; // last unit page the user was on
   ThemeMode themeMode = ThemeMode.system;
   String tempUnit = 'C';
   bool beep = false;
   bool pureBlack = false;
+
+  /// The language chosen in Settings, as a tag from [appLanguages]; null
+  /// follows the phone's.
+  String? language;
+
+  /// [language] as a Locale for MaterialApp; null lets it follow the system.
+  Locale? get locale => language == null ? null : Locale(language!);
   // Which unit page to restore on launch (by unit id, so it survives
   // reordering; the home screen falls back gracefully if it's gone). Null =
   // no preference yet → start on the first unit.
@@ -85,6 +95,7 @@ class AppController extends ChangeNotifier {
     tempUnit = p.getString(_kUnit) == 'F' ? 'F' : 'C';
     beep = p.getBool(_kBeep) ?? false;
     pureBlack = p.getBool(_kPureBlack) ?? false;
+    language = p.getString(_kLanguage);
     lastUnitId = p.getString(_kLastUnit);
   }
 
@@ -113,6 +124,28 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     final p = await SharedPreferences.getInstance();
     await p.setBool(_kPureBlack, value);
+  }
+
+  /// Choose the app's language; null follows the phone's again.
+  ///
+  /// On Android 13 and newer this also becomes Android's own per-app
+  /// language, so the home-screen widget and Android Auto -- native text the
+  /// app's translations never reach -- speak it too. Older Android has no
+  /// such setting; there they follow the phone.
+  Future<void> setLanguage(String? tag) async {
+    language = tag;
+    notifyListeners();
+    final p = await SharedPreferences.getInstance();
+    if (tag == null) {
+      await p.remove(_kLanguage);
+    } else {
+      await p.setString(_kLanguage, tag);
+    }
+    try {
+      await const MethodChannel('app.breeze/locale').invokeMethod<void>('set', tag ?? '');
+    } catch (_) {
+      // Not Android, or a test: the app's own text has changed regardless.
+    }
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -482,8 +515,9 @@ class AppController extends ChangeNotifier {
   /// Returns why there is nothing to keep, or null when addresses were
   /// learned. A server bound only to loopback sits behind a proxy on its own
   /// machine: nothing on the LAN can reach it directly, so there is no LAN
-  /// address worth trying.
-  Future<String?> learnLanAddresses() async {
+  /// address worth trying. The reason is in [l10n]'s language; English when
+  /// none is given.
+  Future<String?> learnLanAddresses([AppLocalizations? l10n]) async {
     final sys = await api!.systemInfo();
     final net = (sys['network'] as Map?)?.cast<String, dynamic>() ?? const {};
     final urls = lanUrlsFrom(net);
@@ -491,10 +525,10 @@ class AppController extends ChangeNotifier {
     await _refreshAlternates();
     if (urls.isNotEmpty) return null;
     final host = net['bind_host']?.toString() ?? '';
+    final l = l10n ?? lookupAppLocalizations(const Locale('en'));
     return _isLoopback(host)
-        ? 'The server only listens on its own machine ($host), behind a proxy, '
-            'so nothing on the LAN can reach it directly.'
-        : 'The server did not report a LAN address.';
+        ? l.nerdLanLoopbackOnly(host)
+        : l.nerdLanNoAddress;
   }
 
   /// `http://ip:port` for each address the server can be reached at on its

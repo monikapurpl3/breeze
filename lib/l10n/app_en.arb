@@ -1,0 +1,3885 @@
+{
+  "@@locale": "en",
+  "language": "Language",
+  "@language": {
+    "description": "Settings: the language picker, and the list it opens."
+  },
+  "languageSystem": "System default",
+  "@languageSystem": {
+    "description": "Settings, language picker: follow the phone's own language."
+  },
+  "modeAuto": "auto",
+  "@modeAuto": {
+    "description": "An air conditioner mode, as a short label on a mode tile and in lists. Lower case in English."
+  },
+  "modeCool": "cool",
+  "@modeCool": {
+    "description": "Mode: cooling."
+  },
+  "modeDry": "dry",
+  "@modeDry": {
+    "description": "Mode: dehumidifying."
+  },
+  "modeHeat": "heat",
+  "@modeHeat": {
+    "description": "Mode: heating."
+  },
+  "modeFan": "fan",
+  "@modeFan": {
+    "description": "Mode: fan only, no cooling or heating."
+  },
+  "fanSpeedSilent": "silent",
+  "@fanSpeedSilent": {
+    "description": "A fan speed: the quietest step. Lower case."
+  },
+  "fanSpeedLow": "low",
+  "@fanSpeedLow": {
+    "description": "A fan speed."
+  },
+  "fanSpeedMedium": "medium",
+  "@fanSpeedMedium": {
+    "description": "A fan speed."
+  },
+  "fanSpeedHigh": "high",
+  "@fanSpeedHigh": {
+    "description": "A fan speed."
+  },
+  "fanSpeedMax": "max",
+  "@fanSpeedMax": {
+    "description": "A fan speed: the strongest step."
+  },
+  "fanSpeedAuto": "auto",
+  "@fanSpeedAuto": {
+    "description": "A fan speed: the unit chooses."
+  },
+  "swingOff": "off",
+  "@swingOff": {
+    "description": "Flaps: not swinging. Lower case."
+  },
+  "swingVertical": "vertical",
+  "@swingVertical": {
+    "description": "Flaps: swinging up and down."
+  },
+  "swingHorizontal": "horizontal",
+  "@swingHorizontal": {
+    "description": "Flaps: swinging left and right."
+  },
+  "swingBoth": "both",
+  "@swingBoth": {
+    "description": "Flaps: swinging both ways."
+  },
+  "actionCancel": "Cancel",
+  "@actionCancel": {
+    "description": "A button."
+  },
+  "actionSave": "Save",
+  "@actionSave": {
+    "description": "A button."
+  },
+  "actionOk": "OK",
+  "@actionOk": {
+    "description": "A button."
+  },
+  "actionDelete": "Delete",
+  "@actionDelete": {
+    "description": "A button."
+  },
+  "actionClose": "Close",
+  "@actionClose": {
+    "description": "A button."
+  },
+  "actionRetry": "Retry",
+  "@actionRetry": {
+    "description": "A button."
+  },
+  "actionRename": "Rename",
+  "@actionRename": {
+    "description": "A button or menu item."
+  },
+  "actionRemove": "Remove",
+  "@actionRemove": {
+    "description": "A button or menu item."
+  },
+  "actionApply": "Apply",
+  "@actionApply": {
+    "description": "A button: put a saved setting into effect now."
+  },
+  "actionAdd": "Add",
+  "@actionAdd": {
+    "description": "A button."
+  },
+  "actionEdit": "Edit",
+  "@actionEdit": {
+    "description": "A button."
+  },
+  "actionDone": "Done",
+  "@actionDone": {
+    "description": "A button."
+  },
+  "stateOn": "on",
+  "@stateOn": {
+    "description": "A switch or unit is on. Lower case."
+  },
+  "stateOff": "off",
+  "@stateOff": {
+    "description": "A switch or unit is off. Lower case."
+  },
+  "stateOffline": "offline",
+  "@stateOffline": {
+    "description": "A unit or the server cannot be reached. Lower case."
+  },
+  "labelPower": "Power",
+  "@labelPower": {
+    "description": "The unit's power switch, as a label."
+  },
+  "labelMode": "Mode",
+  "@labelMode": {
+    "description": "The unit's mode, as a heading or label."
+  },
+  "labelFan": "Fan",
+  "@labelFan": {
+    "description": "The unit's fan speed, as a heading or label."
+  },
+  "labelEco": "Eco",
+  "@labelEco": {
+    "description": "The eco setting. A name, usually not translated."
+  },
+  "labelTurbo": "Turbo",
+  "@labelTurbo": {
+    "description": "The turbo setting. A name, usually not translated."
+  },
+  "labelVerticalFlap": "Vertical flap",
+  "@labelVerticalFlap": {
+    "description": "The flap that swings up and down."
+  },
+  "labelHorizontalFlap": "Horizontal flap",
+  "@labelHorizontalFlap": {
+    "description": "The flap that swings left and right."
+  },
+  "homeErrorDetail": "{detail}",
+  "@homeErrorDetail": {
+    "description": "Home screen, snack bar: something the user did failed. {detail} is the error's own text from the server or the connection, always in English. English shows it bare; other languages put a short lead-in before it (\"Didn't work:\") so the English after it makes sense.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "homeLoadFailed": "Could not load your units.",
+  "@homeLoadFailed": {
+    "description": "Home screen, in the middle of an empty screen: the list of air conditioners could not be fetched from the server. A Retry button is under it."
+  },
+  "homeTimerCancelled": "Timer cancelled",
+  "@homeTimerCancelled": {
+    "description": "Snack bar: the unit's sleep timer (turn off after a while) was cancelled."
+  },
+  "homeStartCancelled": "Scheduled start cancelled",
+  "@homeStartCancelled": {
+    "description": "Snack bar: the unit's scheduled start (turn on at a set time) was cancelled."
+  },
+  "homeSwitchingOffAt": "Switching off at {time}",
+  "@homeSwitchingOffAt": {
+    "description": "Snack bar after setting a sleep timer: the unit will switch off at {time}, a 24-hour clock time like 23:15.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "23:15"
+      }
+    }
+  },
+  "homeSwitchingOn": "Switching on {moment}",
+  "@homeSwitchingOn": {
+    "description": "Snack bar after setting a scheduled start. {moment} is one of timerWhenToday, timerWhenTomorrow or timerWhenDate, e.g. \"tomorrow at 07:30\".",
+    "placeholders": {
+      "moment": {
+        "type": "String",
+        "example": "tomorrow at 07:30"
+      }
+    }
+  },
+  "homeRenameTitle": "Rename unit",
+  "@homeRenameTitle": {
+    "description": "Title of the dialog that renames an air conditioner."
+  },
+  "homeNameField": "Name",
+  "@homeNameField": {
+    "description": "Rename dialog: the label of the text field for the unit's new name."
+  },
+  "homeRemoveTitle": "Remove unit",
+  "@homeRemoveTitle": {
+    "description": "Title of the dialog that removes an air conditioner from the server."
+  },
+  "homeRemoveBody": "Remove \"{name}\" from the server? You can add it back later.",
+  "@homeRemoveBody": {
+    "description": "Remove dialog: the question. {name} is the unit's name, which the user gave it.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "homeAddScanTitle": "Scan the network",
+  "@homeAddScanTitle": {
+    "description": "Add-unit sheet, first choice: look for air conditioners on the local network."
+  },
+  "homeAddScanSubtitle": "Find units by looking for open AC ports",
+  "@homeAddScanSubtitle": {
+    "description": "Add-unit sheet: explains the scan choice. AC = air conditioner."
+  },
+  "homeAddIpTitle": "Enter IP address",
+  "@homeAddIpTitle": {
+    "description": "Add-unit sheet, second choice: type the unit's IP address."
+  },
+  "homeAddIpSubtitle": "Add a unit manually by its LAN IP",
+  "@homeAddIpSubtitle": {
+    "description": "Add-unit sheet: explains the IP choice."
+  },
+  "homeAddByIpTitle": "Add unit by IP",
+  "@homeAddByIpTitle": {
+    "description": "Title of the dialog where the user types a unit's IP address."
+  },
+  "homeUnitIpField": "Unit IP address",
+  "@homeUnitIpField": {
+    "description": "Add-by-IP dialog: label of the IP address field."
+  },
+  "homeNameOptionalField": "Name (optional)",
+  "@homeNameOptionalField": {
+    "description": "Add-by-IP dialog: label of the field for the unit's name, which may be left empty."
+  },
+  "homeDiscovering": "Discovering unit…",
+  "@homeDiscovering": {
+    "description": "Snack bar while the server talks to a newly added unit for the first time."
+  },
+  "homeAdded": "Added \"{name}\"",
+  "@homeAdded": {
+    "description": "Snack bar: the unit was added. {name} is its name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "homeTooltipAddUnit": "Add unit",
+  "@homeTooltipAddUnit": {
+    "description": "Tooltip and screen-reader name of the + button in the home screen's top bar."
+  },
+  "homeTooltipPrograms": "Programs",
+  "@homeTooltipPrograms": {
+    "description": "Tooltip of the top-bar button that opens the programs screen (favourites, schedules, curves)."
+  },
+  "homeTooltipDiagnostics": "Diagnostics",
+  "@homeTooltipDiagnostics": {
+    "description": "Tooltip of the top-bar button that opens the diagnostics screen."
+  },
+  "homeTooltipSettings": "Settings",
+  "@homeTooltipSettings": {
+    "description": "Tooltip of the top-bar button that opens the settings screen."
+  },
+  "homeOfflineBanner": "Can’t reach the server — retrying…",
+  "@homeOfflineBanner": {
+    "description": "Red banner at the top of the home screen while the server cannot be reached; the app keeps trying. A Retry button is beside it."
+  },
+  "homeReachingServer": "Reaching your Breeze Core server…",
+  "@homeReachingServer": {
+    "description": "Shown, and spoken, under the loading animation while the app first connects to the server."
+  },
+  "homeNoUnits": "No units yet.",
+  "@homeNoUnits": {
+    "description": "Home screen when the server has no air conditioners. An 'Add a unit' button is under it."
+  },
+  "homeAddAUnit": "Add a unit",
+  "@homeAddAUnit": {
+    "description": "Button on the empty home screen."
+  },
+  "homeConnectingTo": "Connecting to {name}…",
+  "@homeConnectingTo": {
+    "description": "Under the loading animation on a unit's page before its state has arrived. {name} is the unit's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "homePreviousUnit": "Previous unit",
+  "@homePreviousUnit": {
+    "description": "Tooltip of the left arrow beside the page dots: go to the previous air conditioner."
+  },
+  "homeNextUnit": "Next unit",
+  "@homeNextUnit": {
+    "description": "Tooltip of the right arrow beside the page dots: go to the next air conditioner."
+  },
+  "homeUnitPosition": "Unit {index} of {count}, {name}",
+  "@homeUnitPosition": {
+    "description": "Spoken by screen readers for the page dots: which unit is shown, out of how many, and its name.",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "2"
+      },
+      "count": {
+        "type": "int",
+        "example": "3"
+      },
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "homeTileConnecting": "connecting…",
+  "@homeTileConnecting": {
+    "description": "Units list (tablets): the second line of a unit whose state has not arrived yet. Lower case."
+  },
+  "homeTileOn": "{mode}, {temperature}",
+  "@homeTileOn": {
+    "description": "Units list (tablets): the second line of a unit that is on: its mode (modeCool etc.) and target temperature.",
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "example": "cool"
+      },
+      "temperature": {
+        "type": "String",
+        "example": "23.5°C"
+      }
+    }
+  },
+  "homeTileRoom": "room {temperature}",
+  "@homeTileRoom": {
+    "description": "Units list (tablets), spoken only: the temperature in the unit's room.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "21.0°C"
+      }
+    }
+  },
+  "homeLatencyUnmeasured": "Latency not measured yet",
+  "@homeLatencyUnmeasured": {
+    "description": "Spoken for the latency badge beside the app's title (switched on from the Nerd screen) before the first measurement."
+  },
+  "homeLatency": "{ms, plural, one{Latency {ms} millisecond} other{Latency {ms} milliseconds}}",
+  "@homeLatency": {
+    "description": "Spoken for the latency badge beside the app's title: the server's round-trip time.",
+    "placeholders": {
+      "ms": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  },
+  "homeLatencyFallback": "{ms, plural, one{Latency {ms} millisecond, through a fallback address} other{Latency {ms} milliseconds, through a fallback address}}",
+  "@homeLatencyFallback": {
+    "description": "As homeLatency, while the app is reaching the server through its fallback address instead of the main one.",
+    "placeholders": {
+      "ms": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  },
+  "homeScanTitle": "Scan for units",
+  "@homeScanTitle": {
+    "description": "Title of the dialog that scans the local network for air conditioners."
+  },
+  "homeScanEnterIp": "Enter IP instead",
+  "@homeScanEnterIp": {
+    "description": "Scan dialog button: give up scanning and type an IP address. One of three buttons in a row, keep it short."
+  },
+  "homeScanRescan": "Rescan",
+  "@homeScanRescan": {
+    "description": "Scan dialog button: scan again."
+  },
+  "homeScanning": "Scanning the network…",
+  "@homeScanning": {
+    "description": "Scan dialog, under a spinner."
+  },
+  "homeScanTooOld": "This server is older than 3.0 and can’t scan. Add the unit by its IP instead.",
+  "@homeScanTooOld": {
+    "description": "Scan dialog: the Breeze Core server is a version older than 3.0, which has no scan. 3.0 is a version number."
+  },
+  "homeScanFailed": "Scan failed: {error}",
+  "@homeScanFailed": {
+    "description": "Scan dialog: the scan failed. {error} is the error's text, in English.",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "timed out reaching the server"
+      }
+    }
+  },
+  "homeScanNoneFound": "No units found. Make sure they’re powered on and on this network, or add one by its IP.",
+  "@homeScanNoneFound": {
+    "description": "Scan dialog: the scan found nothing."
+  },
+  "homeScanAlreadyAdded": "already added",
+  "@homeScanAlreadyAdded": {
+    "description": "Scan dialog, under an IP address found: that unit is already on the server. Lower case."
+  },
+  "homeScanPortOpen": "port {port} open",
+  "@homeScanPortOpen": {
+    "description": "Scan dialog, under an IP address found: the network port the unit answered on. Lower case.",
+    "placeholders": {
+      "port": {
+        "type": "String",
+        "example": "6444"
+      }
+    }
+  },
+  "unitMoreOptions": "More options for {name}",
+  "@unitMoreOptions": {
+    "description": "Tooltip and screen-reader name of the ⋮ menu (rename, remove) in a unit page's header. {name} is the unit's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "unitOfflineNote": "offline — last known settings",
+  "@unitOfflineNote": {
+    "description": "Red line under a unit's name when the unit cannot be reached: the controls show what it was last known to be set to. Lower case."
+  },
+  "unitTurnsOffAt": "Turns off at {time}",
+  "@unitTurnsOffAt": {
+    "description": "Tooltip of the timer button while a sleep timer runs. {time} is a 24-hour clock time.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "23:30"
+      }
+    }
+  },
+  "unitTurnsOn": "Turns on {moment}",
+  "@unitTurnsOn": {
+    "description": "Tooltip of the timer button while a scheduled start waits. {moment} is one of timerWhenToday, timerWhenTomorrow or timerWhenDate.",
+    "placeholders": {
+      "moment": {
+        "type": "String",
+        "example": "tomorrow at 07:30"
+      }
+    }
+  },
+  "unitTimerIdle": "Turn off or on later",
+  "@unitTimerIdle": {
+    "description": "Tooltip of the timer button (an hourglass beside the power switch) when nothing is pending: it opens a sheet to switch the unit off after a while or on at a set time."
+  },
+  "unitTimerIdleSleepOnly": "Turn off after a while",
+  "@unitTimerIdleSleepOnly": {
+    "description": "As unitTimerIdle, on an older server that can only switch the unit off later."
+  },
+  "unitTimer": "Timer",
+  "@unitTimer": {
+    "description": "Screen-reader name of the timer button while something is pending (what is pending is read after it)."
+  },
+  "unitTimerWithAction": "Timer, {action}",
+  "@unitTimerWithAction": {
+    "description": "Screen-reader name of the timer button when nothing is pending. {action} is unitTimerIdle or unitTimerIdleSleepOnly in lower case.",
+    "placeholders": {
+      "action": {
+        "type": "String",
+        "example": "turn off or on later"
+      }
+    }
+  },
+  "tempTarget": "Target temperature",
+  "@tempTarget": {
+    "description": "Screen-reader name of the big temperature readout and of the temperature slider."
+  },
+  "tempTargetCaption": "target",
+  "@tempTargetCaption": {
+    "description": "Small caption under the big temperature number, when the unit reports no indoor or outdoor reading. Lower case."
+  },
+  "tempLower": "Lower the target temperature",
+  "@tempLower": {
+    "description": "Screen-reader name of the − button beside the temperature slider."
+  },
+  "tempRaise": "Raise the target temperature",
+  "@tempRaise": {
+    "description": "Screen-reader name of the + button beside the temperature slider."
+  },
+  "tempIndoorShort": "I: {temperature}",
+  "@tempIndoorShort": {
+    "description": "Under the big temperature number: the indoor reading, abbreviated (I = indoor). Shown as \"I: 27.0°C  /  O: 33.0°C\"; keep it short.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "27.0°C"
+      }
+    }
+  },
+  "tempOutdoorShort": "O: {temperature}",
+  "@tempOutdoorShort": {
+    "description": "Under the big temperature number: the outdoor reading, abbreviated (O = outdoor). Keep it short.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "33.0°C"
+      }
+    }
+  },
+  "tempIndoorSpoken": "indoor {temperature}",
+  "@tempIndoorSpoken": {
+    "description": "Spoken for the indoor / outdoor bar: the indoor reading.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "27.0°C"
+      }
+    }
+  },
+  "tempOutdoorSpoken": "outdoor {temperature}",
+  "@tempOutdoorSpoken": {
+    "description": "Spoken for the indoor / outdoor bar: the outdoor reading.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "33.0°C"
+      }
+    }
+  },
+  "tempTargetValue": "target {temperature}",
+  "@tempTargetValue": {
+    "description": "The target temperature: spoken for the indoor / outdoor bar, and shown under the round gauge. Lower case.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "24.0°C"
+      }
+    }
+  },
+  "tempIndoorCaption": "indoor",
+  "@tempIndoorCaption": {
+    "description": "Small caption under the indoor reading in the round temperature gauge. Lower case."
+  },
+  "fanSliderLabel": "Fan speed",
+  "@fanSliderLabel": {
+    "description": "Screen-reader name of the fan speed slider."
+  },
+  "fanSliderAuto": "auto; move to set a speed",
+  "@fanSliderAuto": {
+    "description": "Spoken value of the fan speed slider while the fan is on auto: moving the slider picks a fixed speed."
+  },
+  "fanLow": "Low",
+  "@fanLow": {
+    "description": "Caption under the left end of the fan speed slider."
+  },
+  "fanHigh": "High",
+  "@fanHigh": {
+    "description": "Caption under the right end of the fan speed slider."
+  },
+  "fanAutoPill": "Auto",
+  "@fanAutoPill": {
+    "description": "The button beside the fan heading that sets the fan speed to automatic. Short."
+  },
+  "controlNotApplied": "The air conditioner didn't accept {what} — the unit refused it, not Breeze Core. {reasons}",
+  "@controlNotApplied": {
+    "description": "Snack bar after a control the unit refused. {what} is one or more of the controlName… messages, joined; {reasons} is one or more controlReason… sentences. It must be clear the air conditioner refused, not the app or the server.",
+    "placeholders": {
+      "what": {
+        "type": "String",
+        "example": "the flap change and eco"
+      },
+      "reasons": {
+        "type": "String",
+        "example": "Units only move their flaps while they are running."
+      }
+    }
+  },
+  "controlNameSwing": "the flap change",
+  "@controlNameSwing": {
+    "description": "What the unit refused, as the object of controlNotApplied (\"didn't accept …\"): a change to the flaps' swing."
+  },
+  "controlNameEco": "eco",
+  "@controlNameEco": {
+    "description": "What the unit refused, as the object of controlNotApplied: switching eco on or off."
+  },
+  "controlNameTurbo": "turbo",
+  "@controlNameTurbo": {
+    "description": "What the unit refused, as the object of controlNotApplied: switching turbo on or off."
+  },
+  "controlNameFanSpeed": "the fan speed",
+  "@controlNameFanSpeed": {
+    "description": "What the unit refused, as the object of controlNotApplied."
+  },
+  "controlNameTemperature": "the temperature",
+  "@controlNameTemperature": {
+    "description": "What the unit refused, as the object of controlNotApplied: the target temperature."
+  },
+  "controlNameMode": "the mode",
+  "@controlNameMode": {
+    "description": "What the unit refused, as the object of controlNotApplied."
+  },
+  "controlNamePower": "the power change",
+  "@controlNamePower": {
+    "description": "What the unit refused, as the object of controlNotApplied: switching on or off."
+  },
+  "controlNameChange": "the change",
+  "@controlNameChange": {
+    "description": "What the unit refused, as the object of controlNotApplied, when the server did not say what."
+  },
+  "controlNamesList": "{list}, {item}",
+  "@controlNamesList": {
+    "description": "Joins the refused things in controlNotApplied, all but the last: \"the fan speed, the mode\".",
+    "placeholders": {
+      "list": {
+        "type": "String",
+        "example": "the fan speed"
+      },
+      "item": {
+        "type": "String",
+        "example": "the mode"
+      }
+    }
+  },
+  "controlNamesAnd": "{list} and {last}",
+  "@controlNamesAnd": {
+    "description": "Joins the last refused thing in controlNotApplied: \"the flap change and eco\".",
+    "placeholders": {
+      "list": {
+        "type": "String",
+        "example": "the flap change"
+      },
+      "last": {
+        "type": "String",
+        "example": "eco"
+      }
+    }
+  },
+  "controlReasonSwingOff": "Units only move their flaps while they are running.",
+  "@controlReasonSwingOff": {
+    "description": "Why a flap change was refused: the unit is switched off."
+  },
+  "controlReasonSwingHeating": "While heating, it holds its flaps still until warm air is coming out, which can take a few minutes after switching on or into heating. Try again shortly.",
+  "@controlReasonSwingHeating": {
+    "description": "Why a flap change was refused while heating. \"it\" is the air conditioner."
+  },
+  "controlReasonSwingWait": "It may need a moment before it will take this. Try again shortly.",
+  "@controlReasonSwingWait": {
+    "description": "Why a flap change was refused in another mode. \"It\" is the air conditioner."
+  },
+  "controlReasonEcoHeating": "Many units offer eco only while cooling, not while heating.",
+  "@controlReasonEcoHeating": {
+    "description": "Why eco was refused while heating."
+  },
+  "controlReasonEcoModes": "Many units offer eco only in some modes.",
+  "@controlReasonEcoModes": {
+    "description": "Why eco was refused in a mode other than heating."
+  },
+  "controlReasonTurboModes": "Many units offer turbo only in some modes.",
+  "@controlReasonTurboModes": {
+    "description": "Why turbo was refused."
+  },
+  "controlReasonOther": "It does not take this in its current mode.",
+  "@controlReasonOther": {
+    "description": "Why anything else was refused. \"It\" is the air conditioner."
+  },
+  "timerToday": "Today",
+  "@timerToday": {
+    "description": "Timer sheet, the Day drop-down of a scheduled start: today, on the server's calendar."
+  },
+  "timerTomorrow": "Tomorrow",
+  "@timerTomorrow": {
+    "description": "Timer sheet, the Day drop-down."
+  },
+  "timerInDays": "{days, plural, one{In {days} day} other{In {days} days}}",
+  "@timerInDays": {
+    "description": "Timer sheet, the Day drop-down: a day further ahead (2 to 30).",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "timerTurningOffIn": "Turning off in {duration}",
+  "@timerTurningOffIn": {
+    "description": "Timer sheet heading while a sleep timer runs. {duration} is timerShortMinutes etc., e.g. \"1h 20m\".",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "1h 20m"
+      }
+    }
+  },
+  "timerTurnOffLater": "Turn off later",
+  "@timerTurnOffLater": {
+    "description": "Timer sheet heading of the sleep-timer half when none is set."
+  },
+  "timerSleepActiveBlurb": "{name} switches off at {time}. The server does it, so this works with the phone off.",
+  "@timerSleepActiveBlurb": {
+    "description": "Timer sheet, under the heading while a sleep timer runs. {name} is the unit's name; {time} a 24-hour clock time.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      },
+      "time": {
+        "type": "String",
+        "example": "23:30"
+      }
+    }
+  },
+  "timerSleepIdleBlurb": "Leave {name} running for a while, then let the server switch it off — no need for the phone to be here.",
+  "@timerSleepIdleBlurb": {
+    "description": "Timer sheet, under the heading when no sleep timer is set. {name} is the unit's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "timerCustom": "Custom",
+  "@timerCustom": {
+    "description": "Timer sheet: the chip after the preset durations, which asks for any number of minutes."
+  },
+  "timerCancelSleep": "Cancel the timer",
+  "@timerCancelSleep": {
+    "description": "Timer sheet button: cancel the running sleep timer."
+  },
+  "timerPresetMinutes": "{minutes} min",
+  "@timerPresetMinutes": {
+    "description": "Timer sheet: a preset duration chip under an hour.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "45"
+      }
+    }
+  },
+  "timerPresetHours": "{hours} h",
+  "@timerPresetHours": {
+    "description": "Timer sheet: a preset duration chip of whole hours.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "timerPresetHoursMinutes": "{hours} h {minutes}",
+  "@timerPresetHoursMinutes": {
+    "description": "Timer sheet: a preset duration chip of hours and minutes (1 h 30).",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "1"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  },
+  "timerCustomTitle": "Turn off after",
+  "@timerCustomTitle": {
+    "description": "Title of the dialog asking for a sleep timer's length in minutes."
+  },
+  "timerCustomSuffix": "minutes",
+  "@timerCustomSuffix": {
+    "description": "Custom timer dialog: the unit written after the number field."
+  },
+  "timerCustomHelper": "1 to 1440 (24 h)",
+  "@timerCustomHelper": {
+    "description": "Custom timer dialog, under the field: the allowed range in minutes."
+  },
+  "timerCustomSet": "Set",
+  "@timerCustomSet": {
+    "description": "Custom timer dialog button: set the timer."
+  },
+  "timerTurningOn": "Turning on {moment}",
+  "@timerTurningOn": {
+    "description": "Timer sheet heading while a scheduled start waits. {moment} is one of timerWhenToday, timerWhenTomorrow or timerWhenDate.",
+    "placeholders": {
+      "moment": {
+        "type": "String",
+        "example": "tomorrow at 07:30"
+      }
+    }
+  },
+  "timerTurnOnLater": "Turn on later",
+  "@timerTurnOnLater": {
+    "description": "Timer sheet heading of the scheduled-start half when none is set."
+  },
+  "timerStartPendingBlurb": "{name} switches on with the mode and temperature it last had. Pick another day or time to move it.",
+  "@timerStartPendingBlurb": {
+    "description": "Timer sheet, under the heading while a scheduled start waits. {name} is the unit's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "timerStartIdleBlurb": "Switch {name} on at a set time, up to {days, plural, one{{days} day} other{{days} days}} ahead, with the mode and temperature it last had. The time is the server's clock, the same one schedules use.",
+  "@timerStartIdleBlurb": {
+    "description": "Timer sheet, under the heading when no scheduled start is set. {name} is the unit's name; {days} the furthest ahead a start can be (30).",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      },
+      "days": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  },
+  "timerDayField": "Day",
+  "@timerDayField": {
+    "description": "Timer sheet: label of the drop-down choosing the day of a scheduled start."
+  },
+  "timerPickerHelp": "Turn on at (server time)",
+  "@timerPickerHelp": {
+    "description": "Heading of the time picker for a scheduled start: the time is on the server's clock."
+  },
+  "timerMoveIt": "Move it",
+  "@timerMoveIt": {
+    "description": "Timer sheet button: move the waiting scheduled start to the day and time chosen."
+  },
+  "timerTurnOnThen": "Turn on then",
+  "@timerTurnOnThen": {
+    "description": "Timer sheet button: set a scheduled start at the day and time chosen."
+  },
+  "timerCancelStart": "Cancel the start",
+  "@timerCancelStart": {
+    "description": "Timer sheet button: cancel the waiting scheduled start."
+  },
+  "timerShortSeconds": "{seconds}s",
+  "@timerShortSeconds": {
+    "description": "Countdown beside the hourglass in a unit page's header, under a minute left. As short as possible: it squeezes the unit's name.",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "40"
+      }
+    }
+  },
+  "timerShortMinutes": "{minutes}m",
+  "@timerShortMinutes": {
+    "description": "Countdown beside the hourglass in a unit page's header, under an hour left; also in timerTurningOffIn. As short as possible.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "45"
+      }
+    }
+  },
+  "timerShortHours": "{hours}h",
+  "@timerShortHours": {
+    "description": "Countdown beside the hourglass, whole hours left. As short as possible.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "timerShortHoursMinutes": "{hours}h {minutes}m",
+  "@timerShortHoursMinutes": {
+    "description": "Countdown beside the hourglass, hours and minutes left. As short as possible.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "1"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "20"
+      }
+    }
+  },
+  "timerWhenToday": "today at {time}",
+  "@timerWhenToday": {
+    "description": "When a scheduled start fires, put after \"Turning on\", \"Turns on\" or \"Switching on\". {time} is a 24-hour clock time on the server's clock.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "07:30"
+      }
+    }
+  },
+  "timerWhenTomorrow": "tomorrow at {time}",
+  "@timerWhenTomorrow": {
+    "description": "As timerWhenToday, for tomorrow.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "07:30"
+      }
+    }
+  },
+  "timerWhenDate": "{date} at {time}",
+  "@timerWhenDate": {
+    "description": "As timerWhenToday, for a later day. {date} is timerDate.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Tue 29 Sep"
+      },
+      "time": {
+        "type": "String",
+        "example": "07:30"
+      }
+    }
+  },
+  "timerWhenUnknown": "at {time}",
+  "@timerWhenUnknown": {
+    "description": "As timerWhenToday, when the server's time could not be read; {time} is then whatever the server sent.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "2026-09-29T07:30:00"
+      }
+    }
+  },
+  "timerDate": "{weekday} {day} {month}",
+  "@timerDate": {
+    "description": "A date within the next month: {weekday} is timerWeekdayMon etc., {day} the day of the month, {month} timerMonthJan etc. Order and punctuation as the language writes a short date.",
+    "placeholders": {
+      "weekday": {
+        "type": "String",
+        "example": "Tue"
+      },
+      "day": {
+        "type": "int",
+        "example": "29"
+      },
+      "month": {
+        "type": "String",
+        "example": "Sep"
+      }
+    }
+  },
+  "timerDayMonth": "{day} {month}",
+  "@timerDayMonth": {
+    "description": "A scheduled start more than a week ahead, beside the alarm clock in a unit page's header: the day of the month and timerMonthJan etc. As short as possible.",
+    "placeholders": {
+      "day": {
+        "type": "int",
+        "example": "20"
+      },
+      "month": {
+        "type": "String",
+        "example": "Oct"
+      }
+    }
+  },
+  "timerWeekdayMon": "Mon",
+  "@timerWeekdayMon": {
+    "description": "Monday, abbreviated: in timerDate, and alone beside the alarm clock in a unit page's header. As the language abbreviates weekdays in a short date."
+  },
+  "timerWeekdayTue": "Tue",
+  "@timerWeekdayTue": {
+    "description": "Tuesday, abbreviated, as timerWeekdayMon."
+  },
+  "timerWeekdayWed": "Wed",
+  "@timerWeekdayWed": {
+    "description": "Wednesday, abbreviated, as timerWeekdayMon."
+  },
+  "timerWeekdayThu": "Thu",
+  "@timerWeekdayThu": {
+    "description": "Thursday, abbreviated, as timerWeekdayMon."
+  },
+  "timerWeekdayFri": "Fri",
+  "@timerWeekdayFri": {
+    "description": "Friday, abbreviated, as timerWeekdayMon."
+  },
+  "timerWeekdaySat": "Sat",
+  "@timerWeekdaySat": {
+    "description": "Saturday, abbreviated, as timerWeekdayMon."
+  },
+  "timerWeekdaySun": "Sun",
+  "@timerWeekdaySun": {
+    "description": "Sunday, abbreviated, as timerWeekdayMon."
+  },
+  "timerMonthJan": "Jan",
+  "@timerMonthJan": {
+    "description": "January, abbreviated, in timerDate and timerDayMonth: in the form the language uses after a day number."
+  },
+  "timerMonthFeb": "Feb",
+  "@timerMonthFeb": {
+    "description": "February, abbreviated, as timerMonthJan."
+  },
+  "timerMonthMar": "Mar",
+  "@timerMonthMar": {
+    "description": "March, abbreviated, as timerMonthJan."
+  },
+  "timerMonthApr": "Apr",
+  "@timerMonthApr": {
+    "description": "April, abbreviated, as timerMonthJan."
+  },
+  "timerMonthMay": "May",
+  "@timerMonthMay": {
+    "description": "May, abbreviated, as timerMonthJan."
+  },
+  "timerMonthJun": "Jun",
+  "@timerMonthJun": {
+    "description": "June, abbreviated, as timerMonthJan."
+  },
+  "timerMonthJul": "Jul",
+  "@timerMonthJul": {
+    "description": "July, abbreviated, as timerMonthJan."
+  },
+  "timerMonthAug": "Aug",
+  "@timerMonthAug": {
+    "description": "August, abbreviated, as timerMonthJan."
+  },
+  "timerMonthSep": "Sep",
+  "@timerMonthSep": {
+    "description": "September, abbreviated, as timerMonthJan."
+  },
+  "timerMonthOct": "Oct",
+  "@timerMonthOct": {
+    "description": "October, abbreviated, as timerMonthJan."
+  },
+  "timerMonthNov": "Nov",
+  "@timerMonthNov": {
+    "description": "November, abbreviated, as timerMonthJan."
+  },
+  "timerMonthDec": "Dec",
+  "@timerMonthDec": {
+    "description": "December, abbreviated, as timerMonthJan."
+  },
+  "internalColours": "Colours",
+  "@internalColours": {
+    "description": "Nerd screen, Internal tab: heading of the card that chooses the app's colours. Shown in capitals."
+  },
+  "internalColourSourceMine": "My colour",
+  "@internalColourSourceMine": {
+    "description": "Internal tab, colours: the segment that uses a colour the user picks (the other segment is \"Material You\", not translated)."
+  },
+  "internalColourWallpaperHint": "From the wallpaper, where the system offers it (Android 12 and newer); the built-in teal elsewhere.",
+  "@internalColourWallpaperHint": {
+    "description": "Internal tab, colours: explains the Material You choice. \"teal\" is the app's own blue-green."
+  },
+  "internalColourMineHint": "Your colour, everywhere, whatever the wallpaper.",
+  "@internalColourMineHint": {
+    "description": "Internal tab, colours: explains the \"My colour\" choice."
+  },
+  "internalColourStyle": "Style",
+  "@internalColourStyle": {
+    "description": "Internal tab, colours: label of the drop-down that picks how a palette is built from the colour."
+  },
+  "internalVariantTonalSpot": "Calm (the default)",
+  "@internalVariantTonalSpot": {
+    "description": "Colour style (Material \"tonalSpot\"): calm, the default. Agrees with \"Style\" where the language needs it."
+  },
+  "internalVariantVibrant": "Vibrant",
+  "@internalVariantVibrant": {
+    "description": "Colour style (Material \"vibrant\")."
+  },
+  "internalVariantExpressive": "Expressive",
+  "@internalVariantExpressive": {
+    "description": "Colour style (Material \"expressive\")."
+  },
+  "internalVariantContent": "Faithful to the colour",
+  "@internalVariantContent": {
+    "description": "Colour style (Material \"content\"): stays close to the chosen colour. Must differ from \"True to the colour\"."
+  },
+  "internalVariantFidelity": "True to the colour",
+  "@internalVariantFidelity": {
+    "description": "Colour style (Material \"fidelity\"): even closer to the chosen colour. Must differ from \"Faithful to the colour\"."
+  },
+  "internalVariantRainbow": "Rainbow",
+  "@internalVariantRainbow": {
+    "description": "Colour style (Material \"rainbow\")."
+  },
+  "internalVariantFruitSalad": "Fruit salad",
+  "@internalVariantFruitSalad": {
+    "description": "Colour style (Material \"fruitSalad\"): playful, many hues."
+  },
+  "internalVariantNeutral": "Muted",
+  "@internalVariantNeutral": {
+    "description": "Colour style (Material \"neutral\"): muted, greyish."
+  },
+  "internalVariantMonochrome": "Monochrome",
+  "@internalVariantMonochrome": {
+    "description": "Colour style (Material \"monochrome\"): greys only."
+  },
+  "internalSwatchTeal": "Teal",
+  "@internalSwatchTeal": {
+    "description": "Internal tab, colours: the name of a colour swatch (teal), read out by screen readers."
+  },
+  "internalSwatchBlue": "Blue",
+  "@internalSwatchBlue": {
+    "description": "Internal tab, colours: the name of a colour swatch (blue), read out by screen readers."
+  },
+  "internalSwatchIndigo": "Indigo",
+  "@internalSwatchIndigo": {
+    "description": "Internal tab, colours: the name of a colour swatch (indigo), read out by screen readers."
+  },
+  "internalSwatchLavender": "Lavender",
+  "@internalSwatchLavender": {
+    "description": "Internal tab, colours: the name of a colour swatch (lavender), read out by screen readers."
+  },
+  "internalSwatchPink": "Pink",
+  "@internalSwatchPink": {
+    "description": "Internal tab, colours: the name of a colour swatch (pink), read out by screen readers."
+  },
+  "internalSwatchRed": "Red",
+  "@internalSwatchRed": {
+    "description": "Internal tab, colours: the name of a colour swatch (red), read out by screen readers."
+  },
+  "internalSwatchOrange": "Orange",
+  "@internalSwatchOrange": {
+    "description": "Internal tab, colours: the name of a colour swatch (orange), read out by screen readers."
+  },
+  "internalSwatchAmber": "Amber",
+  "@internalSwatchAmber": {
+    "description": "Internal tab, colours: the name of a colour swatch (amber), read out by screen readers."
+  },
+  "internalSwatchGreen": "Green",
+  "@internalSwatchGreen": {
+    "description": "Internal tab, colours: the name of a colour swatch (green), read out by screen readers."
+  },
+  "internalSwatchSlate": "Slate",
+  "@internalSwatchSlate": {
+    "description": "Internal tab, colours: the name of a colour swatch (slate), read out by screen readers."
+  },
+  "internalSwatchBrown": "Brown",
+  "@internalSwatchBrown": {
+    "description": "Internal tab, colours: the name of a colour swatch (brown), read out by screen readers."
+  },
+  "internalSwatchGrey": "Grey",
+  "@internalSwatchGrey": {
+    "description": "Internal tab, colours: the name of a colour swatch (grey), read out by screen readers."
+  },
+  "internalHexLabel": "Or any colour",
+  "@internalHexLabel": {
+    "description": "Internal tab, colours: label of the field where any colour can be typed as a hex code."
+  },
+  "internalHexUse": "Use this colour",
+  "@internalHexUse": {
+    "description": "Internal tab, colours: tooltip of the tick button that applies the typed hex colour."
+  },
+  "internalHexError": "Six hex digits, like #4FD1C5",
+  "@internalHexError": {
+    "description": "Internal tab, colours: error under the hex field when the input is not a colour. Keep #4FD1C5 as it is."
+  },
+  "internalPreviewPrimary": "Primary",
+  "@internalPreviewPrimary": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"primary\" colour role. Very short."
+  },
+  "internalPreviewSecondary": "Secondary",
+  "@internalPreviewSecondary": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"secondary\" colour role. Very short."
+  },
+  "internalPreviewTertiary": "Tertiary",
+  "@internalPreviewTertiary": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"tertiary\" colour role. Very short."
+  },
+  "internalPreviewContainer": "Container",
+  "@internalPreviewContainer": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"container\" colour role. Very short."
+  },
+  "internalPreviewSurface": "Surface",
+  "@internalPreviewSurface": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"surface\" colour role. Very short."
+  },
+  "internalPreviewError": "Error",
+  "@internalPreviewError": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"error\" colour role. Very short."
+  },
+  "internalConnection": "Connection",
+  "@internalConnection": {
+    "description": "Internal tab: heading of the connection card (addresses, timeout, live updates). Shown in capitals."
+  },
+  "internalPairing": "Pairing",
+  "@internalPairing": {
+    "description": "Internal tab: heading of the pairing card. Shown in capitals."
+  },
+  "internalThisDevice": "This device",
+  "@internalThisDevice": {
+    "description": "Internal tab, pairing: label (about 110 px wide) before this phone's name on the server."
+  },
+  "internalSignsInWith": "Signs in with",
+  "@internalSignsInWith": {
+    "description": "Internal tab, pairing: label (about 110 px wide) before the auth version this phone uses."
+  },
+  "internalAuthV2": "v2 (Ed25519-signed requests)",
+  "@internalAuthV2": {
+    "description": "Internal tab, pairing: the value after \"Signs in with\" for auth v2. Keep v2 and Ed25519."
+  },
+  "internalAuthV1": "v1 (a bearer token)",
+  "@internalAuthV1": {
+    "description": "Internal tab, pairing: the value after \"Signs in with\" for auth v1. Keep v1."
+  },
+  "internalPairAgainButton": "Pair again…",
+  "@internalPairAgainButton": {
+    "description": "Internal tab, pairing: button that opens the \"Pair again\" dialog."
+  },
+  "internalPairAgainHint": "Asks for a new pairing code, with a name and auth version you choose. This device keeps working as it is until an admin approves the new code.",
+  "@internalPairAgainHint": {
+    "description": "Internal tab, pairing: explains the \"Pair again\" button."
+  },
+  "internalDisplay": "Display and feel",
+  "@internalDisplay": {
+    "description": "Internal tab: heading of the card with display and vibration options. Shown in capitals."
+  },
+  "internalShowIp": "Show each unit's IP address",
+  "@internalShowIp": {
+    "description": "Internal tab: switch that shows each air conditioner's IP address."
+  },
+  "internalShowIpHint": "Under its name on the control screen",
+  "@internalShowIpHint": {
+    "description": "Internal tab: where the IP address appears when the switch is on."
+  },
+  "internalShowLatency": "Show latency at the top",
+  "@internalShowLatency": {
+    "description": "Internal tab: switch that shows the latency to the server at the top of the screen."
+  },
+  "internalShowLatencyHint": "Round-trip time to the server, measured every 15 seconds, and the address in use when a fallback is answering",
+  "@internalShowLatencyHint": {
+    "description": "Internal tab: what the latency switch shows."
+  },
+  "internalVibration": "Vibration",
+  "@internalVibration": {
+    "description": "Internal tab: switch for the app's haptic feedback."
+  },
+  "internalVibrationHint": "The small taps and buzzes that confirm a control",
+  "@internalVibrationHint": {
+    "description": "Internal tab: what the vibration switch covers."
+  },
+  "internalServerData": "What the server holds",
+  "@internalServerData": {
+    "description": "Internal tab: heading of the card that opens the server's programs and timers as raw JSON. Shown in capitals."
+  },
+  "internalProgramsJson": "Programs, as JSON",
+  "@internalProgramsJson": {
+    "description": "Internal tab: opens the server's programs as raw JSON."
+  },
+  "internalProgramsJsonHint": "Favourites, schedules and curves. Read-only",
+  "@internalProgramsJsonHint": {
+    "description": "Internal tab: under \"Programs, as JSON\"."
+  },
+  "internalProgramsTitle": "Programs",
+  "@internalProgramsTitle": {
+    "description": "Title of the raw JSON screen opened from \"Programs, as JSON\"."
+  },
+  "internalTimersJson": "Timers, as JSON",
+  "@internalTimersJson": {
+    "description": "Internal tab: opens the server's timers as raw JSON."
+  },
+  "internalTimersJsonHint": "Sleep timers and scheduled starts. Read-only",
+  "@internalTimersJsonHint": {
+    "description": "Internal tab: under \"Timers, as JSON\": sleep timers (turn off after) and scheduled starts (turn on at)."
+  },
+  "internalTimersTitle": "Timers",
+  "@internalTimersTitle": {
+    "description": "Title of the raw JSON screen opened from \"Timers, as JSON\"."
+  },
+  "internalCatFacts": "Cat facts",
+  "@internalCatFacts": {
+    "description": "Internal tab: heading of the card (shown in capitals) and label of the field holding the user's own cat facts, shown while the app waits."
+  },
+  "internalCatFactsHint": "Your own, one per line, shown while the app waits on the server.",
+  "@internalCatFactsHint": {
+    "description": "Internal tab: explains the cat facts field."
+  },
+  "internalCatFactsExample": "A cat's purr is around 25 to 150 hertz.",
+  "@internalCatFactsExample": {
+    "description": "Internal tab: example text in the empty cat facts field."
+  },
+  "internalSaveFacts": "Save facts",
+  "@internalSaveFacts": {
+    "description": "Internal tab: button that saves the cat facts field."
+  },
+  "internalKeepBuiltIn": "Keep the built-in facts too",
+  "@internalKeepBuiltIn": {
+    "description": "Internal tab: switch that keeps the app's own cat facts alongside the user's."
+  },
+  "internalKeepBuiltInHint": "{count, plural, other{{count} of them, mixed in with yours}}",
+  "@internalKeepBuiltInHint": {
+    "description": "Internal tab: under \"Keep the built-in facts too\": how many built-in facts there are.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "internalNextUp": "Next up: “{fact}”",
+  "@internalNextUp": {
+    "description": "Internal tab: the cat fact that will be shown next, in the language's quotation marks. The fact itself is not translated here.",
+    "placeholders": {
+      "fact": {
+        "type": "String"
+      }
+    }
+  },
+  "internalReset": "Reset these settings",
+  "@internalReset": {
+    "description": "Internal tab: button at the bottom that resets the tab's settings."
+  },
+  "internalMainAddress": "Main address",
+  "@internalMainAddress": {
+    "description": "Internal tab, connection: label (about 110 px wide) before the server address the app was set up with."
+  },
+  "internalInUseNow": "In use now",
+  "@internalInUseNow": {
+    "description": "Internal tab, connection: label (about 110 px wide) before the address answering right now, and its latency."
+  },
+  "internalFallbacks": "Fallback addresses",
+  "@internalFallbacks": {
+    "description": "Internal tab, connection: sub-heading of the list of fallback addresses."
+  },
+  "internalFallbacksHint": "Tried in this order when the main address can't be reached, then the LAN addresses below. This device's pairing works at all of them.",
+  "@internalFallbacksHint": {
+    "description": "Internal tab, connection: explains the fallback addresses."
+  },
+  "internalAddFallback": "Add a fallback address",
+  "@internalAddFallback": {
+    "description": "Internal tab, connection: button that adds a fallback address."
+  },
+  "internalTryLan": "Then try the server's LAN addresses",
+  "@internalTryLan": {
+    "description": "Internal tab, connection: switch that also tries the server's own LAN addresses."
+  },
+  "internalTryLanHint": "Asked from the server and refreshed at every launch: for when the main address is a public one and you are at home",
+  "@internalTryLanHint": {
+    "description": "Internal tab, connection: explains the LAN addresses switch."
+  },
+  "internalLanNoneYet": "None learned yet.",
+  "@internalLanNoneYet": {
+    "description": "Internal tab, connection: no LAN addresses have been learned from the server yet."
+  },
+  "internalAskAgain": "Ask the server again",
+  "@internalAskAgain": {
+    "description": "Internal tab, connection: button that asks the server for its LAN addresses again."
+  },
+  "internalTimeout": "Give up on a request after {seconds} s",
+  "@internalTimeout": {
+    "description": "Internal tab, connection: sub-heading over the request timeout slider. \"s\" is the unit, not translated.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "internalTimeoutSemantics": "{count, plural, one{{count} second} other{{count} seconds}}",
+  "@internalTimeoutSemantics": {
+    "description": "Internal tab, connection: the timeout slider's value as a screen reader says it.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "internalTimeoutHint": "Per address. With fallbacks, a short timeout reaches the next one sooner.",
+  "@internalTimeoutHint": {
+    "description": "Internal tab, connection: explains the timeout slider."
+  },
+  "internalLiveUpdates": "Live updates",
+  "@internalLiveUpdates": {
+    "description": "Internal tab, connection: switch for live updates pushed by the server."
+  },
+  "internalLiveUpdatesHint": "Changes pushed by the server as they happen. Off: ask every 5 seconds instead, as with a server older than {version}",
+  "@internalLiveUpdatesHint": {
+    "description": "Internal tab, connection: explains live updates. {version} is a Breeze Core version, e.g. 3.0.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "internalFallbackDialogTitle": "Fallback address",
+  "@internalFallbackDialogTitle": {
+    "description": "Title of the dialog that adds a fallback address."
+  },
+  "internalAddressLabel": "Address",
+  "@internalAddressLabel": {
+    "description": "Fallback address dialog: label of the address field."
+  },
+  "internalAddressHint": "https://breeze.example.com or 192.168.1.10:8420",
+  "@internalAddressHint": {
+    "description": "Fallback address dialog: example in the empty field. Keep both addresses exactly; translate only \"or\"."
+  },
+  "internalAlreadyMain": "That is the main address already.",
+  "@internalAlreadyMain": {
+    "description": "Snack bar: the fallback address typed is the main address."
+  },
+  "internalLanNeedsNewer": "This server can't say: it needs Breeze Core {version} or newer.",
+  "@internalLanNeedsNewer": {
+    "description": "Internal tab, connection: the server cannot list its LAN addresses because it is too old. {version} is a Breeze Core version.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "internalLanAskFailed": "Could not ask the server: {error}",
+  "@internalLanAskFailed": {
+    "description": "Internal tab, connection: asking the server for its LAN addresses failed. {error} is a technical message in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "internalOnlyV2": "This server only accepts v2 pairing.",
+  "@internalOnlyV2": {
+    "description": "Snack bar: pairing again with v1 was refused because the server only accepts v2."
+  },
+  "internalPairFailed": "Could not start pairing: {error}",
+  "@internalPairFailed": {
+    "description": "Snack bar: pairing again could not start. {error} is a technical message in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "internalFactsNone": "No facts of your own: the built-in ones it is",
+  "@internalFactsNone": {
+    "description": "Snack bar after saving an empty cat facts field: only the built-in facts will be shown."
+  },
+  "internalFactsSaved": "{count, plural, one{{count} fact saved} other{{count} facts saved}}",
+  "@internalFactsSaved": {
+    "description": "Snack bar after saving the cat facts field.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "internalResetTitle": "Reset these settings?",
+  "@internalResetTitle": {
+    "description": "Title of the dialog confirming the reset of the Internal tab's settings."
+  },
+  "internalResetBody": "Colours, display, vibration, timeout, live updates and cat facts go back to how the app ships. Fallback addresses and pairing are this server's, and stay.",
+  "@internalResetBody": {
+    "description": "Reset dialog: what is reset and what is kept."
+  },
+  "internalResetConfirm": "Reset",
+  "@internalResetConfirm": {
+    "description": "Reset dialog: the button that resets."
+  },
+  "internalFallbackEarlier": "Try {url} earlier",
+  "@internalFallbackEarlier": {
+    "description": "Tooltip and screen reader label of the up arrow beside a fallback address: try it sooner.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "internalFallbackLater": "Try {url} later",
+  "@internalFallbackLater": {
+    "description": "Tooltip and screen reader label of the down arrow beside a fallback address: try it later.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "internalFallbackRemove": "Remove {url}",
+  "@internalFallbackRemove": {
+    "description": "Tooltip and screen reader label of the cross beside a fallback address.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "internalPairAgainTitle": "Pair again",
+  "@internalPairAgainTitle": {
+    "description": "Title of the dialog that pairs this phone again."
+  },
+  "internalDeviceName": "Name for this device",
+  "@internalDeviceName": {
+    "description": "Pair again dialog: label of the field with the name this phone will have on the server."
+  },
+  "internalSegmentV2": "v2, signed",
+  "@internalSegmentV2": {
+    "description": "Pair again dialog: segment choosing auth v2 (signed requests). Very short."
+  },
+  "internalSegmentV1": "v1, token",
+  "@internalSegmentV1": {
+    "description": "Pair again dialog: segment choosing auth v1 (a bearer token). Very short."
+  },
+  "internalV2Hint": "Every request is signed with a key that never leaves this phone. What the app uses normally.",
+  "@internalV2Hint": {
+    "description": "Pair again dialog: explains auth v2."
+  },
+  "internalV1Hint": "A bearer token, as before {version}. For testing a server with v1; the app stays on v1 instead of upgrading itself.",
+  "@internalV1Hint": {
+    "description": "Pair again dialog: explains auth v1. {version} is a Breeze Core version, e.g. 3.0.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "internalPairAgainNote": "An admin approves the new code on the server's network. Until then this device works as it does now; its old entry stays in the server's device list until revoked there.",
+  "@internalPairAgainNote": {
+    "description": "Pair again dialog: what happens until the new code is approved."
+  },
+  "internalGetCode": "Get a code",
+  "@internalGetCode": {
+    "description": "Pair again dialog: the button that requests the new pairing code."
+  },
+  "diagTitle": "Diagnostics",
+  "@diagTitle": {
+    "description": "Diagnostics screen: title in the app bar."
+  },
+  "diagRun": "Run full diagnosis",
+  "@diagRun": {
+    "description": "Diagnostics: the button that runs every check."
+  },
+  "diagRunning": "Running…",
+  "@diagRunning": {
+    "description": "Diagnostics: the run button while the checks run."
+  },
+  "diagIntro": "Tap “{button}” to check connectivity, the server build, authentication and security posture, this device’s credential, input validation, the live stream, and every unit.",
+  "@diagIntro": {
+    "description": "Diagnostics: text shown before the first run. {button} is the run button's label.",
+    "placeholders": {
+      "button": {
+        "type": "String"
+      }
+    }
+  },
+  "diagLevelPassed": "passed",
+  "@diagLevelPassed": {
+    "description": "Diagnostics: what a screen reader says for a check's green tick."
+  },
+  "diagLevelWarning": "warning",
+  "@diagLevelWarning": {
+    "description": "Diagnostics: what a screen reader says for a check's warning sign."
+  },
+  "diagLevelFailed": "failed",
+  "@diagLevelFailed": {
+    "description": "Diagnostics: what a screen reader says for a check's error sign."
+  },
+  "diagLevelNote": "note",
+  "@diagLevelNote": {
+    "description": "Diagnostics: what a screen reader says for a check's information sign."
+  },
+  "diagSectionConnectivity": "Connectivity & build",
+  "@diagSectionConnectivity": {
+    "description": "Diagnostics: section heading."
+  },
+  "diagServerUnreachable": "Server unreachable",
+  "@diagServerUnreachable": {
+    "description": "Diagnostics: check name when the server cannot be reached at all. The line under it is a technical message in English."
+  },
+  "diagServerReachable": "Server reachable",
+  "@diagServerReachable": {
+    "description": "Diagnostics: check name."
+  },
+  "diagServerReachableDetail": "{count, plural, one{{count} unit} other{{count} units}} · {ms} ms",
+  "@diagServerReachableDetail": {
+    "description": "Diagnostics: under \"Server reachable\": how many air conditioners, and how long the listing took in milliseconds.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "diagHealthEndpoint": "Health endpoint",
+  "@diagHealthEndpoint": {
+    "description": "Diagnostics: check name: the server's health endpoint answers. The line under it may be \"status=ok\", not translated."
+  },
+  "diagNotPresentServer": "not present (server < {version})",
+  "@diagNotPresentServer": {
+    "description": "Diagnostics: an endpoint the server does not have, because it is older than {version} (a Breeze Core version).",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "diagNotPresentServerSkipping": "not present (server < {version}) — skipping",
+  "@diagNotPresentServerSkipping": {
+    "description": "Diagnostics: like \"not present (server < {version})\", and the check is skipped.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "diagEndpointMissing": "endpoint not present — skipping",
+  "@diagEndpointMissing": {
+    "description": "Diagnostics: the server has no such endpoint, so the check is skipped."
+  },
+  "diagServerVersion": "Server version",
+  "@diagServerVersion": {
+    "description": "Diagnostics: check name."
+  },
+  "diagServerVersionDetail": "Breeze Core {version} (commit {commit})",
+  "@diagServerVersionDetail": {
+    "description": "Diagnostics: under \"Server version\". {commit} is a git commit hash, or \"unknown\".",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "commit": {
+        "type": "String"
+      }
+    }
+  },
+  "diagUnknown": "unknown",
+  "@diagUnknown": {
+    "description": "Diagnostics: the server did not say which commit it was built from."
+  },
+  "diagAppVersion": "App version",
+  "@diagAppVersion": {
+    "description": "Diagnostics: check name; the line under it is \"Breeze\" and the version."
+  },
+  "diagFeatures": "Advertised features",
+  "@diagFeatures": {
+    "description": "Diagnostics: check name: the features the server says it has. The line under it lists their technical names."
+  },
+  "diagFeaturesNone": "none advertised",
+  "@diagFeaturesNone": {
+    "description": "Diagnostics: under \"Advertised features\" when the server lists none."
+  },
+  "diagUnitParity": "Unit-count parity",
+  "@diagUnitParity": {
+    "description": "Diagnostics: check name: the server's count of air conditioners matches its list."
+  },
+  "diagUnitParityAgree": "server and listing agree ({count})",
+  "@diagUnitParityAgree": {
+    "description": "Diagnostics: the counts agree; {count} is the number of air conditioners.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagUnitParityDiffer": "server reports {server}, listing has {listing}",
+  "@diagUnitParityDiffer": {
+    "description": "Diagnostics: the counts differ.",
+    "placeholders": {
+      "server": {
+        "type": "int"
+      },
+      "listing": {
+        "type": "int"
+      }
+    }
+  },
+  "diagVersionUnreadable": "could not read /api/version — {error}",
+  "@diagVersionUnreadable": {
+    "description": "Diagnostics: the version endpoint failed. {error} is a technical message in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "diagSectionAuth": "Authentication posture",
+  "@diagSectionAuth": {
+    "description": "Diagnostics: section heading: how well the server guards itself."
+  },
+  "diagNoKeyRejected": "No key rejected",
+  "@diagNoKeyRejected": {
+    "description": "Diagnostics: check name: a request without the API key is refused."
+  },
+  "diagWrongKeyRejected": "Wrong key rejected",
+  "@diagWrongKeyRejected": {
+    "description": "Diagnostics: check name: a request with a wrong API key is refused."
+  },
+  "diagCorrectlyReturns": "correctly returns {status}",
+  "@diagCorrectlyReturns": {
+    "description": "Diagnostics: the server answered with the expected HTTP status.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagReturnedExpected": "returned {status}, expected {expected}",
+  "@diagReturnedExpected": {
+    "description": "Diagnostics: the server answered with another HTTP status than expected.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      },
+      "expected": {
+        "type": "int"
+      }
+    }
+  },
+  "diagReturnedExpectedParen": "returned {status} (expected {expected})",
+  "@diagReturnedExpectedParen": {
+    "description": "Diagnostics: as \"returned {status}, expected {expected}\", worded with parentheses.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      },
+      "expected": {
+        "type": "int"
+      }
+    }
+  },
+  "diagTokenGated": "Control API is token-gated",
+  "@diagTokenGated": {
+    "description": "Diagnostics: check name: the control API also needs this device's own credential (good)."
+  },
+  "diagTokenGatedDetail": "key alone is refused ({status}) — a device credential is also required (hardened)",
+  "@diagTokenGatedDetail": {
+    "description": "Diagnostics: under \"Control API is token-gated\". {status} is an HTTP status.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagNotTokenGated": "Control API not token-gated",
+  "@diagNotTokenGated": {
+    "description": "Diagnostics: check name: the key alone is enough for the control API (a warning)."
+  },
+  "diagNotTokenGatedDetail": "key alone is accepted ({status}) — older or loosened build",
+  "@diagNotTokenGatedDetail": {
+    "description": "Diagnostics: under \"Control API not token-gated\". {status} is an HTTP status.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagTokenGating": "Token-gating",
+  "@diagTokenGating": {
+    "description": "Diagnostics: check name when the key-only probe gave an unexpected answer."
+  },
+  "diagTokenGatingDetail": "key alone returned {status} (expected {accepted} or {refused})",
+  "@diagTokenGatingDetail": {
+    "description": "Diagnostics: under \"Token-gating\". All three are HTTP statuses.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      },
+      "accepted": {
+        "type": "int"
+      },
+      "refused": {
+        "type": "int"
+      }
+    }
+  },
+  "diagSectionThisDevice": "This device",
+  "@diagSectionThisDevice": {
+    "description": "Diagnostics: section heading about this phone's own credential."
+  },
+  "diagDeviceClock": "Device clock",
+  "@diagDeviceClock": {
+    "description": "Diagnostics: check name: the phone's clock against the server's."
+  },
+  "diagClockInSync": "in sync with the server",
+  "@diagClockInSync": {
+    "description": "Diagnostics: under \"Device clock\"."
+  },
+  "diagClockBehind": "off by {seconds} s (behind the server) — corrected automatically; turn on automatic date & time",
+  "@diagClockBehind": {
+    "description": "Diagnostics: the phone's clock is behind the server's by {seconds} seconds (\"s\" is the unit).",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "diagClockAhead": "off by {seconds} s (ahead of the server) — corrected automatically; turn on automatic date & time",
+  "@diagClockAhead": {
+    "description": "Diagnostics: the phone's clock is ahead of the server's by {seconds} seconds (\"s\" is the unit).",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "diagAuthProfile": "Auth profile",
+  "@diagAuthProfile": {
+    "description": "Diagnostics: check name: which auth version this phone uses."
+  },
+  "diagAuthV2": "v2 — requests signed with a per-device Ed25519 key",
+  "@diagAuthV2": {
+    "description": "Diagnostics: under \"Auth profile\" for v2. Keep v2 and Ed25519."
+  },
+  "diagAuthV1": "v1 — legacy bearer token (upgrades to v2 automatically when the server supports it)",
+  "@diagAuthV1": {
+    "description": "Diagnostics: under \"Auth profile\" for v1. Keep v1 and v2."
+  },
+  "diagRecognised": "Server recognises this device",
+  "@diagRecognised": {
+    "description": "Diagnostics: check name: the server knows this phone."
+  },
+  "diagRecognisedDetail": "label \"{label}\" · auth v{version}",
+  "@diagRecognisedDetail": {
+    "description": "Diagnostics: under \"Server recognises this device\": the name the server has for it, and its auth version (\"auth v2\"; keep \"auth v\").",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "diagCredentialExpiry": "Credential expiry",
+  "@diagCredentialExpiry": {
+    "description": "Diagnostics: check name when this phone's credential has no expiry."
+  },
+  "diagNoExpiry": "no expiry set",
+  "@diagNoExpiry": {
+    "description": "Diagnostics: under \"Credential expiry\"."
+  },
+  "diagCredentialExpired": "Credential expired",
+  "@diagCredentialExpired": {
+    "description": "Diagnostics: check name: this phone's credential has expired."
+  },
+  "diagCredentialExpiredDetail": "re-pair this device (expired {date})",
+  "@diagCredentialExpiredDetail": {
+    "description": "Diagnostics: under \"Credential expired\". {date} is like 2026-11-15.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "diagCredentialExpiresSoon": "Credential expires soon",
+  "@diagCredentialExpiresSoon": {
+    "description": "Diagnostics: check name: the credential expires within a week."
+  },
+  "diagCredentialExpiresSoonDetail": "within 7 days (on {date})",
+  "@diagCredentialExpiresSoonDetail": {
+    "description": "Diagnostics: under \"Credential expires soon\". {date} is like 2026-11-15.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "diagCredentialValid": "Credential valid",
+  "@diagCredentialValid": {
+    "description": "Diagnostics: check name: the credential is valid."
+  },
+  "diagCredentialValidDetail": "expires {date}",
+  "@diagCredentialValidDetail": {
+    "description": "Diagnostics: under \"Credential valid\". {date} is like 2026-11-15.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "diagWhoamiMissing": "server predates {version} (no /whoami) — skipping",
+  "@diagWhoamiMissing": {
+    "description": "Diagnostics: the server has no /whoami because it is older than {version} (a Breeze Core version).",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "diagSectionPairedDevices": "Paired devices",
+  "@diagSectionPairedDevices": {
+    "description": "Diagnostics: section heading: the phones paired with the server."
+  },
+  "diagDeviceManagement": "Device management",
+  "@diagDeviceManagement": {
+    "description": "Diagnostics: check name: the admin list of paired devices."
+  },
+  "diagDeviceManagementSkipped": "skipped — admin endpoint, only checked when connected to the LAN",
+  "@diagDeviceManagementSkipped": {
+    "description": "Diagnostics: under \"Device management\" when the phone is not on the server's LAN."
+  },
+  "diagEnrolledDevices": "Enrolled devices",
+  "@diagEnrolledDevices": {
+    "description": "Diagnostics: check name: how many devices the server has enrolled."
+  },
+  "diagTokenCount": "{count, plural, one{{count} token} other{{count} tokens}}",
+  "@diagTokenCount": {
+    "description": "Diagnostics: under \"Enrolled devices\": the number of device tokens.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagTokenExpired": "token expired — revoke it",
+  "@diagTokenExpired": {
+    "description": "Diagnostics: under a paired device's name: its token has expired."
+  },
+  "diagTokenExpiresSoon": "expires within 7 days",
+  "@diagTokenExpiresSoon": {
+    "description": "Diagnostics: under a paired device's name: its token expires within a week."
+  },
+  "diagNeedsLanKey": "needs the key from the LAN — skipping (off-LAN?)",
+  "@diagNeedsLanKey": {
+    "description": "Diagnostics: the device list needs the key from the server's LAN, so the check is skipped."
+  },
+  "diagSectionConfig": "Config API (secret sanitisation)",
+  "@diagSectionConfig": {
+    "description": "Diagnostics: section heading: the config API must not reveal secrets."
+  },
+  "diagConfigApi": "Config API",
+  "@diagConfigApi": {
+    "description": "Diagnostics: check name for the config API when it cannot be checked."
+  },
+  "diagNoSecrets": "No secrets exposed",
+  "@diagNoSecrets": {
+    "description": "Diagnostics: check name: the config API reveals no secrets."
+  },
+  "diagConfigSanitised": "config response is sanitised",
+  "@diagConfigSanitised": {
+    "description": "Diagnostics: under \"No secrets exposed\" when all is well."
+  },
+  "diagSecretsExposed": "{count, plural, one{{count} secret-looking value exposed — possible leak} other{{count} secret-looking values exposed — possible leak}}",
+  "@diagSecretsExposed": {
+    "description": "Diagnostics: under \"No secrets exposed\" when values that look secret were found.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagKeyNotEchoed": "API key not echoed",
+  "@diagKeyNotEchoed": {
+    "description": "Diagnostics: check name: the config API does not send the API key back."
+  },
+  "diagKeyEchoed": "the API key appears verbatim in /api/config — leak",
+  "@diagKeyEchoed": {
+    "description": "Diagnostics: under \"API key not echoed\" when it is (a leak)."
+  },
+  "diagKeyAbsent": "the API key is absent from the response",
+  "@diagKeyAbsent": {
+    "description": "Diagnostics: under \"API key not echoed\" when all is well."
+  },
+  "diagNeedsLanKeyToken": "needs key+token from the LAN — skipping",
+  "@diagNeedsLanKeyToken": {
+    "description": "Diagnostics: the config API needs key and token from the server's LAN, so the check is skipped."
+  },
+  "diagSectionInput": "Input validation",
+  "@diagSectionInput": {
+    "description": "Diagnostics: section heading: the server refuses bad input."
+  },
+  "diagUnknownUnit": "Unknown unit → {status}",
+  "@diagUnknownUnit": {
+    "description": "Diagnostics: check name: asking for an air conditioner that does not exist gives HTTP {status}.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagBoundsCheck": "Bounds check",
+  "@diagBoundsCheck": {
+    "description": "Diagnostics: check name: an out-of-range temperature is refused."
+  },
+  "diagNoUnitsToTest": "no units to test against",
+  "@diagNoUnitsToTest": {
+    "description": "Diagnostics: under \"Bounds check\" when there is no air conditioner."
+  },
+  "diagOutOfRangeRejected": "Out-of-range rejected",
+  "@diagOutOfRangeRejected": {
+    "description": "Diagnostics: check name: an out-of-range value was refused (good)."
+  },
+  "diagOutOfRangeRejectedDetail": "{probe} refused with {status}",
+  "@diagOutOfRangeRejectedDetail": {
+    "description": "Diagnostics: under \"Out-of-range rejected\". {probe} is the request sent (target_temperature=99), {status} the HTTP status.",
+    "placeholders": {
+      "probe": {
+        "type": "String"
+      },
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagOutOfRangeAccepted": "Out-of-range ACCEPTED",
+  "@diagOutOfRangeAccepted": {
+    "description": "Diagnostics: check name: an out-of-range value was ACCEPTED (bad). The capitals are for emphasis."
+  },
+  "diagOutOfRangeAcceptedDetail": "server took {probe} ({status}) — bounds not enforced",
+  "@diagOutOfRangeAcceptedDetail": {
+    "description": "Diagnostics: under \"Out-of-range ACCEPTED\". {probe} is the request sent (target_temperature=99), {status} the HTTP status.",
+    "placeholders": {
+      "probe": {
+        "type": "String"
+      },
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagOutOfRangeOther": "out-of-range control returned {status} (expected {expected})",
+  "@diagOutOfRangeOther": {
+    "description": "Diagnostics: under \"Bounds check\" when the answer was neither a refusal nor an acceptance.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      },
+      "expected": {
+        "type": "int"
+      }
+    }
+  },
+  "diagBatchState": "Batch state",
+  "@diagBatchState": {
+    "description": "Diagnostics: section heading, and check name: reading every air conditioner's state in one request."
+  },
+  "diagOneShotBatch": "One-shot batch",
+  "@diagOneShotBatch": {
+    "description": "Diagnostics: check name: the one-request read of every state."
+  },
+  "diagBatchDetail": "{count, plural, one{{count} state} other{{count} states}} in {ms} ms",
+  "@diagBatchDetail": {
+    "description": "Diagnostics: under \"One-shot batch\": how many states came back, and how long it took in milliseconds.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "diagUnreachableInBatch": "Unreachable in batch",
+  "@diagUnreachableInBatch": {
+    "description": "Diagnostics: check name: air conditioners the batch read could not reach."
+  },
+  "diagUnreachableDetail": "{count, plural, one{{count} unit} other{{count} units}}: {names}",
+  "@diagUnreachableDetail": {
+    "description": "Diagnostics: under \"Unreachable in batch\": how many, then their names.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "diagBatchCoverage": "Batch coverage",
+  "@diagBatchCoverage": {
+    "description": "Diagnostics: check name: the batch read covers every air conditioner."
+  },
+  "diagCoversAll": "{count, plural, one{covers the {count} unit} other{covers all {count} units}}",
+  "@diagCoversAll": {
+    "description": "Diagnostics: under \"Batch coverage\" when every air conditioner was covered.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagCoveredOf": "covered {seen} of {total}",
+  "@diagCoveredOf": {
+    "description": "Diagnostics: under \"Batch coverage\" when some were missed: {seen} of {total} air conditioners.",
+    "placeholders": {
+      "seen": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "diagSectionLive": "Live stream (SSE)",
+  "@diagSectionLive": {
+    "description": "Diagnostics: section heading: the server's live update stream. Keep SSE."
+  },
+  "diagLiveUpdates": "Live updates",
+  "@diagLiveUpdates": {
+    "description": "Diagnostics: check name when the server does not offer live updates."
+  },
+  "diagNoLiveStreamFeature": "server doesn’t advertise {feature} — skipping",
+  "@diagNoLiveStreamFeature": {
+    "description": "Diagnostics: the server does not list the live stream feature ({feature} is its technical name, live_stream).",
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "diagStreamConnected": "Stream connected",
+  "@diagStreamConnected": {
+    "description": "Diagnostics: check name: the live stream connected."
+  },
+  "diagFirstUpdate": "first live update received ({name})",
+  "@diagFirstUpdate": {
+    "description": "Diagnostics: under \"Stream connected\": the first update arrived; {name} is the air conditioner it was about.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "diagNoUpdateWithin": "no update pushed within {seconds} s (idle is normal)",
+  "@diagNoUpdateWithin": {
+    "description": "Diagnostics: under \"Stream connected\": nothing arrived within {seconds} seconds (\"s\" is the unit), which is normal when nothing changes.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "diagLiveStream": "Live stream",
+  "@diagLiveStream": {
+    "description": "Diagnostics: check name when the live stream failed."
+  },
+  "diagStreamClosed": "closed without an update ({error})",
+  "@diagStreamClosed": {
+    "description": "Diagnostics: the live stream closed before any update. {error} is a technical message in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "diagSectionUnit": "Unit: {name}",
+  "@diagSectionUnit": {
+    "description": "Diagnostics: section heading for one air conditioner; {name} is its name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "diagStateFetched": "State fetched",
+  "@diagStateFetched": {
+    "description": "Diagnostics: check name: the air conditioner's state was read; the line under it is the time in ms."
+  },
+  "diagState": "State",
+  "@diagState": {
+    "description": "Diagnostics: check name when reading the state failed."
+  },
+  "diagOnline": "Online",
+  "@diagOnline": {
+    "description": "Diagnostics: check name: the air conditioner answers (the line under it is true or false)."
+  },
+  "diagTarget": "Target",
+  "@diagTarget": {
+    "description": "Diagnostics: check name: the target temperature is in range."
+  },
+  "diagTargetDetail": "{value}° (expected {min}–{max})",
+  "@diagTargetDetail": {
+    "description": "Diagnostics: under \"Target\": the value, then the allowed range. Numbers already formatted.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "diagIndoorSensor": "Indoor sensor",
+  "@diagIndoorSensor": {
+    "description": "Diagnostics: check name: the indoor temperature sensor gives a reading."
+  },
+  "diagNoReading": "no reading",
+  "@diagNoReading": {
+    "description": "Diagnostics: under \"Indoor sensor\" when there is no reading."
+  },
+  "diagReadouts": "Readouts",
+  "@diagReadouts": {
+    "description": "Diagnostics: check name over the raw state values (power=, fan=, ... stay as they are)."
+  },
+  "diagSwing": "Swing",
+  "@diagSwing": {
+    "description": "Diagnostics: check name: the flaps' setting is a known one (the line under it is the raw value)."
+  },
+  "diagCapabilities": "Capabilities",
+  "@diagCapabilities": {
+    "description": "Diagnostics: check name: what the air conditioner's hardware offers."
+  },
+  "diagModeCount": "{count, plural, one{{count} mode} other{{count} modes}}",
+  "@diagModeCount": {
+    "description": "Diagnostics: under \"Capabilities\": how many modes the air conditioner has.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagModeCountUnknown": "? modes",
+  "@diagModeCountUnknown": {
+    "description": "Diagnostics: under \"Capabilities\" when the number of modes is unknown."
+  },
+  "diagCapabilitiesDetail": "{modes}, range {range}",
+  "@diagCapabilitiesDetail": {
+    "description": "Diagnostics: under \"Capabilities\": {modes} is \"3 modes\", {range} the temperature range, like 16–30°.",
+    "placeholders": {
+      "modes": {
+        "type": "String"
+      },
+      "range": {
+        "type": "String"
+      }
+    }
+  },
+  "diagCapabilitiesDetailExtras": "{modes}, range {range}, {extras}",
+  "@diagCapabilitiesDetailExtras": {
+    "description": "Diagnostics: as \"{modes}, range {range}\", followed by the extras the unit has (eco/turbo/h-swing, not translated).",
+    "placeholders": {
+      "modes": {
+        "type": "String"
+      },
+      "range": {
+        "type": "String"
+      },
+      "extras": {
+        "type": "String"
+      }
+    }
+  },
+  "diagLatency": "Latency",
+  "@diagLatency": {
+    "description": "Diagnostics: check name: how fast the air conditioner answers."
+  },
+  "diagLatencyDetail": "avg {ms} ms over {count, plural, one{{count} call} other{{count} calls}}",
+  "@diagLatencyDetail": {
+    "description": "Diagnostics: under \"Latency\": the average time in ms over {count} requests.",
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagLatencySlow": "avg {ms} ms over {count, plural, one{{count} call} other{{count} calls}} — check Wi-Fi to this unit",
+  "@diagLatencySlow": {
+    "description": "Diagnostics: as the latency line, when it is slow: suggests checking the Wi-Fi to the air conditioner.",
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagNoSamples": "no samples succeeded",
+  "@diagNoSamples": {
+    "description": "Diagnostics: under \"Latency\" when every timing request failed."
+  },
+  "diagSectionPrograms": "Programs / scheduler",
+  "@diagSectionPrograms": {
+    "description": "Diagnostics: section heading: the server's programs and the scheduler that runs them."
+  },
+  "diagScheduler": "Scheduler",
+  "@diagScheduler": {
+    "description": "Diagnostics: check name: the scheduler is running (the line under it is raw values, not translated)."
+  },
+  "diagProgramsMissing": "programs feature not present — skipping",
+  "@diagProgramsMissing": {
+    "description": "Diagnostics: the server has no programs feature, so the check is skipped."
+  },
+  "diagPrograms": "Programs",
+  "@diagPrograms": {
+    "description": "Diagnostics: check name: the server's programs."
+  },
+  "diagProgramsDetail": "{total}: {favourites} favourite, {schedules} schedule, {curves} curve ({enabled} enabled)",
+  "@diagProgramsDetail": {
+    "description": "Diagnostics: under \"Programs\": the total, then how many favourites, schedules and curves, and how many are enabled. Written as \"label count\" where a plural would not agree.",
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "favourites": {
+        "type": "int"
+      },
+      "schedules": {
+        "type": "int"
+      },
+      "curves": {
+        "type": "int"
+      },
+      "enabled": {
+        "type": "int"
+      }
+    }
+  },
+  "diagSectionSummary": "Summary",
+  "@diagSectionSummary": {
+    "description": "Diagnostics: section heading of the verdict."
+  },
+  "diagProblemsFound": "Problems found",
+  "@diagProblemsFound": {
+    "description": "Diagnostics: verdict when a check failed."
+  },
+  "diagPassedWithWarnings": "Passed with warnings",
+  "@diagPassedWithWarnings": {
+    "description": "Diagnostics: verdict when nothing failed but something warned."
+  },
+  "diagAllPassed": "All checks passed",
+  "@diagAllPassed": {
+    "description": "Diagnostics: verdict when every check passed."
+  },
+  "diagProblemCount": "{count, plural, one{{count} problem} other{{count} problems}}",
+  "@diagProblemCount": {
+    "description": "Diagnostics: the number of failed checks, in the verdict.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagWarningCount": "{count, plural, one{{count} warning} other{{count} warnings}}",
+  "@diagWarningCount": {
+    "description": "Diagnostics: the number of warnings, in the verdict.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagProblemsAndWarnings": "{problems}, {warnings}",
+  "@diagProblemsAndWarnings": {
+    "description": "Diagnostics: the verdict's line when a check failed: \"3 problems, 1 warning\".",
+    "placeholders": {
+      "problems": {
+        "type": "String"
+      },
+      "warnings": {
+        "type": "String"
+      }
+    }
+  },
+  "diagNoIssues": "no issues",
+  "@diagNoIssues": {
+    "description": "Diagnostics: the verdict's line when every check passed."
+  },
+  "programsTitle": "Programs",
+  "@programsTitle": {
+    "description": "Programs list: the screen title."
+  },
+  "programsNew": "New",
+  "@programsNew": {
+    "description": "Programs list: the floating button that starts a new program. One short word."
+  },
+  "programsUnsupported": "This server doesn’t have the programs feature yet.\n\nUpdate the server, then favourites, schedules and temperature curves will appear here.",
+  "@programsUnsupported": {
+    "description": "Programs list, when the server is too old to have programs. Two paragraphs."
+  },
+  "programsGroupFavourites": "Favourites",
+  "@programsGroupFavourites": {
+    "description": "Programs list: heading over the favourites (saved scenes). Shown in capitals."
+  },
+  "programsGroupSchedules": "Schedules",
+  "@programsGroupSchedules": {
+    "description": "Programs list: heading over the schedules. Shown in capitals."
+  },
+  "programsGroupCurves": "Curves",
+  "@programsGroupCurves": {
+    "description": "Programs list: heading over the temperature curves. Shown in capitals."
+  },
+  "programsApplied": "Applied “{name}”",
+  "@programsApplied": {
+    "description": "Snack bar after a favourite was applied. {name} is the program's name, as the user typed it.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "programsDeleteTitle": "Delete “{name}”?",
+  "@programsDeleteTitle": {
+    "description": "Title of the dialog that confirms deleting a program.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "programsDeleteBody": "It is removed from the server, for every phone.",
+  "@programsDeleteBody": {
+    "description": "Body of the delete dialog: programs live on the server, so every paired phone loses it."
+  },
+  "programsEmptyScene": "Empty scene",
+  "@programsEmptyScene": {
+    "description": "Programs list: the one-line summary of a favourite with no settings."
+  },
+  "programsNoTimes": "No times",
+  "@programsNoTimes": {
+    "description": "Programs list: the summary of a schedule with no times in it."
+  },
+  "programsNoPoints": "No points",
+  "@programsNoPoints": {
+    "description": "Programs list: the summary of a curve with no points."
+  },
+  "programsCurveRange": "{low} to {high}",
+  "@programsCurveRange": {
+    "description": "Programs list: a curve's summary, after its mode: the lowest and highest temperature, already formatted (\"21.0°\").",
+    "placeholders": {
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      }
+    }
+  },
+  "programsApplyNowTooltip": "Apply {name} now",
+  "@programsApplyNowTooltip": {
+    "description": "Tooltip (and screen-reader label) of the play button on a favourite.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "programsRunningLabel": "Running, {name}",
+  "@programsRunningLabel": {
+    "description": "Screen-reader label of the on/off switch on a schedule or curve: whether the server runs it. The switch adds \"on\" or \"off\".",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "programsMoreOptions": "More options for {name}",
+  "@programsMoreOptions": {
+    "description": "Tooltip of a program's ⋮ menu button.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "programsApplyNow": "Apply now",
+  "@programsApplyNow": {
+    "description": "Menu item on a curve: set the curve's current temperature on the units now."
+  },
+  "programsEmptyTitle": "No programs yet",
+  "@programsEmptyTitle": {
+    "description": "Programs list with nothing in it: the heading."
+  },
+  "programsEmptyFavourite": "A favourite: a scene you apply with one tap.",
+  "@programsEmptyFavourite": {
+    "description": "Programs list with nothing in it: what a favourite is."
+  },
+  "programsEmptySchedule": "A schedule: scenes at times of the week, run by the server.",
+  "@programsEmptySchedule": {
+    "description": "Programs list with nothing in it: what a schedule is."
+  },
+  "programsEmptyCurve": "A curve: a temperature that follows the day.",
+  "@programsEmptyCurve": {
+    "description": "Programs list with nothing in it: what a curve is."
+  },
+  "programNew": "New program",
+  "@programNew": {
+    "description": "The button that starts a new program, and the editor's title while creating one."
+  },
+  "programEditTitle": "Edit program",
+  "@programEditTitle": {
+    "description": "The program editor's title for an existing program."
+  },
+  "programAllUnits": "All units",
+  "@programAllUnits": {
+    "description": "A program that applies to every air conditioner: the chip in the editor and the line on its card."
+  },
+  "programKindFavourite": "Favourite",
+  "@programKindFavourite": {
+    "description": "One of the three kinds of program, on a tile under an icon: a saved scene applied on demand. One short word; it shrinks to fit rather than wrap."
+  },
+  "programKindSchedule": "Schedule",
+  "@programKindSchedule": {
+    "description": "Kind of program: scenes at times of the week. One short word on a tile."
+  },
+  "programKindCurve": "Curve",
+  "@programKindCurve": {
+    "description": "Kind of program: a temperature that follows the day. One short word on a tile."
+  },
+  "programKindLabel": "Kind of program",
+  "@programKindLabel": {
+    "description": "Screen-reader label of the group of three kind tiles."
+  },
+  "programBlurbFavourite": "A scene saved for one tap: apply it from Programs whenever you want it.",
+  "@programBlurbFavourite": {
+    "description": "Program editor: what a favourite does, under the kind tiles. \"Programs\" is the programs screen."
+  },
+  "programBlurbSchedule": "Scenes at set times on the days you pick. The server runs them, so they happen with the phone off. Times are the server's.",
+  "@programBlurbSchedule": {
+    "description": "Program editor: what a schedule does. The times are in the server's clock and time zone."
+  },
+  "programBlurbCurve": "A target temperature that follows the day, adjusted by the server as the hours pass, through midnight and round again.",
+  "@programBlurbCurve": {
+    "description": "Program editor: what a curve does. It wraps round midnight into the next day."
+  },
+  "programName": "Name",
+  "@programName": {
+    "description": "Program editor: label of the name field."
+  },
+  "programNameHintFavourite": "Cosy evening",
+  "@programNameHintFavourite": {
+    "description": "Program editor: an example name for a favourite, shown in the empty name field."
+  },
+  "programNameHintSchedule": "Weekday mornings",
+  "@programNameHintSchedule": {
+    "description": "Program editor: an example name for a schedule."
+  },
+  "programNameHintCurve": "Summer nights",
+  "@programNameHintCurve": {
+    "description": "Program editor: an example name for a curve."
+  },
+  "programUnits": "Units",
+  "@programUnits": {
+    "description": "Program editor: heading of the section that picks the air conditioners. Shown in capitals."
+  },
+  "programRunning": "Running",
+  "@programRunning": {
+    "description": "Program editor: heading of the section with the switch that turns a schedule or curve on or off. Shown in capitals."
+  },
+  "programOn": "On",
+  "@programOn": {
+    "description": "Program editor: the title of the running switch while the program is on (the server runs it)."
+  },
+  "programOff": "Off",
+  "@programOff": {
+    "description": "Program editor: the title of the running switch while the program is off."
+  },
+  "programOffKeepsTimes": "Off keeps the times, but nothing happens at them",
+  "@programOffKeepsTimes": {
+    "description": "Program editor, under the running switch of a schedule."
+  },
+  "programOffKeepsCurve": "Off keeps the curve, but the server stops following it",
+  "@programOffKeepsCurve": {
+    "description": "Program editor, under the running switch of a curve."
+  },
+  "programScene": "Scene",
+  "@programScene": {
+    "description": "Program editor: heading of a favourite's settings, and the button on a schedule time that edits its settings."
+  },
+  "programNeedsName": "Give the program a name.",
+  "@programNeedsName": {
+    "description": "Snack bar: saving without a name."
+  },
+  "programNeedsTime": "Add at least one time.",
+  "@programNeedsTime": {
+    "description": "Snack bar: saving a schedule with no times."
+  },
+  "programNeedsTwoPoints": "A curve needs at least two points.",
+  "@programNeedsTwoPoints": {
+    "description": "Snack bar: saving a curve with fewer than two points."
+  },
+  "programTimes": "Times",
+  "@programTimes": {
+    "description": "Schedule editor: heading over the list of times. Shown in capitals."
+  },
+  "programTimesCount": "{count, plural, one{{count} time} other{{count} times}}",
+  "@programTimesCount": {
+    "description": "Schedule editor: how many times the schedule has, at the end of the heading.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "programNoTimesYet": "No times yet.",
+  "@programNoTimesYet": {
+    "description": "Schedule editor with no times."
+  },
+  "programAddTime": "Add a time",
+  "@programAddTime": {
+    "description": "Schedule editor: button that adds a time."
+  },
+  "programAddTimeHelp": "When should it happen?",
+  "@programAddTimeHelp": {
+    "description": "Title of the time picker opened by \"Add a time\"."
+  },
+  "programSceneAt": "At {time}, {days}",
+  "@programSceneAt": {
+    "description": "Title of the sheet that edits one time's scene. {time} is like 07:00; {days} is \"every day\", \"weekdays\", \"weekends\" or a list of days, in lower case.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "programTimeChange": "Time {time}, change",
+  "@programTimeChange": {
+    "description": "Screen-reader label of a schedule time, which opens the time picker.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "programDeleteTime": "Delete the {time} time",
+  "@programDeleteTime": {
+    "description": "Tooltip of the delete button on a schedule time.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "programDaysEveryDay": "Every day",
+  "@programDaysEveryDay": {
+    "description": "Which days a schedule time runs: all seven (or none picked)."
+  },
+  "programDaysWeekdays": "Weekdays",
+  "@programDaysWeekdays": {
+    "description": "Which days a schedule time runs: Monday to Friday."
+  },
+  "programDaysWeekends": "Weekends",
+  "@programDaysWeekends": {
+    "description": "Which days a schedule time runs: Saturday and Sunday."
+  },
+  "programDaysSeparator": ", ",
+  "@programDaysSeparator": {
+    "description": "Between the short day names in a list such as \"Mon, Wed, Fri\" (the names come from the system). Keep the space where the language has one."
+  },
+  "curveThroughTheDay": "Through the day",
+  "@curveThroughTheDay": {
+    "description": "Curve editor: heading over the chart of the day. Shown in capitals."
+  },
+  "curveModeAndFan": "Mode and fan",
+  "@curveModeAndFan": {
+    "description": "Curve editor: heading over the mode and fan speed controls. Shown in capitals."
+  },
+  "curvePoints": "Points",
+  "@curvePoints": {
+    "description": "Curve editor: heading over the list of points (a time and a temperature each). Shown in capitals."
+  },
+  "curveAddPoint": "Add a point",
+  "@curveAddPoint": {
+    "description": "Curve editor: button that adds a point."
+  },
+  "curveAddPointHelp": "A point at what time?",
+  "@curveAddPointHelp": {
+    "description": "Title of the time picker opened by \"Add a point\"."
+  },
+  "curvePointChangeTime": "Point at {time}, change the time",
+  "@curvePointChangeTime": {
+    "description": "Screen-reader label of a point's time, which opens the time picker.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "curvePointLower": "Lower the {time} point",
+  "@curvePointLower": {
+    "description": "Tooltip of the − button on a point: half a degree cooler.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "curvePointRaise": "Raise the {time} point",
+  "@curvePointRaise": {
+    "description": "Tooltip of the + button on a point: half a degree warmer.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "curvePointDelete": "Delete the {time} point",
+  "@curvePointDelete": {
+    "description": "Tooltip of the delete button on a point.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "curveNeedsTwoPoints": "A curve needs two points",
+  "@curveNeedsTwoPoints": {
+    "description": "Tooltip of the delete button on a point when only two are left, so it is disabled."
+  },
+  "curveChartEmpty": "Temperature curve, no points",
+  "@curveChartEmpty": {
+    "description": "Screen-reader description of the curve chart with no points."
+  },
+  "curveChartSummary": "{count, plural, one{Temperature curve, {count} point, from {low} to {high} degrees} other{Temperature curve, {count} points, from {low} to {high} degrees}}",
+  "@curveChartSummary": {
+    "description": "Screen-reader description of the curve chart: how many points, and the lowest and highest temperature ({low} and {high} are numbers like 21.5, already formatted).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      }
+    }
+  },
+  "sceneSwitchesOn": "Switches the unit on",
+  "@sceneSwitchesOn": {
+    "description": "Scene editor, beside the power switch, while it is on: applying the scene turns the air conditioner on."
+  },
+  "sceneSwitchesOff": "Switches the unit off",
+  "@sceneSwitchesOff": {
+    "description": "Scene editor, beside the power switch, while it is off."
+  },
+  "sceneWithEverythingBelow": "With everything below",
+  "@sceneWithEverythingBelow": {
+    "description": "Scene editor, under \"Switches the unit on\": the settings below are applied too."
+  },
+  "sceneSettingsStillSent": "The settings below are still sent, for next time",
+  "@sceneSettingsStillSent": {
+    "description": "Scene editor, under \"Switches the unit off\"."
+  },
+  "sceneOff": "Off",
+  "@sceneOff": {
+    "description": "A scene in one line of small pills: the only pill when the scene switches the unit off."
+  },
+  "sceneFan": "fan {speed}",
+  "@sceneFan": {
+    "description": "A scene in a line: the fan speed pill, and in the spoken summary. {speed} is a fan speed word such as \"auto\" or \"low\". Lower case.",
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "sceneFlaps": "flaps {swing}",
+  "@sceneFlaps": {
+    "description": "A scene in a line, spoken summary: the flaps' swing. {swing} is \"vertical\", \"horizontal\" or \"both\". Lower case.",
+    "placeholders": {
+      "swing": {
+        "type": "String"
+      }
+    }
+  },
+  "catWhileYouWait": "while you wait",
+  "@catWhileYouWait": {
+    "description": "Small lower-case label, with a paw icon, over a cat fact shown while the app waits for the server."
+  },
+  "catFact1": "A cat has 32 muscles in each ear.",
+  "@catFact1": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact2": "Cats sleep 12 to 16 hours a day, which is most of a working week.",
+  "@catFact2": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word. The English joke is loose: a version that stays true (16 hours is two 8-hour working days) is fine."
+  },
+  "catFact3": "A group of cats is called a clowder.",
+  "@catFact3": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word. \"Clowder\" is an English word; say that it is, if the language has no word of its own."
+  },
+  "catFact4": "Cats have a third eyelid, the haw, which sweeps across the eye.",
+  "@catFact4": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word. \"The haw\" is the English name for the third eyelid; the language's own term, or none, is fine."
+  },
+  "catFact5": "A cat's nose print is as unique as a human fingerprint.",
+  "@catFact5": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact6": "Cats cannot taste sweetness — the receptor gene is broken in all felids.",
+  "@catFact6": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact7": "A domestic cat can sprint at roughly 48 km/h.",
+  "@catFact7": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact8": "Cats walk like camels and giraffes: both right legs, then both left.",
+  "@catFact8": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact9": "The oldest known pet cat was buried with a human in Cyprus 9,500 years ago.",
+  "@catFact9": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact10": "Cats have 24 more bones than humans do.",
+  "@catFact10": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact11": "A cat can rotate its ears 180 degrees.",
+  "@catFact11": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact12": "Purring happens between 25 and 150 Hz, which may help bones heal.",
+  "@catFact12": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact13": "Cats sweat only through their paw pads.",
+  "@catFact13": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact14": "A cat can jump about six times its own length.",
+  "@catFact14": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact15": "Whiskers are roughly as wide as the cat, and are used to judge gaps.",
+  "@catFact15": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact16": "Cats have no collarbone, which is why they fit through narrow spaces.",
+  "@catFact16": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word. Strictly, a cat has a small collarbone attached to no other bone; saying it that way keeps it true."
+  },
+  "catFact17": "Adult cats meow at humans far more than at other cats.",
+  "@catFact17": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact18": "A cat’s heart beats about twice as fast as a human’s.",
+  "@catFact18": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact19": "Cats see well at a sixth of the light a human needs.",
+  "@catFact19": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact20": "The record for the loudest purr is about 67 decibels — a conversation.",
+  "@catFact20": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact21": "Cats have around 200 million scent receptors; humans have about 5 million.",
+  "@catFact21": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact22": "A cat’s tail carries about 10% of its bones.",
+  "@catFact22": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact23": "Kittens are born with blue eyes; the adult colour arrives later.",
+  "@catFact23": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact24": "Cats knead with their paws — a behaviour kept from nursing.",
+  "@catFact24": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact25": "A cat’s brain is more similar to a human’s than a dog’s is.",
+  "@catFact25": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact26": "Cats can make over 100 distinct vocal sounds.",
+  "@catFact26": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact27": "The hairless Sphynx still needs regular bathing, for oil rather than hair.",
+  "@catFact27": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact28": "A cat’s field of view is about 200 degrees, against a human’s 180.",
+  "@catFact28": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact29": "Cats prefer water that is moving, which is why taps beat bowls.",
+  "@catFact29": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact30": "A cat spends up to half its waking hours grooming.",
+  "@catFact30": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact31": "Cats have a righting reflex from about three weeks old.",
+  "@catFact31": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact32": "Black cats can be any of 22 breeds recognised for the colour.",
+  "@catFact32": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact33": "A cat’s normal body temperature is around 38.6 °C — warmer than yours.",
+  "@catFact33": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact34": "Cats mark by rubbing: cheeks and flanks carry scent glands.",
+  "@catFact34": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact35": "The heaviest recorded domestic cat weighed over 21 kg. Please do not.",
+  "@catFact35": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact36": "Cats dream, and show the same REM sleep phase humans do.",
+  "@catFact36": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact37": "A cat’s claws retract to keep them sharp for climbing.",
+  "@catFact37": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact38": "Cats respond to their own name; they simply reserve the right not to.",
+  "@catFact38": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact39": "Ancient Egyptians shaved their eyebrows in mourning when a cat died.",
+  "@catFact39": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact40": "A cat can be either right- or left-pawed, and most females are right-pawed.",
+  "@catFact40": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Settings screen: the app bar title."
+  },
+  "settingsServer": "Server",
+  "@settingsServer": {
+    "description": "Settings: the row showing the server this app talks to; its address is underneath. Opens the list of saved servers."
+  },
+  "settingsServersSaved": "{count, plural, one{{count} saved — tap to switch} other{{count} saved — tap to switch}}",
+  "@settingsServersSaved": {
+    "description": "Settings, Server row, second line when more than one server is saved: how many are saved, and that tapping the row switches between them.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsThisDevice": "This device",
+  "@settingsThisDevice": {
+    "description": "Settings: the row showing this phone's name on the server (the name itself is underneath)."
+  },
+  "settingsDisplay": "Display",
+  "@settingsDisplay": {
+    "description": "Settings: section heading for display preferences (language, theme, units)."
+  },
+  "settingsTheme": "Theme",
+  "@settingsTheme": {
+    "description": "Settings: the light/dark theme setting."
+  },
+  "settingsThemeHint": "Follow system, or force light / dark",
+  "@settingsThemeHint": {
+    "description": "Settings, Theme: what the choice below does."
+  },
+  "settingsThemeSystem": "System",
+  "@settingsThemeSystem": {
+    "description": "Settings, Theme: a segment of a three-way button; follow the phone. Very short: three share one row."
+  },
+  "settingsThemeLight": "Light",
+  "@settingsThemeLight": {
+    "description": "Settings, Theme: segment; always the light theme. Very short."
+  },
+  "settingsThemeDark": "Dark",
+  "@settingsThemeDark": {
+    "description": "Settings, Theme: segment; always the dark theme. Very short."
+  },
+  "settingsPureBlack": "AMOLED Black",
+  "@settingsPureBlack": {
+    "description": "Settings: switch for a pure black background in the dark theme, for AMOLED screens."
+  },
+  "settingsPureBlackHint": "Supported devices only",
+  "@settingsPureBlackHint": {
+    "description": "Settings, AMOLED Black: it only takes effect on some phones."
+  },
+  "settingsTempUnit": "Temperature unit",
+  "@settingsTempUnit": {
+    "description": "Settings: Celsius or Fahrenheit. A °C / °F button sits beside it, so space is tight."
+  },
+  "settingsTempUnitHint": "Display only, the server always uses Celsius",
+  "@settingsTempUnitHint": {
+    "description": "Settings, Temperature unit: the choice only changes what is shown; the server always works in Celsius."
+  },
+  "settingsBehaviour": "Behaviour",
+  "@settingsBehaviour": {
+    "description": "Settings: section heading for how the app behaves."
+  },
+  "settingsBeep": "Beep on control",
+  "@settingsBeep": {
+    "description": "Settings: switch; the air conditioner beeps when it receives a command."
+  },
+  "settingsBeepHint": "Make the unit chirp when it accepts a command",
+  "@settingsBeepHint": {
+    "description": "Settings, Beep on control: explanation."
+  },
+  "settingsRepair": "Re-pair this device",
+  "@settingsRepair": {
+    "description": "Settings: start pairing this phone with the server again."
+  },
+  "settingsRepairHint": "Get a new pairing code and re-authorise",
+  "@settingsRepairHint": {
+    "description": "Settings, Re-pair: explanation."
+  },
+  "settingsRepairTitle": "Re-pair device?",
+  "@settingsRepairTitle": {
+    "description": "Settings, Re-pair: title of the confirmation dialog."
+  },
+  "settingsRepairBody": "This forgets the current access token and starts pairing again.",
+  "@settingsRepairBody": {
+    "description": "Settings, Re-pair: body of the confirmation dialog."
+  },
+  "settingsForgetServer": "Forget this server",
+  "@settingsForgetServer": {
+    "description": "Settings: remove the current server from this phone (shown in red)."
+  },
+  "settingsForgetServerHint": "Erase its address, key and credential from this phone",
+  "@settingsForgetServerHint": {
+    "description": "Settings, Forget this server: explanation."
+  },
+  "settingsForgetServerTitle": "Forget this server?",
+  "@settingsForgetServerTitle": {
+    "description": "Settings, Forget this server: title of the confirmation dialog."
+  },
+  "settingsForgetServerBody": "This erases the stored server address, access key and device credential. Other saved servers are untouched.",
+  "@settingsForgetServerBody": {
+    "description": "Settings, Forget this server: body of the confirmation dialog."
+  },
+  "settingsConfirm": "Confirm",
+  "@settingsConfirm": {
+    "description": "Settings: the button that confirms re-pairing or forgetting a server."
+  },
+  "settingsLicences": "Licences",
+  "@settingsLicences": {
+    "description": "Settings: opens the open-source licences page."
+  },
+  "settingsLicencesHint": "Open-source licences for this app",
+  "@settingsLicencesHint": {
+    "description": "Settings, Licences: explanation."
+  },
+  "settingsLegalese": "AGPL-3.0-or-later. A client for a self-hosted Breeze Core server; requests are signed per-device with an Ed25519 key that never leaves this phone.",
+  "@settingsLegalese": {
+    "description": "Licences page: the short legal note under the app name. \"AGPL-3.0-or-later\" is a licence identifier; keep it as it is."
+  },
+  "settingsNerdOneMoreTap": "One more tap, and you're a nerd…",
+  "@settingsNerdOneMoreTap": {
+    "description": "Settings: snack bar after the sixth tap on the version row; the seventh opens the hidden Nerd screen. Playful."
+  },
+  "settingsNerdTapsLeft": "{count, plural, one{{count} tap until you are a nerd} other{{count} taps until you are a nerd}}",
+  "@settingsNerdTapsLeft": {
+    "description": "Settings: snack bar counting down the taps on the version row that open the hidden Nerd screen (shown for 3 and 2). Playful.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serversTitle": "Servers",
+  "@serversTitle": {
+    "description": "Servers screen (saved servers): the app bar title."
+  },
+  "serversEmpty": "No servers saved yet.",
+  "@serversEmpty": {
+    "description": "Servers screen: shown when no server is saved."
+  },
+  "serversAdd": "Add a server",
+  "@serversAdd": {
+    "description": "Servers screen: the row that adds another server; also the title of the setup screen opened from it."
+  },
+  "serversAddHint": "Pair with another Breeze Core; this one stays saved",
+  "@serversAddHint": {
+    "description": "Servers screen, Add a server: explanation. The current server stays saved."
+  },
+  "serversRenameTitle": "Rename server",
+  "@serversRenameTitle": {
+    "description": "Servers screen: title of the rename dialog."
+  },
+  "serversName": "Name",
+  "@serversName": {
+    "description": "Servers screen, rename dialog: the name field."
+  },
+  "serversNameHelper": "Just a label on this phone",
+  "@serversNameHelper": {
+    "description": "Servers screen, rename dialog: under the name field; the name is only shown on this phone, not sent to the server."
+  },
+  "serversForgetTitle": "Forget {name}?",
+  "@serversForgetTitle": {
+    "description": "Servers screen: title of the dialog that removes a saved server. {name} is the server's name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "serversForgetBody": "This phone will erase that server's address, access key and device credential. Pairing again needs an admin on that network.",
+  "@serversForgetBody": {
+    "description": "Servers screen: body of the dialog that removes a saved server."
+  },
+  "serversForget": "Forget",
+  "@serversForget": {
+    "description": "Servers screen: menu item and dialog button that remove a saved server from this phone."
+  },
+  "serversPaired": "paired",
+  "@serversPaired": {
+    "description": "Servers screen, a server's details: this phone is paired with it. Lower case; fills {status} in serversDetail."
+  },
+  "serversNotPaired": "not paired",
+  "@serversNotPaired": {
+    "description": "Servers screen, a server's details: this phone is not paired with it (yet, or any more). Lower case."
+  },
+  "serversDetail": "{status} · auth v{version} · as \"{label}\"",
+  "@serversDetail": {
+    "description": "Servers screen, second line of a saved server: whether this phone is paired ({status}: serversPaired or serversNotPaired), the auth scheme version (\"auth v2\"; keep \"auth v\" as is), and the name this phone has on that server ({label}, never translated).",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "version": {
+        "type": "int"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingTitle": "Pair this device",
+  "@pairingTitle": {
+    "description": "Pairing screen: the app bar title, while the phone waits for an admin to approve it. A \"Change server\" button shares the bar, so keep it short."
+  },
+  "pairingChangeServer": "Change server",
+  "@pairingChangeServer": {
+    "description": "Pairing screen: app bar button; go back and use another server."
+  },
+  "pairingYourCode": "Your pairing code",
+  "@pairingYourCode": {
+    "description": "Pairing screen: heading above the pairing code."
+  },
+  "pairingGettingCode": "Getting a pairing code",
+  "@pairingGettingCode": {
+    "description": "Pairing screen, screen reader: the code has not arrived yet."
+  },
+  "pairingCodeSpoken": "Pairing code {code}",
+  "@pairingCodeSpoken": {
+    "description": "Pairing screen, screen reader: the pairing code, spelled out character by character ({code}, never translated).",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingCopyCode": "Copy the code",
+  "@pairingCopyCode": {
+    "description": "Pairing screen: tooltip of the button that copies the code."
+  },
+  "pairingCodeExpired": "Code expired",
+  "@pairingCodeExpired": {
+    "description": "Pairing screen: the code ran out of time (shown in red)."
+  },
+  "pairingNewCode": "Get a new code",
+  "@pairingNewCode": {
+    "description": "Pairing screen: button; ask the server for a fresh code."
+  },
+  "pairingNewCodeFailed": "Could not get a new code: {error}",
+  "@pairingNewCodeFailed": {
+    "description": "Pairing screen: snack bar; asking for a new code failed. {error} is a technical message in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pairingTimeLeft": "Time left",
+  "@pairingTimeLeft": {
+    "description": "Pairing screen, screen reader: the name of the countdown bar."
+  },
+  "pairingSeconds": "{count, plural, one{{count} second} other{{count} seconds}}",
+  "@pairingSeconds": {
+    "description": "Pairing screen, screen reader: the countdown bar's value, in seconds.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pairingExpiresIn": "expires in {seconds}s · waiting for approval…",
+  "@pairingExpiresIn": {
+    "description": "Pairing screen: small line under the countdown bar. {seconds} with the unit symbol \"s\"; lower case.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "pairingExpiresInSpoken": "{count, plural, one{Expires in {count} second. Waiting for approval.} other{Expires in {count} seconds. Waiting for approval.}}",
+  "@pairingExpiresInSpoken": {
+    "description": "Pairing screen, screen reader: the same line as pairingExpiresIn, in words.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pairingSecondsLeftWarning": "{count, plural, one{{count} second left on the pairing code.} other{{count} seconds left on the pairing code.}}",
+  "@pairingSecondsLeftWarning": {
+    "description": "Pairing screen, screen reader: said once, shortly before the code expires.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pairingInstructions": "Enter this code in your server’s approval tool within the time limit. Approval must be done by an administrator on the local network.",
+  "@pairingInstructions": {
+    "description": "Pairing screen: what to do with the code."
+  },
+  "onboardingCancelAdd": "Cancel adding a server",
+  "@onboardingCancelAdd": {
+    "description": "Setup screen, when adding a second server: tooltip of the close button."
+  },
+  "onboardingWelcome": "Welcome to Breeze",
+  "@onboardingWelcome": {
+    "description": "Setup screen (first run): the big heading."
+  },
+  "onboardingTagline": "Control your air conditioning from anywhere — without handing it to the cloud.",
+  "@onboardingTagline": {
+    "description": "Setup screen: the line under the heading."
+  },
+  "onboardingStep1Title": "Point it at your server",
+  "@onboardingStep1Title": {
+    "description": "Setup screen, step 1 of 3: tell the app where the server is."
+  },
+  "onboardingStep1Body": "Its address and access key.",
+  "@onboardingStep1Body": {
+    "description": "Setup screen, step 1: what to enter."
+  },
+  "onboardingStep2Title": "Get a pairing code",
+  "@onboardingStep2Title": {
+    "description": "Setup screen, step 2 of 3."
+  },
+  "onboardingStep2Body": "Shown on the next screen.",
+  "@onboardingStep2Body": {
+    "description": "Setup screen, step 2: where the code appears."
+  },
+  "onboardingStep3Title": "Someone approves it",
+  "@onboardingStep3Title": {
+    "description": "Setup screen, step 3 of 3: someone approves the pairing code."
+  },
+  "onboardingStep3Body": "An admin on your home network — this keeps strangers out.",
+  "@onboardingStep3Body": {
+    "description": "Setup screen, step 3: who approves, and why."
+  },
+  "onboardingServerAddress": "Server address",
+  "@onboardingServerAddress": {
+    "description": "Setup screen: label of the server address field."
+  },
+  "onboardingServerAddressHelper": "Or a LAN address like 192.168.1.10:8420",
+  "@onboardingServerAddressHelper": {
+    "description": "Setup screen: one line under the server address field. Keep the example address as it is."
+  },
+  "onboardingAccessKey": "Access key",
+  "@onboardingAccessKey": {
+    "description": "Setup screen: label of the access key field."
+  },
+  "onboardingAccessKeyHelper": "From your server's config.json",
+  "@onboardingAccessKeyHelper": {
+    "description": "Setup screen: one line under the access key field; where to find the key. config.json is a file name."
+  },
+  "onboardingShowKey": "Show",
+  "@onboardingShowKey": {
+    "description": "Setup screen: tooltip of the eye button that shows the access key."
+  },
+  "onboardingHideKey": "Hide",
+  "@onboardingHideKey": {
+    "description": "Setup screen: tooltip of the eye button that hides the access key again."
+  },
+  "onboardingDeviceName": "Name for this device",
+  "@onboardingDeviceName": {
+    "description": "Setup screen: label of the field for this phone's name on the server."
+  },
+  "onboardingDeviceNameHelper": "How this phone appears in the server's device list",
+  "@onboardingDeviceNameHelper": {
+    "description": "Setup screen: one line under the device name field."
+  },
+  "onboardingSuggestName": "Suggest another name",
+  "@onboardingSuggestName": {
+    "description": "Setup screen: tooltip of the dice button that suggests a different random device name."
+  },
+  "onboardingKeyRejected": "That access key was rejected.",
+  "@onboardingKeyRejected": {
+    "description": "Setup screen: error; the server refused the access key."
+  },
+  "onboardingConnectFailed": "Could not connect: {detail}",
+  "@onboardingConnectFailed": {
+    "description": "Setup screen: error; the server could not be reached or refused. {detail} is a technical message in English.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingErrorSpoken": "Error: {error}",
+  "@onboardingErrorSpoken": {
+    "description": "Setup screen, screen reader: announces an error ({error}, the text shown).",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingConnecting": "Connecting…",
+  "@onboardingConnecting": {
+    "description": "Setup screen: the main button while connecting."
+  },
+  "onboardingContinue": "Continue",
+  "@onboardingContinue": {
+    "description": "Setup screen: the main button."
+  },
+  "onboardingPrivacy": "Encrypted over HTTPS. This phone gets its own key, which never leaves the device.",
+  "@onboardingPrivacy": {
+    "description": "Setup screen: small print under the button, beside a lock icon."
+  },
+  "nerdNotConnected": "Not connected to a server.",
+  "@nerdNotConnected": {
+    "description": "Nerd screen: shown instead of the details when no server is set up."
+  },
+  "nerdLoadFailed": "Could not ask the server: {detail}",
+  "@nerdLoadFailed": {
+    "description": "Nerd screen: asking the server for its details failed. {detail} is a technical message in English.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdTryAgain": "Try again",
+  "@nerdTryAgain": {
+    "description": "Nerd screen: button under an error."
+  },
+  "nerdCopyAll": "Copy all",
+  "@nerdCopyAll": {
+    "description": "Nerd screen: tooltip; copy every detail on the screen."
+  },
+  "nerdCopied": "Copied everything to the clipboard",
+  "@nerdCopied": {
+    "description": "Nerd screen: snack bar after Copy all."
+  },
+  "nerdRefresh": "Refresh",
+  "@nerdRefresh": {
+    "description": "Nerd screen and its JSON views: tooltip; load again from the server."
+  },
+  "nerdTabSystem": "System",
+  "@nerdTabSystem": {
+    "description": "Nerd screen: first tab; facts about the app, the connection and the server."
+  },
+  "nerdTabInternal": "Internal",
+  "@nerdTabInternal": {
+    "description": "Nerd screen: second tab; internal settings that change how the app looks and connects."
+  },
+  "nerdWompWomp": "womp womp update your server",
+  "@nerdWompWomp": {
+    "description": "Nerd screen: big playful heading when the server is too old for it (\"womp womp\" is a sad-trombone sound). Lower case, no full stop."
+  },
+  "nerdNeedsNewer": "This screen needs Breeze Core 3.0.5 or newer.",
+  "@nerdNeedsNewer": {
+    "description": "Nerd screen: under womp womp, when the server did not say its version."
+  },
+  "nerdServerTooOld": "This server is on {version}. The Nerd screen needs Breeze Core 3.0.5 or newer.",
+  "@nerdServerTooOld": {
+    "description": "Nerd screen: under womp womp; {version} is the server's version number.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdSectionApp": "This app",
+  "@nerdSectionApp": {
+    "description": "Nerd screen: section heading (shown in capitals); this app."
+  },
+  "nerdSectionConnection": "Connection",
+  "@nerdSectionConnection": {
+    "description": "Nerd screen: section heading; the connection to the server."
+  },
+  "nerdSectionServer": "Server",
+  "@nerdSectionServer": {
+    "description": "Nerd screen: section heading; the Breeze Core server."
+  },
+  "nerdSectionHost": "Host",
+  "@nerdSectionHost": {
+    "description": "Nerd screen: section heading; the machine the server runs on."
+  },
+  "nerdSectionServerComponents": "Server components",
+  "@nerdSectionServerComponents": {
+    "description": "Nerd screen: section heading; the server's software components and their versions."
+  },
+  "nerdSectionAppComponents": "App components",
+  "@nerdSectionAppComponents": {
+    "description": "Nerd screen: section heading; the app's software components and their versions."
+  },
+  "nerdSectionUnits": "Air conditioners",
+  "@nerdSectionUnits": {
+    "description": "Nerd screen: section heading; the air conditioners the server knows."
+  },
+  "nerdSectionDevices": "Enrolled devices",
+  "@nerdSectionDevices": {
+    "description": "Nerd screen: section heading; phones and other clients paired with the server."
+  },
+  "nerdSectionPrograms": "Programs & scheduler",
+  "@nerdSectionPrograms": {
+    "description": "Nerd screen: section heading; saved programs and the server's scheduler that runs them."
+  },
+  "nerdSectionSettings": "Settings",
+  "@nerdSectionSettings": {
+    "description": "Nerd screen: section heading; the server's settings."
+  },
+  "nerdSectionStorage": "Storage",
+  "@nerdSectionStorage": {
+    "description": "Nerd screen: section heading; the server's files on disk."
+  },
+  "nerdSectionFeatures": "Advertised features",
+  "@nerdSectionFeatures": {
+    "description": "Nerd screen: section heading; the features and auth versions the server says it supports."
+  },
+  "nerdVersion": "Version",
+  "@nerdVersion": {
+    "description": "Nerd screen: row label; a version number."
+  },
+  "nerdPackage": "Package",
+  "@nerdPackage": {
+    "description": "Nerd screen: row label; the app's package name."
+  },
+  "nerdPlatform": "Platform",
+  "@nerdPlatform": {
+    "description": "Nerd screen: row label; the operating system the app runs on."
+  },
+  "nerdDartSdkConstraint": "Dart SDK constraint",
+  "@nerdDartSdkConstraint": {
+    "description": "Nerd screen: row label; the Dart SDK version range the app was built for."
+  },
+  "nerdFlutterConstraint": "Flutter constraint",
+  "@nerdFlutterConstraint": {
+    "description": "Nerd screen: row label; the Flutter version range the app was built for."
+  },
+  "nerdServerUrl": "Server URL",
+  "@nerdServerUrl": {
+    "description": "Nerd screen: row label; the server's main address."
+  },
+  "nerdAnsweringNow": "Answering now",
+  "@nerdAnsweringNow": {
+    "description": "Nerd screen: row label; the address that is answering now, when it is not the main one."
+  },
+  "nerdFallbackValue": "{url} (a fallback)",
+  "@nerdFallbackValue": {
+    "description": "Nerd screen: value of \"Answering now\"; {url} is a fallback address.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdLatency": "Latency",
+  "@nerdLatency": {
+    "description": "Nerd screen: row label; round-trip time to the server."
+  },
+  "nerdLatencyValue": "{ms} ms (this request)",
+  "@nerdLatencyValue": {
+    "description": "Nerd screen: value of Latency, in milliseconds, for the request that loaded this screen.",
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdAuthVersion": "Auth version",
+  "@nerdAuthVersion": {
+    "description": "Nerd screen: row label; which authentication scheme this phone uses."
+  },
+  "nerdAuthSigned": "v{version} — Ed25519 signed",
+  "@nerdAuthSigned": {
+    "description": "Nerd screen: value of Auth version for v2 and later: requests are signed with an Ed25519 key.",
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdAuthBearer": "v{version} — bearer token",
+  "@nerdAuthBearer": {
+    "description": "Nerd screen: value of Auth version for v1: a bearer token (an HTTP term).",
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdSeenAs": "Seen by server as",
+  "@nerdSeenAs": {
+    "description": "Nerd screen: row label; this phone's IP address as the server sees it."
+  },
+  "nerdPrivateNetwork": "On a private network",
+  "@nerdPrivateNetwork": {
+    "description": "Nerd screen: row label; whether this phone is on a private network (yes / no)."
+  },
+  "nerdReachedVia": "Reached via",
+  "@nerdReachedVia": {
+    "description": "Nerd screen: row label; the URL the request arrived on."
+  },
+  "nerdHostHeader": "Host header",
+  "@nerdHostHeader": {
+    "description": "Nerd screen: row label; the HTTP Host header (\"Host\" is the header's name; keep it)."
+  },
+  "nerdScheme": "Scheme",
+  "@nerdScheme": {
+    "description": "Nerd screen: row label; http or https."
+  },
+  "nerdHttpVersion": "HTTP version",
+  "@nerdHttpVersion": {
+    "description": "Nerd screen: row label."
+  },
+  "nerdBehindProxy": "Behind proxy",
+  "@nerdBehindProxy": {
+    "description": "Nerd screen: row label; whether the server is set up to sit behind a reverse proxy (yes / no)."
+  },
+  "nerdBuildCommit": "Build commit",
+  "@nerdBuildCommit": {
+    "description": "Nerd screen: row label; the git commit the server was built from."
+  },
+  "nerdUptime": "Uptime",
+  "@nerdUptime": {
+    "description": "Nerd screen: row label; how long the server has been running."
+  },
+  "nerdStarted": "Started",
+  "@nerdStarted": {
+    "description": "Nerd screen: row label; when the server started (a date and time)."
+  },
+  "nerdInstalled": "Installed",
+  "@nerdInstalled": {
+    "description": "Nerd screen: row label; when the server was installed (a date and time)."
+  },
+  "nerdServerTime": "Server time",
+  "@nerdServerTime": {
+    "description": "Nerd screen: row label; the server's clock."
+  },
+  "nerdTimeZone": "Time zone",
+  "@nerdTimeZone": {
+    "description": "Nerd screen: row label; the server's time zone."
+  },
+  "nerdProcessId": "Process id",
+  "@nerdProcessId": {
+    "description": "Nerd screen: row label; the server process's id."
+  },
+  "nerdMemory": "Memory (RSS)",
+  "@nerdMemory": {
+    "description": "Nerd screen: row label; the server process's memory use (RSS is a technical term; keep it)."
+  },
+  "nerdOs": "Operating system",
+  "@nerdOs": {
+    "description": "Nerd screen: row label; the server machine's operating system."
+  },
+  "nerdKernel": "Kernel",
+  "@nerdKernel": {
+    "description": "Nerd screen: row label; the operating system kernel."
+  },
+  "nerdKernelBuild": "Kernel build",
+  "@nerdKernelBuild": {
+    "description": "Nerd screen: row label; the kernel's build string."
+  },
+  "nerdInitSystem": "Init system",
+  "@nerdInitSystem": {
+    "description": "Nerd screen: row label; e.g. systemd, OpenRC (\"init\" is a technical term)."
+  },
+  "nerdHostname": "Hostname",
+  "@nerdHostname": {
+    "description": "Nerd screen: row label; the server machine's network name."
+  },
+  "nerdArchitecture": "Architecture",
+  "@nerdArchitecture": {
+    "description": "Nerd screen: row label; CPU architecture, e.g. x86_64."
+  },
+  "nerdCores": "Cores",
+  "@nerdCores": {
+    "description": "Nerd screen: row label; number of CPU cores."
+  },
+  "nerdByteOrder": "Byte order",
+  "@nerdByteOrder": {
+    "description": "Nerd screen: row label; little or big endian."
+  },
+  "nerdMachineUptime": "Machine uptime",
+  "@nerdMachineUptime": {
+    "description": "Nerd screen: row label; how long the server machine has been running."
+  },
+  "nerdLocalAddresses": "Local addresses",
+  "@nerdLocalAddresses": {
+    "description": "Nerd screen: row label; the server machine's own IP addresses."
+  },
+  "nerdFrozenBundle": "Frozen bundle",
+  "@nerdFrozenBundle": {
+    "description": "Nerd screen: row label; whether the server runs as a frozen (bundled) Python program (yes / no)."
+  },
+  "nerdNotInstalled": "not installed",
+  "@nerdNotInstalled": {
+    "description": "Nerd screen: value for a server component that is not installed. Lower case."
+  },
+  "nerdPrograms": "Programs",
+  "@nerdPrograms": {
+    "description": "Nerd screen: row label; how many programs are saved, by kind."
+  },
+  "nerdSchedulerRunning": "Scheduler running",
+  "@nerdSchedulerRunning": {
+    "description": "Nerd screen: row label; whether the server's scheduler is running (yes / no)."
+  },
+  "nerdTick": "Tick",
+  "@nerdTick": {
+    "description": "Nerd screen: row label; how often the scheduler wakes up, in seconds."
+  },
+  "nerdRuns": "Runs",
+  "@nerdRuns": {
+    "description": "Nerd screen: row label; how many times the scheduler has run."
+  },
+  "nerdErrors": "Errors",
+  "@nerdErrors": {
+    "description": "Nerd screen: row label; how many scheduler runs failed."
+  },
+  "nerdLastRun": "Last run",
+  "@nerdLastRun": {
+    "description": "Nerd screen: row label; when the scheduler last ran."
+  },
+  "nerdFeatures": "Features",
+  "@nerdFeatures": {
+    "description": "Nerd screen: row label; the features the server says it has."
+  },
+  "nerdAuthVersions": "Auth versions",
+  "@nerdAuthVersions": {
+    "description": "Nerd screen: row label; the authentication scheme versions the server accepts."
+  },
+  "nerdUnits": "Units",
+  "@nerdUnits": {
+    "description": "Nerd screen: row label when the server has no air conditioners."
+  },
+  "nerdNoneConfigured": "none configured",
+  "@nerdNoneConfigured": {
+    "description": "Nerd screen: value; no air conditioners are set up. Lower case."
+  },
+  "nerdUnitFallback": "unit",
+  "@nerdUnitFallback": {
+    "description": "Nerd screen: row label for an air conditioner that has no name. Lower case."
+  },
+  "nerdV3Credentials": "V3 credentials",
+  "@nerdV3Credentials": {
+    "description": "Nerd screen: row under an air conditioner; whether the server has its V3 protocol credentials (yes / no). \"V3\" is a protocol version; keep it."
+  },
+  "nerdConnectionCached": "connection cached",
+  "@nerdConnectionCached": {
+    "description": "Nerd screen: row under an air conditioner; whether the server keeps a connection to it open (yes / no). Lower case."
+  },
+  "nerdHistorySamples": "history samples",
+  "@nerdHistorySamples": {
+    "description": "Nerd screen: row under an air conditioner; how many history readings are stored. Lower case."
+  },
+  "nerdModes": "modes",
+  "@nerdModes": {
+    "description": "Nerd screen: row under an air conditioner; the modes it supports. Lower case."
+  },
+  "nerdSwing": "swing",
+  "@nerdSwing": {
+    "description": "Nerd screen: row under an air conditioner; the flap swing settings it supports. Lower case."
+  },
+  "nerdFanSpeeds": "fan speeds",
+  "@nerdFanSpeeds": {
+    "description": "Nerd screen: row under an air conditioner; the fan speeds it supports. Lower case."
+  },
+  "nerdTempRange": "temp range",
+  "@nerdTempRange": {
+    "description": "Nerd screen: row under an air conditioner; the lowest and highest target temperature. Lower case."
+  },
+  "nerdEcoTurbo": "eco / turbo",
+  "@nerdEcoTurbo": {
+    "description": "Nerd screen: row under an air conditioner; whether it has eco and turbo (yes / no each). Names, usually not translated."
+  },
+  "nerdCapabilities": "capabilities",
+  "@nerdCapabilities": {
+    "description": "Nerd screen: row under an air conditioner; what it can do. Lower case."
+  },
+  "nerdCapabilitiesNotCached": "not cached — open the unit once, then refresh",
+  "@nerdCapabilitiesNotCached": {
+    "description": "Nerd screen: value of capabilities when the server hasn't read them yet, and how to fix that."
+  },
+  "nerdDevices": "Devices",
+  "@nerdDevices": {
+    "description": "Nerd screen: row label when no devices are paired."
+  },
+  "nerdNoneEnrolled": "none enrolled",
+  "@nerdNoneEnrolled": {
+    "description": "Nerd screen: value; no phones or clients are paired. Lower case."
+  },
+  "nerdDeviceFallback": "device",
+  "@nerdDeviceFallback": {
+    "description": "Nerd screen: row label for a paired device that has no name. Lower case."
+  },
+  "nerdExpiredTag": "EXPIRED",
+  "@nerdExpiredTag": {
+    "description": "Nerd screen: tag after a paired device's auth version when its credential has expired. Capitals, as a warning."
+  },
+  "nerdEnrolled": "enrolled",
+  "@nerdEnrolled": {
+    "description": "Nerd screen: row under a paired device; when it was paired (a date). Lower case."
+  },
+  "nerdLastUsed": "last used",
+  "@nerdLastUsed": {
+    "description": "Nerd screen: row under a paired device; when it was last used (a date). Lower case."
+  },
+  "nerdExpires": "expires",
+  "@nerdExpires": {
+    "description": "Nerd screen: row under a paired device; when its credential expires. Lower case."
+  },
+  "nerdNever": "never",
+  "@nerdNever": {
+    "description": "Nerd screen: value of expires; the credential never expires. Lower case."
+  },
+  "nerdExpiresIn": "{when} (in {duration})",
+  "@nerdExpiresIn": {
+    "description": "Nerd screen: value of expires; {when} is a date and time, {duration} how long until then (e.g. \"3d 4h 5m\").",
+    "placeholders": {
+      "when": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdMissing": "missing ({path})",
+  "@nerdMissing": {
+    "description": "Nerd screen: value for a server file that does not exist; {path} is its path. Lower case.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdSizeMode": "size / mode",
+  "@nerdSizeMode": {
+    "description": "Nerd screen: row under a server file; its size and permission bits. Lower case."
+  },
+  "nerdModified": "modified",
+  "@nerdModified": {
+    "description": "Nerd screen: row under a server file; when it last changed. Lower case."
+  },
+  "nerdYes": "yes",
+  "@nerdYes": {
+    "description": "Nerd screen: value; yes. Lower case."
+  },
+  "nerdNo": "no",
+  "@nerdNo": {
+    "description": "Nerd screen: value; no. Lower case."
+  },
+  "nerdNone": "none",
+  "@nerdNone": {
+    "description": "Nerd screen: value; an empty list. Lower case."
+  },
+  "nerdDurationDays": "{d}d {h}h {m}m",
+  "@nerdDurationDays": {
+    "description": "Nerd screen: a duration of a day or more, with short unit symbols (days, hours, minutes).",
+    "placeholders": {
+      "d": {
+        "type": "int"
+      },
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdDurationHours": "{h}h {m}m",
+  "@nerdDurationHours": {
+    "description": "Nerd screen: a duration of an hour or more (hours, minutes).",
+    "placeholders": {
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdDurationMinutes": "{m}m {s}s",
+  "@nerdDurationMinutes": {
+    "description": "Nerd screen: a duration of a minute or more (minutes, seconds).",
+    "placeholders": {
+      "m": {
+        "type": "int"
+      },
+      "s": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdDurationSeconds": "{s}s",
+  "@nerdDurationSeconds": {
+    "description": "Nerd screen: a duration under a minute (seconds).",
+    "placeholders": {
+      "s": {
+        "type": "int"
+      }
+    }
+  },
+  "nerdLanLoopbackOnly": "The server only listens on its own machine ({host}), behind a proxy, so nothing on the LAN can reach it directly.",
+  "@nerdLanLoopbackOnly": {
+    "description": "Nerd screen, Internal tab: why no LAN fallback address could be learned: the server only listens on its own machine ({host}, an address like 127.0.0.1).",
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "nerdLanNoAddress": "The server did not report a LAN address.",
+  "@nerdLanNoAddress": {
+    "description": "Nerd screen, Internal tab: why no LAN fallback address could be learned."
+  },
+  "jsonCopy": "Copy the JSON",
+  "@jsonCopy": {
+    "description": "JSON view (Nerd screen, Internal tab): tooltip; copy the JSON shown."
+  },
+  "jsonCopied": "Copied to the clipboard",
+  "@jsonCopied": {
+    "description": "JSON view: snack bar after copying."
+  },
+  "jsonNotOnServer": "This server does not have that yet.",
+  "@jsonNotOnServer": {
+    "description": "JSON view: the server is too old to have this list."
+  },
+  "jsonLoadFailed": "Could not ask the server: {detail}",
+  "@jsonLoadFailed": {
+    "description": "JSON view: loading failed. {detail} is a technical message in English.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "jsonFilterAll": "All ({count})",
+  "@jsonFilterAll": {
+    "description": "JSON view: filter chip showing every item; {count} is how many.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jsonFilterFavourites": "Favourites ({count})",
+  "@jsonFilterFavourites": {
+    "description": "JSON view: filter chip; only favourites (saved scenes); {count} is how many.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jsonFilterSchedules": "Schedules ({count})",
+  "@jsonFilterSchedules": {
+    "description": "JSON view: filter chip; only schedules; {count} is how many.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jsonFilterCurves": "Curves ({count})",
+  "@jsonFilterCurves": {
+    "description": "JSON view: filter chip; only curves (temperature over a day); {count} is how many.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jsonEmpty": "Nothing here: []",
+  "@jsonEmpty": {
+    "description": "JSON view: nothing to show; \"[]\" is an empty JSON list, keep it."
+  },
+  "nerdTitle": "Nerd",
+  "@nerdTitle": {
+    "description": "The Nerd screen's title: diagnostics for technical users, opened by tapping the version in Settings seven times. Translated playfully (štreber, geek, secchione, 极客), as the settings teaser calls the reader one."
+  }
+}

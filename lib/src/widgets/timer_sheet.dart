@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
+import '../l10n.dart';
 import '../models.dart';
 import '../haptics.dart';
 
@@ -76,10 +77,10 @@ class TimerSheet extends StatefulWidget {
   );
 
   /// "Today", "Tomorrow", "In 5 days".
-  static String dayLabel(int days) => switch (days) {
-    0 => 'Today',
-    1 => 'Tomorrow',
-    _ => 'In $days days',
+  static String dayLabel(AppLocalizations l, int days) => switch (days) {
+    0 => l.timerToday,
+    1 => l.timerTomorrow,
+    _ => l.timerInDays(days),
   };
 
   static String hhmm(TimeOfDay t) =>
@@ -177,6 +178,7 @@ class _TimerSheetState extends State<TimerSheet> {
   // --- switch off -----------------------------------------------------------
 
   Widget _offSection(BuildContext context) {
+    final l = context.l10n;
     final sleep = widget.sleep;
     final active = sleep != null && !sleep.expired;
     final name = widget.unitName;
@@ -187,15 +189,13 @@ class _TimerSheetState extends State<TimerSheet> {
         _heading(
           context,
           Icons.hourglass_bottom,
-          active ? 'Turning off in ${sleep.shortLabel}' : 'Turn off later',
+          active ? l.timerTurningOffIn(sleep.shortLabel(l)) : l.timerTurnOffLater,
         ),
         _blurb(
           context,
           active
-              ? '$name switches off at ${sleep.firesAtClock}. '
-                    'The server does it, so this works with the phone off.'
-              : 'Leave $name running for a while, then let the server '
-                    'switch it off — no need for the phone to be here.',
+              ? l.timerSleepActiveBlurb(name, sleep.firesAtClock)
+              : l.timerSleepIdleBlurb(name),
         ),
         const SizedBox(height: 18),
         Wrap(
@@ -204,7 +204,7 @@ class _TimerSheetState extends State<TimerSheet> {
           children: [
             for (final m in TimerSheet.presets)
               ActionChip(
-                label: Text(_label(m)),
+                label: Text(_label(l, m)),
                 onPressed: () {
                   Haptics.select();
                   Navigator.pop(context, SleepFor(m));
@@ -212,7 +212,7 @@ class _TimerSheetState extends State<TimerSheet> {
               ),
             ActionChip(
               avatar: const Icon(Icons.edit, size: 16),
-              label: const Text('Custom'),
+              label: Text(l.timerCustom),
               onPressed: () async {
                 final chosen = await _askCustom(context);
                 if (chosen != null && context.mounted) {
@@ -224,37 +224,38 @@ class _TimerSheetState extends State<TimerSheet> {
         ),
         if (active) ...[
           const SizedBox(height: 8),
-          _cancel(context, sleep, 'Cancel the timer'),
+          _cancel(context, sleep, l.timerCancelSleep),
         ],
       ],
     );
   }
 
-  static String _label(int minutes) =>
-      minutes < 60 ? '$minutes min' : (minutes % 60 == 0
-          ? '${minutes ~/ 60} h'
-          : '${minutes ~/ 60} h ${minutes % 60}');
+  static String _label(AppLocalizations l, int minutes) =>
+      minutes < 60 ? l.timerPresetMinutes(minutes) : (minutes % 60 == 0
+          ? l.timerPresetHours(minutes ~/ 60)
+          : l.timerPresetHoursMinutes(minutes ~/ 60, minutes % 60));
 
   Future<int?> _askCustom(BuildContext context) async {
+    final l = context.l10n;
     final controller = TextEditingController();
     return showDialog<int>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Turn off after'),
+        title: Text(l.timerCustomTitle),
         content: TextField(
           controller: controller,
           autofocus: true,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            suffixText: 'minutes',
+          decoration: InputDecoration(
+            suffixText: l.timerCustomSuffix,
             // The server's own ceiling. Saying it here beats a 422 later.
-            helperText: '1 to 1440 (24 h)',
+            helperText: l.timerCustomHelper,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l.actionCancel),
           ),
           FilledButton(
             onPressed: () {
@@ -262,7 +263,7 @@ class _TimerSheetState extends State<TimerSheet> {
               if (v == null || v < 1 || v > 1440) return;
               Navigator.pop(ctx, v);
             },
-            child: const Text('Set'),
+            child: Text(l.timerCustomSet),
           ),
         ],
       ),
@@ -272,6 +273,7 @@ class _TimerSheetState extends State<TimerSheet> {
   // --- switch on later ------------------------------------------------------
 
   Widget _onSection(BuildContext context) {
+    final l = context.l10n;
     final start = widget.start;
     final pending = start != null && !start.expired;
     final name = widget.unitName;
@@ -282,16 +284,13 @@ class _TimerSheetState extends State<TimerSheet> {
         _heading(
           context,
           Icons.alarm,
-          pending ? 'Turning on ${start.whenLabel}' : 'Turn on later',
+          pending ? l.timerTurningOn(start.whenLabel(l)) : l.timerTurnOnLater,
         ),
         _blurb(
           context,
           pending
-              ? '$name switches on with the mode and temperature it last had. '
-                    'Pick another day or time to move it.'
-              : 'Switch $name on at a set time, up to ${TimerSheet.maxStartDays} '
-                    'days ahead, with the mode and temperature it last had. The '
-                    'time is the server\'s clock, the same one schedules use.',
+              ? l.timerStartPendingBlurb(name)
+              : l.timerStartIdleBlurb(name, TimerSheet.maxStartDays),
         ),
         const SizedBox(height: 14),
         Row(
@@ -300,14 +299,14 @@ class _TimerSheetState extends State<TimerSheet> {
               child: DropdownButtonFormField<int>(
                 initialValue: _days,
                 isExpanded: true,
-                decoration: const InputDecoration(
-                  labelText: 'Day',
+                decoration: InputDecoration(
+                  labelText: l.timerDayField,
                   border: OutlineInputBorder(),
                   isDense: true,
                 ),
                 items: [
                   for (var d = 0; d <= TimerSheet.maxStartDays; d++)
-                    DropdownMenuItem(value: d, child: Text(TimerSheet.dayLabel(d))),
+                    DropdownMenuItem(value: d, child: Text(TimerSheet.dayLabel(l, d))),
                 ],
                 onChanged: (d) => setState(() => _days = d ?? _days),
               ),
@@ -319,7 +318,7 @@ class _TimerSheetState extends State<TimerSheet> {
                 final picked = await showTimePicker(
                   context: context,
                   initialTime: _time,
-                  helpText: 'Turn on at (server time)',
+                  helpText: l.timerPickerHelp,
                 );
                 if (picked != null && mounted) setState(() => _time = picked);
               },
@@ -335,11 +334,11 @@ class _TimerSheetState extends State<TimerSheet> {
             Navigator.pop(context, StartAt(_days, TimerSheet.hhmm(_time)));
           },
           icon: const Icon(Icons.alarm_on),
-          label: Text(pending ? 'Move it' : 'Turn on then'),
+          label: Text(pending ? l.timerMoveIt : l.timerTurnOnThen),
         ),
         if (pending) ...[
           const SizedBox(height: 4),
-          _cancel(context, start, 'Cancel the start'),
+          _cancel(context, start, l.timerCancelStart),
         ],
       ],
     );

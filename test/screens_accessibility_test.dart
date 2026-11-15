@@ -2,9 +2,10 @@
 // someone with large text meet them. Companion to accessibility_test.dart,
 // which covers the controls one by one.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:breeze/src/l10n.dart';
 import 'package:breeze/src/a11y.dart';
 import 'package:breeze/src/app_controller.dart';
 import 'package:breeze/src/app_scope.dart';
@@ -31,6 +32,8 @@ UnitState _state({bool online = true}) => UnitState(
 Widget _unitPage(double textScale, {bool online = true}) => AppScope(
       controller: AppController(SecureStore()),
       child: MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: appSupportedLocales,
         home: Builder(
           // The test screen's size, with only the text scaled.
           builder: (context) => MediaQuery(

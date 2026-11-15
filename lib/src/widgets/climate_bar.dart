@@ -24,8 +24,9 @@
 // The geometry is computed in Celsius regardless of the display unit; only the
 // labels are converted, so a °F user gets identical proportions.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
+import '../l10n.dart';
 import '../util.dart';
 
 /// Readings outside this window are sensor nonsense, not weather.
@@ -153,6 +154,7 @@ class ClimateBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final scheme = Theme.of(context).colorScheme;
     final inC = sanitiseTemp(indoor);
     final outC = sanitiseTemp(outdoor);
@@ -161,16 +163,16 @@ class ClimateBar extends StatelessWidget {
     // The reading line stays even when the bar can't be drawn — knowing it's
     // 27 inside is useful on its own.
     final parts = <String>[
-      if (inC != null) 'I: ${fmtTemp(inC, unit)}',
-      if (outC != null) 'O: ${fmtTemp(outC, unit)}',
+      if (inC != null) l.tempIndoorShort(fmtTemp(inC, unit)),
+      if (outC != null) l.tempOutdoorShort(fmtTemp(outC, unit)),
     ];
     if (parts.isEmpty) return const SizedBox.shrink();
 
     return Semantics(
       label: [
-        if (inC != null) 'indoor ${fmtTemp(inC, unit)}',
-        if (outC != null) 'outdoor ${fmtTemp(outC, unit)}',
-        if (sanitiseTemp(target) != null) 'target ${fmtTemp(target!, unit)}',
+        if (inC != null) l.tempIndoorSpoken(fmtTemp(inC, unit)),
+        if (outC != null) l.tempOutdoorSpoken(fmtTemp(outC, unit)),
+        if (sanitiseTemp(target) != null) l.tempTargetValue(fmtTemp(target!, unit)),
       ].join(', '),
       // The words above, once: without this the "I: / O:" line was read
       // after them as well.

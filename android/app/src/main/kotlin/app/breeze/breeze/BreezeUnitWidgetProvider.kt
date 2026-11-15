@@ -91,7 +91,9 @@ class BreezeUnitWidgetProvider : HomeWidgetProvider() {
         views.setTextViewText(
             R.id.widget_temp,
             if (target.isNaN()) context.getString(R.string.widget_dash)
-            else String.format(Locale.US, "%.1f°", target),
+            // A comma in the languages that write one, as the app does.
+            else String.format(Locale.US, "%.1f°", target)
+                .replace(".", context.getString(R.string.widget_decimal_separator)),
         )
         setControlsVisible(views, true)
 
@@ -114,7 +116,7 @@ class BreezeUnitWidgetProvider : HomeWidgetProvider() {
         }
 
         // The mode line no longer repeats the state word — the badge owns that.
-        val modeLabel = modeLabels[mode] ?: mode.lowercase(Locale.US)
+        val modeLabel = modeLabels[mode]?.let { context.getString(it) } ?: mode.lowercase(Locale.US)
         views.setTextViewText(
             R.id.widget_mode,
             if (modeLabel.isEmpty()) context.getString(R.string.widget_dash) else modeLabel,
@@ -210,9 +212,11 @@ class BreezeUnitWidgetProvider : HomeWidgetProvider() {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
     companion object {
+        /** The wire's mode names, to their words in each language's strings.xml. */
         private val modeLabels = mapOf(
-            "AUTO" to "auto", "COOL" to "cool", "DRY" to "dry",
-            "HEAT" to "heat", "FAN_ONLY" to "fan",
+            "AUTO" to R.string.widget_mode_auto, "COOL" to R.string.widget_mode_cool,
+            "DRY" to R.string.widget_mode_dry, "HEAT" to R.string.widget_mode_heat,
+            "FAN_ONLY" to R.string.widget_mode_fan,
         )
 
         /** Ask the framework to redraw the given widget instances. */

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Slovenian: see values/strings.xml. -->
+<resources>
+    <string name="widget_label">Breeze klima</string>
+    <string name="widget_description">Upravljaj eno klimatsko napravo z začetnega zaslona.</string>
+    <string name="widget_configure_title">Izberi napravo za ta pripomoček</string>
+    <string name="widget_configure_empty">Najprej odpri Breeze, da naloži tvoje naprave, nato znova dodaj pripomoček.</string>
+    <string name="widget_not_configured">Tapni za izbiro naprave</string>
+    <string name="widget_open_app">Odpri Breeze in se prijavi</string>
+    <string name="widget_state_on">VKLOPLJENO</string>
+    <string name="widget_state_off">IZKLOPLJENO</string>
+    <string name="widget_state_offline">BREZ POVEZAVE</string>
+    <string name="widget_mode_auto">samodejno</string>
+    <string name="widget_mode_cool">hlajenje</string>
+    <string name="widget_mode_dry">sušenje</string>
+    <string name="widget_mode_heat">ogrevanje</string>
+    <string name="widget_mode_fan">ventilator</string>
+    <string name="widget_power">Vklop</string>
+    <string name="widget_lower_temp">Znižaj temperaturo</string>
+    <string name="widget_raise_temp">Zvišaj temperaturo</string>
+    <string name="widget_refresh">Osveži</string>
+    <string name="widget_decimal_separator">,</string>
+    <string name="car_state_on">VKLOPLJENO</string>
+    <string name="car_state_off">IZKLOPLJENO</string>
+    <string name="car_offline">Ni dosegljiva</string>
+    <string name="car_tap_to_turn_on">Tapni za vklop</string>
+    <string name="car_tap_to_turn_off">Tapni za izklop</string>
+    <string name="car_not_paired">Odpri Breeze na telefonu in se prijavi.</string>
+    <string name="car_no_units">Še ni naprav. Dodaj jo v aplikaciji Breeze.</string>
+</resources>

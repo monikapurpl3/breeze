@@ -1,11 +1,14 @@
+import 'package:breeze/src/l10n.dart';
 import 'package:breeze/src/models.dart';
 import 'package:breeze/src/native_licenses.dart';
 import 'package:breeze/src/widgets/timer_sheet.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  final en = lookupAppLocalizations(const Locale('en'));
+
   group('UnitTimer', () {
     UnitTimer make(int secondsRemaining, {String firesAt = '2026-08-21T23:15:00'}) =>
         UnitTimer.fromJson({
@@ -30,10 +33,10 @@ void main() {
     });
 
     test('short label reads like a human wrote it', () {
-      expect(make(40).shortLabel, '40s');
-      expect(make(45 * 60).shortLabel, '45m');
-      expect(make(60 * 60).shortLabel, '1h');
-      expect(make(80 * 60).shortLabel, '1h 20m');
+      expect(make(40).shortLabel(en), '40s');
+      expect(make(45 * 60).shortLabel(en), '45m');
+      expect(make(60 * 60).shortLabel(en), '1h');
+      expect(make(80 * 60).shortLabel(en), '1h 20m');
     });
 
     test('fires-at clock is taken verbatim, not reinterpreted', () {
@@ -80,26 +83,26 @@ void main() {
     test("says today, tomorrow, or the date, by the server's calendar", () {
       final today = start('2026-09-27T18:05:00', '2026-09-27T17:00:00');
       expect(today.daysAhead, 0);
-      expect(today.whenLabel, 'today at 18:05');
-      expect(today.shortWhen, '18:05');
+      expect(today.whenLabel(en), 'today at 18:05');
+      expect(today.shortWhen(en), '18:05');
 
       // Twenty minutes away, but past midnight: that is tomorrow.
       final late = start('2026-09-28T00:10:00', '2026-09-27T23:50:00');
       expect(late.daysAhead, 1);
-      expect(late.whenLabel, 'tomorrow at 00:10');
+      expect(late.whenLabel(en), 'tomorrow at 00:10');
 
       final monthEnd = start('2026-10-01T07:00:00', '2026-09-30T22:00:00');
-      expect(monthEnd.whenLabel, 'tomorrow at 07:00');
+      expect(monthEnd.whenLabel(en), 'tomorrow at 07:00');
 
       final later = start('2026-09-29T07:30:00', '2026-09-27T17:00:00');
       expect(later.daysAhead, 2);
-      expect(later.whenLabel, 'Tue 29 Sep at 07:30');
-      expect(later.shortWhen, 'Tue');
+      expect(later.whenLabel(en), 'Tue 29 Sep at 07:30');
+      expect(later.shortWhen(en), 'Tue');
 
       final far = start('2026-10-20T07:00:00', '2026-09-27T07:00:00');
       expect(far.daysAhead, 23);
-      expect(far.whenLabel, 'Tue 20 Oct at 07:00');
-      expect(far.shortWhen, '20 Oct');
+      expect(far.whenLabel(en), 'Tue 20 Oct at 07:00');
+      expect(far.shortWhen(en), '20 Oct');
     });
 
     test('an unreadable fires_at does not throw', () {
@@ -107,7 +110,7 @@ void main() {
         {'id': 'x', 'unit_ids': [], 'kind': 'start', 'fires_at': 'soon'},
       );
       expect(t.daysAhead, isNull);
-      expect(t.whenLabel, 'at soon');
+      expect(t.whenLabel(en), 'at soon');
     });
   });
 
@@ -120,6 +123,8 @@ void main() {
       bool startsSupported = true,
     }) async {
       await tester.pumpWidget(MaterialApp(
+        localizationsDelegates: appLocalizationsDelegates,
+        supportedLocales: appSupportedLocales,
         home: Builder(
           builder: (context) => TextButton(
             onPressed: () async => onResult(await TimerSheet.show(

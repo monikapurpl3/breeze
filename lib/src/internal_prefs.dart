@@ -5,7 +5,7 @@
 // secure store. (The per-server ones -- fallback addresses, a pinned auth
 // version -- are part of a server profile and live with it, in SecureStore.)
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Where the app's colours come from.

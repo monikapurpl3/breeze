@@ -1,7 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
+import '../l10n.dart';
 import '../models.dart';
 import '../theme.dart';
 import '../util.dart';
@@ -94,6 +95,7 @@ class _TempControlState extends State<TempControl> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final scheme = Theme.of(context).colorScheme;
     final accent = widget.accent;
     final shown = _shown.clamp(kMinTemp, kMaxTemp);
@@ -113,7 +115,7 @@ class _TempControlState extends State<TempControl> {
           // bare number, and a live region, so a change -- from the buttons,
           // or from another phone -- is spoken without moving focus.
           grow(Semantics(
-            label: 'Target temperature',
+            label: l.tempTarget,
             value: fmtTemp(shown, widget.unit),
             liveRegion: true,
             excludeSemantics: true,
@@ -147,7 +149,7 @@ class _TempControlState extends State<TempControl> {
             )
           else
             Text(
-              'target',
+              l.tempTargetCaption,
               style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
             ),
           SizedBox(height: fill ? 14 : 10),
@@ -156,7 +158,7 @@ class _TempControlState extends State<TempControl> {
               _StepButton(
                 big: fill,
                 icon: Icons.remove,
-                label: 'Lower the target temperature',
+                label: l.tempLower,
                 accent: accent,
                 onTap: widget.enabled ? () => _step(-0.5) : null,
                 onHoldStart: () => _holdStart(-0.5),
@@ -181,7 +183,7 @@ class _TempControlState extends State<TempControl> {
                   child: Slider(
                     // Named, and read in degrees: it said "57 percent". No
                     // value bubble shows the label (showValueIndicator: never).
-                    label: 'Target temperature',
+                    label: l.tempTarget,
                     min: kMinTemp,
                     max: kMaxTemp,
                     divisions: ((kMaxTemp - kMinTemp) * 2).round(),
@@ -208,7 +210,7 @@ class _TempControlState extends State<TempControl> {
               _StepButton(
                 big: fill,
                 icon: Icons.add,
-                label: 'Raise the target temperature',
+                label: l.tempRaise,
                 accent: accent,
                 onTap: widget.enabled ? () => _step(0.5) : null,
                 onHoldStart: () => _holdStart(0.5),

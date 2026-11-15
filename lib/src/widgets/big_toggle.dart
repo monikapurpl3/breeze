@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../haptics.dart';
 import '../theme.dart';
 
@@ -96,15 +96,17 @@ class BigToggle extends StatelessWidget {
                       Icon(icon, color: fg, size: fill ? 30 : 24),
                       const SizedBox(width: 8),
                       Flexible(
-                        child: Text(
-                          label,
-                          maxLines: 1,
-                          softWrap: false,
-                          overflow: TextOverflow.fade,
-                          style: TextStyle(
-                            fontSize: fill ? 20 : 16,
-                            fontWeight: FontWeight.w600,
-                            color: fg,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            label,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
+                              fontSize: fill ? 20 : 16,
+                              fontWeight: FontWeight.w600,
+                              color: fg,
+                            ),
                           ),
                         ),
                       ),

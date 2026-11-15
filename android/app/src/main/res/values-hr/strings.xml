@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Croatian: see values/strings.xml. -->
+<resources>
+    <string name="widget_label">Breeze klima</string>
+    <string name="widget_description">Upravljaj jednim klima-uređajem s početnog zaslona.</string>
+    <string name="widget_configure_title">Odaberi uređaj za ovaj widget</string>
+    <string name="widget_configure_empty">Najprije otvori Breeze da učita tvoje uređaje, a zatim ponovno dodaj widget.</string>
+    <string name="widget_not_configured">Dodirni za odabir uređaja</string>
+    <string name="widget_open_app">Otvori Breeze i prijavi se</string>
+    <string name="widget_state_on">UKLJUČENO</string>
+    <string name="widget_state_off">ISKLJUČENO</string>
+    <string name="widget_state_offline">IZVAN MREŽE</string>
+    <string name="widget_mode_auto">auto</string>
+    <string name="widget_mode_cool">hlađenje</string>
+    <string name="widget_mode_dry">sušenje</string>
+    <string name="widget_mode_heat">grijanje</string>
+    <string name="widget_mode_fan">ventilator</string>
+    <string name="widget_power">Napajanje</string>
+    <string name="widget_lower_temp">Snizi temperaturu</string>
+    <string name="widget_raise_temp">Povisi temperaturu</string>
+    <string name="widget_refresh">Osvježi</string>
+    <string name="widget_decimal_separator">,</string>
+    <string name="car_state_on">UKLJUČENO</string>
+    <string name="car_state_off">ISKLJUČENO</string>
+    <string name="car_offline">Nedostupan</string>
+    <string name="car_tap_to_turn_on">Dodirni za uključivanje</string>
+    <string name="car_tap_to_turn_off">Dodirni za isključivanje</string>
+    <string name="car_not_paired">Otvori Breeze na mobitelu i prijavi se.</string>
+    <string name="car_no_units">Još nema uređaja. Dodaj ga u aplikaciji Breeze.</string>
+</resources>

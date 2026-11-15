@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../app_scope.dart';
+import '../l10n.dart';
 import '../models.dart';
 import '../theme.dart';
 import '../util.dart';
@@ -51,6 +52,7 @@ class _SceneEditorState extends State<SceneEditor> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
     final accent = accentForMode(s.operationalMode!, scheme);
     final on = s.powerState!;
     return Column(
@@ -62,12 +64,12 @@ class _SceneEditorState extends State<SceneEditor> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(on ? 'Switches the unit on' : 'Switches the unit off',
+                  Text(on ? l.sceneSwitchesOn : l.sceneSwitchesOff,
                       style: Theme.of(context).textTheme.titleMedium),
                   Text(
                     on
-                        ? 'With everything below'
-                        : 'The settings below are still sent, for next time',
+                        ? l.sceneWithEverythingBelow
+                        : l.sceneSettingsStillSent,
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall
@@ -108,7 +110,7 @@ class _SceneEditorState extends State<SceneEditor> {
           children: [
             Expanded(
               child: BigToggle(
-                label: 'Eco',
+                label: l.labelEco,
                 icon: Icons.eco,
                 value: s.eco!,
                 accent: const Color(0xFF4CAF50),
@@ -118,7 +120,7 @@ class _SceneEditorState extends State<SceneEditor> {
             const SizedBox(width: 12),
             Expanded(
               child: BigToggle(
-                label: 'Turbo',
+                label: l.labelTurbo,
                 icon: Icons.bolt,
                 value: s.turbo!,
                 accent: const Color(0xFFFF7043),
@@ -146,23 +148,26 @@ class SceneSummary extends StatelessWidget {
     'FAN_ONLY': Icons.air,
   };
 
-  /// The same, as words, for a screen reader and for one-line summaries.
-  static String describe(ClimateSettings raw, String unit) {
+  /// The same, as words, for a screen reader and for one-line summaries: in
+  /// [l]'s language, or English without one.
+  static String describe(ClimateSettings raw, String unit, [AppLocalizations? l]) {
+    l ??= lookupAppLocalizations(const Locale('en'));
     final s = SceneEditor.complete(raw);
-    if (s.powerState == false) return 'off';
+    if (s.powerState == false) return l.stateOff;
     return [
-      kModeLabels[s.operationalMode] ?? s.operationalMode!.toLowerCase(),
+      modeLabel(l, s.operationalMode!),
       fmtTemp(s.targetTemperature!, unit, showUnit: false),
-      'fan ${fanWord(s.fanSpeed!)}',
-      if (s.swingMode != 'OFF') 'flaps ${s.swingMode!.toLowerCase()}',
-      if (s.eco == true) 'eco',
-      if (s.turbo == true) 'turbo',
+      l.sceneFan(fanWord(s.fanSpeed!, l)),
+      if (s.swingMode != 'OFF') l.sceneFlaps(swingLabel(l, s.swingMode!)),
+      if (s.eco == true) l.labelEco.toLowerCase(),
+      if (s.turbo == true) l.labelTurbo.toLowerCase(),
     ].join(' · ');
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
     final unit = AppScope.of(context).tempUnit;
     final s = SceneEditor.complete(settings);
     final off = s.powerState == false;
@@ -182,32 +187,36 @@ class SceneSummary extends StatelessWidget {
                 Icon(icon, size: 15, color: strong ? ink : scheme.onSurfaceVariant),
                 const SizedBox(width: 4),
               ],
-              Text(text,
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    fontWeight: strong ? FontWeight.w600 : FontWeight.w500,
-                    color: strong ? ink : scheme.onSurface,
-                  )),
+              // Flexible: a long translation ("ventilator: srednje") wraps
+              // inside its pill at large text sizes rather than overflowing.
+              Flexible(
+                child: Text(text,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: strong ? FontWeight.w600 : FontWeight.w500,
+                      color: strong ? ink : scheme.onSurface,
+                    )),
+              ),
             ],
           ),
         );
     return Semantics(
-      label: describe(settings, unit),
+      label: describe(settings, unit, l),
       excludeSemantics: true,
       child: Wrap(
         spacing: 6,
         runSpacing: 6,
         children: off
-            ? [pill('Off', icon: Icons.power_settings_new, strong: true)]
+            ? [pill(l.sceneOff, icon: Icons.power_settings_new, strong: true)]
             : [
-                pill(kModeLabels[s.operationalMode] ?? s.operationalMode!,
+                pill(modeLabel(l, s.operationalMode!),
                     icon: _modeIcons[s.operationalMode], strong: true),
                 pill(fmtTemp(s.targetTemperature!, unit, showUnit: false), strong: true),
-                pill('fan ${fanWord(s.fanSpeed!)}', icon: Icons.air),
+                pill(l.sceneFan(fanWord(s.fanSpeed!, l)), icon: Icons.air),
                 if (s.swingMode != 'OFF')
-                  pill(s.swingMode!.toLowerCase(), icon: Icons.swap_vert),
-                if (s.eco == true) pill('eco', icon: Icons.eco),
-                if (s.turbo == true) pill('turbo', icon: Icons.bolt),
+                  pill(swingLabel(l, s.swingMode!), icon: Icons.swap_vert),
+                if (s.eco == true) pill(l.labelEco.toLowerCase(), icon: Icons.eco),
+                if (s.turbo == true) pill(l.labelTurbo.toLowerCase(), icon: Icons.bolt),
               ],
       ),
     );
@@ -215,9 +224,10 @@ class SceneSummary extends StatelessWidget {
 }
 
 /// The fan speed in the fan slider's words: silent, low, medium, high, max --
-/// or auto.
-String fanWord(int speed) {
-  if (speed >= 101) return 'auto';
-  const names = ['silent', 'low', 'medium', 'high', 'max'];
-  return names[((speed / 20).round() - 1).clamp(0, names.length - 1)];
+/// or auto; in [l]'s language, or English without one.
+String fanWord(int speed, [AppLocalizations? l]) {
+  l ??= lookupAppLocalizations(const Locale('en'));
+  // The nearest of the slider's five steps (20 ... 100), or 102 for auto.
+  final step = speed >= 101 ? 102 : (speed / 20).round().clamp(1, 5) * 20;
+  return fanSpeedLabel(l, step);
 }

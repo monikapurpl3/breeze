@@ -1,18 +1,12 @@
 // Data models mirroring the server's wire contract (snake_case JSON).
 
+import 'l10n.dart' show AppLocalizations;
+
 const List<String> kModes = ['AUTO', 'COOL', 'DRY', 'HEAT', 'FAN_ONLY'];
-const Map<String, String> kModeLabels = {
-  'AUTO': 'auto',
-  'COOL': 'cool',
-  'DRY': 'dry',
-  'HEAT': 'heat',
-  'FAN_ONLY': 'fan',
-};
 const List<String> kSwingModes = ['OFF', 'VERTICAL', 'HORIZONTAL', 'BOTH'];
 
 // The fan speeds the UI exposes (server also accepts 40/80).
 const List<int> kFanSpeeds = [20, 60, 100, 102];
-const Map<int, String> kFanLabels = {20: 'low', 60: 'med', 100: 'high', 102: 'auto'};
 
 const double kMinTemp = 16.0;
 const double kMaxTemp = 30.0;
@@ -357,14 +351,14 @@ class UnitTimer {
   bool get expired => remaining == 0;
 
   /// "45m" / "1h 20m" / "40s" — short enough to sit next to the power switch.
-  String get shortLabel {
+  String shortLabel(AppLocalizations l) {
     final s = remaining;
-    if (s < 60) return '${s}s';
+    if (s < 60) return l.timerShortSeconds(s);
     final m = (s / 60).ceil();
-    if (m < 60) return '${m}m';
+    if (m < 60) return l.timerShortMinutes(m);
     final h = m ~/ 60;
     final rest = m % 60;
-    return rest == 0 ? '${h}h' : '${h}h ${rest}m';
+    return rest == 0 ? l.timerShortHours(h) : l.timerShortHoursMinutes(h, rest);
   }
 
   /// "23:15" out of the server's ISO string, without re-interpreting it in the
@@ -375,10 +369,14 @@ class UnitTimer {
     return firesAt.substring(i + 1, i + 6);
   }
 
-  static const _weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  static const _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  static List<String> _weekdays(AppLocalizations l) => [
+    l.timerWeekdayMon, l.timerWeekdayTue, l.timerWeekdayWed, l.timerWeekdayThu,
+    l.timerWeekdayFri, l.timerWeekdaySat, l.timerWeekdaySun,
+  ];
+  static List<String> _months(AppLocalizations l) => [
+    l.timerMonthJan, l.timerMonthFeb, l.timerMonthMar, l.timerMonthApr,
+    l.timerMonthMay, l.timerMonthJun, l.timerMonthJul, l.timerMonthAug,
+    l.timerMonthSep, l.timerMonthOct, l.timerMonthNov, l.timerMonthDec,
   ];
 
   /// [firesAt]'s wall clock as a UTC [DateTime], which is only a convenient
@@ -404,28 +402,29 @@ class UnitTimer {
   }
 
   /// "today at 07:30", "tomorrow at 07:30", "Tue 29 Sep at 07:30".
-  String get whenLabel {
+  String whenLabel(AppLocalizations l) {
     final w = _wall;
-    if (w == null) return 'at $firesAt';
+    if (w == null) return l.timerWhenUnknown(firesAt);
     final clock = firesAtClock;
     switch (daysAhead) {
       case 0:
-        return 'today at $clock';
+        return l.timerWhenToday(clock);
       case 1:
-        return 'tomorrow at $clock';
+        return l.timerWhenTomorrow(clock);
     }
-    return '${_weekdays[w.weekday - 1]} ${w.day} ${_months[w.month - 1]} at $clock';
+    final date = l.timerDate(_weekdays(l)[w.weekday - 1], w.day, _months(l)[w.month - 1]);
+    return l.timerWhenDate(date, clock);
   }
 
   /// "07:30" today, "Tue" within the week, "29 Sep" beyond it — for the
   /// header, where anything longer squeezes the unit's name on a narrow phone.
   /// The time itself is one tap away, in the sheet.
-  String get shortWhen {
+  String shortWhen(AppLocalizations l) {
     final w = _wall;
     final days = daysAhead;
     if (w == null || days == null) return firesAtClock;
     if (days == 0) return firesAtClock;
-    if (days < 7) return _weekdays[w.weekday - 1];
-    return '${w.day} ${_months[w.month - 1]}';
+    if (days < 7) return _weekdays(l)[w.weekday - 1];
+    return l.timerDayMonth(w.day, _months(l)[w.month - 1]);
   }
 }

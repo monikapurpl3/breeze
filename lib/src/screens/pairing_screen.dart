@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 import '../a11y.dart';
 import '../app_scope.dart';
+import '../l10n.dart';
 
 class PairingScreen extends StatefulWidget {
   const PairingScreen({super.key});
@@ -79,7 +80,7 @@ class _PairingScreenState extends State<PairingScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Could not get a new code: $e')));
+            .showSnackBar(SnackBar(content: Text(context.l10n.pairingNewCodeFailed('$e'))));
       }
     } finally {
       if (mounted) setState(() => _restarting = false);
@@ -97,13 +98,14 @@ class _PairingScreenState extends State<PairingScreen> {
     final scheme = Theme.of(context).colorScheme;
     final c = AppScope.of(context);
     final code = _code ?? c.userCode ?? '········';
+    final l = context.l10n;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pair this device'),
+        title: Text(l.pairingTitle),
         actions: [
           TextButton(
             onPressed: () => c.changeServer(),
-            child: const Text('Change server'),
+            child: Text(l.pairingChangeServer),
           ),
         ],
       ),
@@ -118,7 +120,7 @@ class _PairingScreenState extends State<PairingScreen> {
                 children: [
                   Icon(Icons.verified_user_outlined, size: 48, color: scheme.primary),
                   const SizedBox(height: 16),
-                  Text('Your pairing code',
+                  Text(l.pairingYourCode,
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 16),
                   Card(
@@ -133,8 +135,8 @@ class _PairingScreenState extends State<PairingScreen> {
                           // came out as a guess. Copy stays on the button.
                           Semantics(
                             label: _code == null
-                                ? 'Getting a pairing code'
-                                : 'Pairing code ${spelled(code)}',
+                                ? l.pairingGettingCode
+                                : l.pairingCodeSpoken(spelled(code)),
                             liveRegion: true,
                             excludeSemantics: true,
                             child: SelectableText(
@@ -148,7 +150,7 @@ class _PairingScreenState extends State<PairingScreen> {
                           ),
                           const SizedBox(width: 12),
                           IconButton(
-                            tooltip: 'Copy the code',
+                            tooltip: l.pairingCopyCode,
                             onPressed: () => Clipboard.setData(ClipboardData(text: code)),
                             icon: Icon(Icons.copy, color: scheme.onPrimaryContainer),
                           ),
@@ -164,28 +166,36 @@ class _PairingScreenState extends State<PairingScreen> {
                         // screen-reader user waiting on a dead code.
                         Semantics(
                           liveRegion: true,
-                          child: Text('Code expired', style: TextStyle(color: scheme.error)),
+                          child: Text(l.pairingCodeExpired, style: TextStyle(color: scheme.error)),
                         ),
                         const SizedBox(height: 12),
                         FilledButton.tonalIcon(
                           onPressed: _restarting ? null : _newCode,
                           icon: const Icon(Icons.refresh),
-                          label: const Text('Get a new code'),
+                          label: Text(l.pairingNewCode),
                         ),
                       ],
                     )
                   else
                     Column(
                       children: [
-                        LinearProgressIndicator(
-                          semanticsLabel: 'Time left',
-                          semanticsValue: '$_remaining seconds',
-                          value: c.expiresIn == 0 ? null : _remaining / c.expiresIn,
+                        // Spoken as "Time left, 45 seconds", as before. Not
+                        // through the bar's own semanticsValue: a bar with a
+                        // value is a progress bar to Flutter 3.50, whose value
+                        // must be a number from 0 to 100, and asserts so.
+                        Semantics(
+                          label: l.pairingTimeLeft,
+                          value: l.pairingSeconds(_remaining),
+                          child: ExcludeSemantics(
+                            child: LinearProgressIndicator(
+                              value: c.expiresIn == 0 ? null : _remaining / c.expiresIn,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        Text('expires in ${_remaining}s · waiting for approval…',
+                        Text(l.pairingExpiresIn(_remaining),
                             semanticsLabel:
-                                'Expires in $_remaining seconds. Waiting for approval.',
+                                l.pairingExpiresInSpoken(_remaining),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodySmall
@@ -195,16 +205,14 @@ class _PairingScreenState extends State<PairingScreen> {
                         if (_code != null && _remaining > 0 && _remaining <= kPairingWarnAtSeconds)
                           Semantics(
                             liveRegion: true,
-                            label: '$kPairingWarnAtSeconds seconds left on the pairing code.',
+                            label: l.pairingSecondsLeftWarning(kPairingWarnAtSeconds),
                             child: const SizedBox.shrink(),
                           ),
                       ],
                     ),
                   const SizedBox(height: 24),
                   Text(
-                    'Enter this code in your server’s approval tool within the '
-                    'time limit. Approval must be done by an administrator on '
-                    'the local network.',
+                    l.pairingInstructions,
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
                         .textTheme

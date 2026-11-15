@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../api_client.dart';
 import '../app_scope.dart';
+import '../l10n.dart';
 import '../models.dart';
 import '../theme.dart';
 import '../util.dart';
@@ -47,7 +48,7 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
   }
 
   String _target(Program p) {
-    if (p.unitIds.isEmpty) return 'All units';
+    if (p.unitIds.isEmpty) return context.l10n.programAllUnits;
     final names = p.unitIds
         .map((id) => widget.units.firstWhere(
               (u) => u.id == id,
@@ -76,7 +77,7 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
       await _api.applyProgram(p.id);
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Applied “${p.name}”')));
+            .showSnackBar(SnackBar(content: Text(context.l10n.programsApplied(p.name))));
       }
     } on ApiException catch (e) {
       if (mounted) {
@@ -106,13 +107,13 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Programs')),
+      appBar: AppBar(title: Text(context.l10n.programsTitle)),
       floatingActionButton: _unsupported
           ? null
           : FloatingActionButton.extended(
               onPressed: () => _edit(null),
               icon: const Icon(Icons.add),
-              label: const Text('New'),
+              label: Text(context.l10n.programsNew),
             ),
       body: _buildBody(),
     );
@@ -121,13 +122,11 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
   Widget _buildBody() {
     if (_loading) return const Center(child: CircularProgressIndicator());
     if (_unsupported) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(32),
+          padding: const EdgeInsets.all(32),
           child: Text(
-            'This server doesn’t have the programs feature yet.\n\n'
-            'Update the server, then favourites, schedules and '
-            'temperature curves will appear here.',
+            context.l10n.programsUnsupported,
             textAlign: TextAlign.center,
           ),
         ),
@@ -138,6 +137,7 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
     }
     if (_programs.isEmpty) return _Empty(onNew: () => _edit(null));
     final unit = AppScope.of(context).tempUnit;
+    final l = context.l10n;
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
       children: [
@@ -145,10 +145,10 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
           if (_programs.any((p) => p.kind == kind)) ...[
             _GroupHeading(
               kind == 'favourite'
-                  ? 'Favourites'
+                  ? l.programsGroupFavourites
                   : kind == 'schedule'
-                      ? 'Schedules'
-                      : 'Curves',
+                      ? l.programsGroupSchedules
+                      : l.programsGroupCurves,
               count: _programs.where((p) => p.kind == kind).length,
             ),
             for (final p in _programs.where((p) => p.kind == kind))
@@ -170,11 +170,11 @@ class _ProgramsScreenState extends State<ProgramsScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Delete “${p.name}”?'),
-        content: const Text('It is removed from the server, for every phone.'),
+        title: Text(ctx.l10n.programsDeleteTitle(p.name)),
+        content: Text(ctx.l10n.programsDeleteBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.l10n.actionCancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(ctx.l10n.actionDelete)),
         ],
       ),
     );
@@ -244,33 +244,34 @@ class _ProgramCard extends StatelessWidget {
     }
   }
 
-  String _summary() {
+  String _summary(AppLocalizations l) {
     switch (program.kind) {
       case 'favourite':
         return program.favourite == null
-            ? 'Empty scene'
-            : SceneSummary.describe(program.favourite!, unit);
+            ? l.programsEmptyScene
+            : SceneSummary.describe(program.favourite!, unit, l);
       case 'schedule':
         final entries = [...program.schedule]
           ..sort((a, b) => minutesOf(a.time).compareTo(minutesOf(b.time)));
-        if (entries.isEmpty) return 'No times';
+        if (entries.isEmpty) return l.programsNoTimes;
         return entries
-            .map((e) => '${e.time} ${e.settings.powerState == false ? 'off' : 'on'}')
+            .map((e) => '${e.time} ${e.settings.powerState == false ? l.stateOff : l.stateOn}')
             .join(' · ');
       default:
         final pts = program.curve?.points ?? const <CurvePoint>[];
-        if (pts.isEmpty) return 'No points';
+        if (pts.isEmpty) return l.programsNoPoints;
         final temps = pts.map((p) => p.temperature);
         final lo = temps.reduce((a, b) => a < b ? a : b);
         final hi = temps.reduce((a, b) => a > b ? a : b);
-        return '${kModeLabels[program.curve!.operationalMode] ?? ''} · '
-            '${fmtTemp(lo, unit, showUnit: false)} to ${fmtTemp(hi, unit, showUnit: false)}';
+        return '${modeLabel(l, program.curve!.operationalMode)} · '
+            '${l.programsCurveRange(fmtTemp(lo, unit, showUnit: false), fmtTemp(hi, unit, showUnit: false))}';
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
     final accent = accentForMode(_mode(), scheme);
     final dim = program.kind != 'favourite' && !program.enabled;
     final ink = readableAccent(accent, scheme,
@@ -330,7 +331,7 @@ class _ProgramCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                        Text(_summary(),
+                        Text(_summary(l),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 13)),
@@ -353,7 +354,7 @@ class _ProgramCard extends StatelessWidget {
                 ),
                 if (program.kind == 'favourite')
                   IconButton.filledTonal(
-                    tooltip: 'Apply ${program.name} now',
+                    tooltip: l.programsApplyNowTooltip(program.name),
                     icon: const Icon(Icons.play_arrow_rounded),
                     onPressed: onApply,
                   )
@@ -362,12 +363,12 @@ class _ProgramCard extends StatelessWidget {
                   // nothing about which program each one ran.
                   MergeSemantics(
                     child: Semantics(
-                      label: 'Running, ${program.name}',
+                      label: l.programsRunningLabel(program.name),
                       child: Switch(value: program.enabled, onChanged: onToggle),
                     ),
                   ),
                 PopupMenuButton<String>(
-                  tooltip: 'More options for ${program.name}',
+                  tooltip: l.programsMoreOptions(program.name),
                   onSelected: (v) {
                     if (v == 'apply') onApply();
                     if (v == 'edit') onTap();
@@ -375,9 +376,9 @@ class _ProgramCard extends StatelessWidget {
                   },
                   itemBuilder: (_) => [
                     if (program.kind == 'curve')
-                      const PopupMenuItem(value: 'apply', child: Text('Apply now')),
-                    const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                      PopupMenuItem(value: 'apply', child: Text(l.programsApplyNow)),
+                    PopupMenuItem(value: 'edit', child: Text(l.actionEdit)),
+                    PopupMenuItem(value: 'delete', child: Text(l.actionDelete)),
                   ],
                 ),
               ],
@@ -396,6 +397,7 @@ class _Empty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
     Widget row(String kind, String text) => Padding(
           padding: const EdgeInsets.symmetric(vertical: 6),
           child: Row(
@@ -421,14 +423,14 @@ class _Empty extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('No programs yet', style: Theme.of(context).textTheme.headlineSmall),
+            Text(l.programsEmptyTitle, style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 16),
-            row('favourite', 'A favourite: a scene you apply with one tap.'),
-            row('schedule', 'A schedule: scenes at times of the week, run by the server.'),
-            row('curve', 'A curve: a temperature that follows the day.'),
+            row('favourite', l.programsEmptyFavourite),
+            row('schedule', l.programsEmptySchedule),
+            row('curve', l.programsEmptyCurve),
             const SizedBox(height: 20),
             FilledButton.icon(
-                onPressed: onNew, icon: const Icon(Icons.add), label: const Text('New program')),
+                onPressed: onNew, icon: const Icon(Icons.add), label: Text(l.programNew)),
           ],
         ),
       ),

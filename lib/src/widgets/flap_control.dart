@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../haptics.dart';
+import '../l10n.dart';
 import '../theme.dart';
 
 /// Flap (swing) control: one big pill split into two independently-toggled
@@ -66,7 +67,7 @@ class FlapControl extends StatelessWidget {
             Expanded(
               child: _Half(
                 icon: Icons.swap_vert,
-                label: 'Vertical flap',
+                label: context.l10n.labelVerticalFlap,
                 on: _vertical,
                 accent: accent,
                 enabled: enabled,
@@ -89,7 +90,7 @@ class FlapControl extends StatelessWidget {
             Expanded(
               child: _Half(
                 icon: Icons.swap_horiz,
-                label: 'Horizontal flap',
+                label: context.l10n.labelHorizontalFlap,
                 on: _horizontal,
                 accent: accent,
                 enabled: enabled,

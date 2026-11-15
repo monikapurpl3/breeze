@@ -19,15 +19,15 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
-          # The version the releases are built with. Unpinned, CI met each new
-          # stable before the app did: 3.47 deprecates importing
-          # package:flutter/material.dart, every file here does, and analyze
-          # failed a release that 3.44.4 built cleanly. Moving Flutter is its
-          # own change, made here and on the build machine together.
-          flutter-version: 3.44.4
+          # The version the releases are built with, moved here and on the
+          # build machine together. Unpinned, CI met each new stable before
+          # the app did: analyze failed 2.5.0 on 3.47's deprecation of
+          # package:flutter/material.dart. Since 2.6.0 the app imports
+          # package:material_ui instead and is built with this version.
+          flutter-version: 3.50.0
           channel: stable
           cache: true
       - run: flutter pub get

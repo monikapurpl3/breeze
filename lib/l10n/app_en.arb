@@ -155,5 +155,1314 @@
   "labelHorizontalFlap": "Horizontal flap",
   "@labelHorizontalFlap": {
     "description": "The flap that swings left and right."
+  },
+  "internalColours": "Colours",
+  "@internalColours": {
+    "description": "Nerd screen, Internal tab: heading of the card that chooses the app's colours. Shown in capitals."
+  },
+  "internalColourSourceMine": "My colour",
+  "@internalColourSourceMine": {
+    "description": "Internal tab, colours: the segment that uses a colour the user picks (the other segment is \"Material You\", not translated)."
+  },
+  "internalColourWallpaperHint": "From the wallpaper, where the system offers it (Android 12 and newer); the built-in teal elsewhere.",
+  "@internalColourWallpaperHint": {
+    "description": "Internal tab, colours: explains the Material You choice. \"teal\" is the app's own blue-green."
+  },
+  "internalColourMineHint": "Your colour, everywhere, whatever the wallpaper.",
+  "@internalColourMineHint": {
+    "description": "Internal tab, colours: explains the \"My colour\" choice."
+  },
+  "internalColourStyle": "Style",
+  "@internalColourStyle": {
+    "description": "Internal tab, colours: label of the drop-down that picks how a palette is built from the colour."
+  },
+  "internalVariantTonalSpot": "Calm (the default)",
+  "@internalVariantTonalSpot": {
+    "description": "Colour style (Material \"tonalSpot\"): calm, the default. Agrees with \"Style\" where the language needs it."
+  },
+  "internalVariantVibrant": "Vibrant",
+  "@internalVariantVibrant": {
+    "description": "Colour style (Material \"vibrant\")."
+  },
+  "internalVariantExpressive": "Expressive",
+  "@internalVariantExpressive": {
+    "description": "Colour style (Material \"expressive\")."
+  },
+  "internalVariantContent": "Faithful to the colour",
+  "@internalVariantContent": {
+    "description": "Colour style (Material \"content\"): stays close to the chosen colour. Must differ from \"True to the colour\"."
+  },
+  "internalVariantFidelity": "True to the colour",
+  "@internalVariantFidelity": {
+    "description": "Colour style (Material \"fidelity\"): even closer to the chosen colour. Must differ from \"Faithful to the colour\"."
+  },
+  "internalVariantRainbow": "Rainbow",
+  "@internalVariantRainbow": {
+    "description": "Colour style (Material \"rainbow\")."
+  },
+  "internalVariantFruitSalad": "Fruit salad",
+  "@internalVariantFruitSalad": {
+    "description": "Colour style (Material \"fruitSalad\"): playful, many hues."
+  },
+  "internalVariantNeutral": "Muted",
+  "@internalVariantNeutral": {
+    "description": "Colour style (Material \"neutral\"): muted, greyish."
+  },
+  "internalVariantMonochrome": "Monochrome",
+  "@internalVariantMonochrome": {
+    "description": "Colour style (Material \"monochrome\"): greys only."
+  },
+  "internalSwatchTeal": "Teal",
+  "@internalSwatchTeal": {
+    "description": "Internal tab, colours: the name of a colour swatch (teal), read out by screen readers."
+  },
+  "internalSwatchBlue": "Blue",
+  "@internalSwatchBlue": {
+    "description": "Internal tab, colours: the name of a colour swatch (blue), read out by screen readers."
+  },
+  "internalSwatchIndigo": "Indigo",
+  "@internalSwatchIndigo": {
+    "description": "Internal tab, colours: the name of a colour swatch (indigo), read out by screen readers."
+  },
+  "internalSwatchLavender": "Lavender",
+  "@internalSwatchLavender": {
+    "description": "Internal tab, colours: the name of a colour swatch (lavender), read out by screen readers."
+  },
+  "internalSwatchPink": "Pink",
+  "@internalSwatchPink": {
+    "description": "Internal tab, colours: the name of a colour swatch (pink), read out by screen readers."
+  },
+  "internalSwatchRed": "Red",
+  "@internalSwatchRed": {
+    "description": "Internal tab, colours: the name of a colour swatch (red), read out by screen readers."
+  },
+  "internalSwatchOrange": "Orange",
+  "@internalSwatchOrange": {
+    "description": "Internal tab, colours: the name of a colour swatch (orange), read out by screen readers."
+  },
+  "internalSwatchAmber": "Amber",
+  "@internalSwatchAmber": {
+    "description": "Internal tab, colours: the name of a colour swatch (amber), read out by screen readers."
+  },
+  "internalSwatchGreen": "Green",
+  "@internalSwatchGreen": {
+    "description": "Internal tab, colours: the name of a colour swatch (green), read out by screen readers."
+  },
+  "internalSwatchSlate": "Slate",
+  "@internalSwatchSlate": {
+    "description": "Internal tab, colours: the name of a colour swatch (slate), read out by screen readers."
+  },
+  "internalSwatchBrown": "Brown",
+  "@internalSwatchBrown": {
+    "description": "Internal tab, colours: the name of a colour swatch (brown), read out by screen readers."
+  },
+  "internalSwatchGrey": "Grey",
+  "@internalSwatchGrey": {
+    "description": "Internal tab, colours: the name of a colour swatch (grey), read out by screen readers."
+  },
+  "internalHexLabel": "Or any colour",
+  "@internalHexLabel": {
+    "description": "Internal tab, colours: label of the field where any colour can be typed as a hex code."
+  },
+  "internalHexUse": "Use this colour",
+  "@internalHexUse": {
+    "description": "Internal tab, colours: tooltip of the tick button that applies the typed hex colour."
+  },
+  "internalHexError": "Six hex digits, like #4FD1C5",
+  "@internalHexError": {
+    "description": "Internal tab, colours: error under the hex field when the input is not a colour. Keep #4FD1C5 as it is."
+  },
+  "internalPreviewPrimary": "Primary",
+  "@internalPreviewPrimary": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"primary\" colour role. Very short."
+  },
+  "internalPreviewSecondary": "Secondary",
+  "@internalPreviewSecondary": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"secondary\" colour role. Very short."
+  },
+  "internalPreviewTertiary": "Tertiary",
+  "@internalPreviewTertiary": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"tertiary\" colour role. Very short."
+  },
+  "internalPreviewContainer": "Container",
+  "@internalPreviewContainer": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"container\" colour role. Very short."
+  },
+  "internalPreviewSurface": "Surface",
+  "@internalPreviewSurface": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"surface\" colour role. Very short."
+  },
+  "internalPreviewError": "Error",
+  "@internalPreviewError": {
+    "description": "Internal tab, colours: a small chip previewing the scheme's \"error\" colour role. Very short."
+  },
+  "internalConnection": "Connection",
+  "@internalConnection": {
+    "description": "Internal tab: heading of the connection card (addresses, timeout, live updates). Shown in capitals."
+  },
+  "internalPairing": "Pairing",
+  "@internalPairing": {
+    "description": "Internal tab: heading of the pairing card. Shown in capitals."
+  },
+  "internalThisDevice": "This device",
+  "@internalThisDevice": {
+    "description": "Internal tab, pairing: label (about 110 px wide) before this phone's name on the server."
+  },
+  "internalSignsInWith": "Signs in with",
+  "@internalSignsInWith": {
+    "description": "Internal tab, pairing: label (about 110 px wide) before the auth version this phone uses."
+  },
+  "internalAuthV2": "v2 (Ed25519-signed requests)",
+  "@internalAuthV2": {
+    "description": "Internal tab, pairing: the value after \"Signs in with\" for auth v2. Keep v2 and Ed25519."
+  },
+  "internalAuthV1": "v1 (a bearer token)",
+  "@internalAuthV1": {
+    "description": "Internal tab, pairing: the value after \"Signs in with\" for auth v1. Keep v1."
+  },
+  "internalPairAgainButton": "Pair again…",
+  "@internalPairAgainButton": {
+    "description": "Internal tab, pairing: button that opens the \"Pair again\" dialog."
+  },
+  "internalPairAgainHint": "Asks for a new pairing code, with a name and auth version you choose. This device keeps working as it is until an admin approves the new code.",
+  "@internalPairAgainHint": {
+    "description": "Internal tab, pairing: explains the \"Pair again\" button."
+  },
+  "internalDisplay": "Display and feel",
+  "@internalDisplay": {
+    "description": "Internal tab: heading of the card with display and vibration options. Shown in capitals."
+  },
+  "internalShowIp": "Show each unit's IP address",
+  "@internalShowIp": {
+    "description": "Internal tab: switch that shows each air conditioner's IP address."
+  },
+  "internalShowIpHint": "Under its name on the control screen",
+  "@internalShowIpHint": {
+    "description": "Internal tab: where the IP address appears when the switch is on."
+  },
+  "internalShowLatency": "Show latency at the top",
+  "@internalShowLatency": {
+    "description": "Internal tab: switch that shows the latency to the server at the top of the screen."
+  },
+  "internalShowLatencyHint": "Round-trip time to the server, measured every 15 seconds, and the address in use when a fallback is answering",
+  "@internalShowLatencyHint": {
+    "description": "Internal tab: what the latency switch shows."
+  },
+  "internalVibration": "Vibration",
+  "@internalVibration": {
+    "description": "Internal tab: switch for the app's haptic feedback."
+  },
+  "internalVibrationHint": "The small taps and buzzes that confirm a control",
+  "@internalVibrationHint": {
+    "description": "Internal tab: what the vibration switch covers."
+  },
+  "internalServerData": "What the server holds",
+  "@internalServerData": {
+    "description": "Internal tab: heading of the card that opens the server's programs and timers as raw JSON. Shown in capitals."
+  },
+  "internalProgramsJson": "Programs, as JSON",
+  "@internalProgramsJson": {
+    "description": "Internal tab: opens the server's programs as raw JSON."
+  },
+  "internalProgramsJsonHint": "Favourites, schedules and curves. Read-only",
+  "@internalProgramsJsonHint": {
+    "description": "Internal tab: under \"Programs, as JSON\"."
+  },
+  "internalProgramsTitle": "Programs",
+  "@internalProgramsTitle": {
+    "description": "Title of the raw JSON screen opened from \"Programs, as JSON\"."
+  },
+  "internalTimersJson": "Timers, as JSON",
+  "@internalTimersJson": {
+    "description": "Internal tab: opens the server's timers as raw JSON."
+  },
+  "internalTimersJsonHint": "Sleep timers and scheduled starts. Read-only",
+  "@internalTimersJsonHint": {
+    "description": "Internal tab: under \"Timers, as JSON\": sleep timers (turn off after) and scheduled starts (turn on at)."
+  },
+  "internalTimersTitle": "Timers",
+  "@internalTimersTitle": {
+    "description": "Title of the raw JSON screen opened from \"Timers, as JSON\"."
+  },
+  "internalCatFacts": "Cat facts",
+  "@internalCatFacts": {
+    "description": "Internal tab: heading of the card (shown in capitals) and label of the field holding the user's own cat facts, shown while the app waits."
+  },
+  "internalCatFactsHint": "Your own, one per line, shown while the app waits on the server.",
+  "@internalCatFactsHint": {
+    "description": "Internal tab: explains the cat facts field."
+  },
+  "internalCatFactsExample": "A cat's purr is around 25 to 150 hertz.",
+  "@internalCatFactsExample": {
+    "description": "Internal tab: example text in the empty cat facts field."
+  },
+  "internalSaveFacts": "Save facts",
+  "@internalSaveFacts": {
+    "description": "Internal tab: button that saves the cat facts field."
+  },
+  "internalKeepBuiltIn": "Keep the built-in facts too",
+  "@internalKeepBuiltIn": {
+    "description": "Internal tab: switch that keeps the app's own cat facts alongside the user's."
+  },
+  "internalKeepBuiltInHint": "{count, plural, other{{count} of them, mixed in with yours}}",
+  "@internalKeepBuiltInHint": {
+    "description": "Internal tab: under \"Keep the built-in facts too\": how many built-in facts there are.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "internalNextUp": "Next up: “{fact}”",
+  "@internalNextUp": {
+    "description": "Internal tab: the cat fact that will be shown next, in the language's quotation marks. The fact itself is not translated here.",
+    "placeholders": {
+      "fact": {
+        "type": "String"
+      }
+    }
+  },
+  "internalReset": "Reset these settings",
+  "@internalReset": {
+    "description": "Internal tab: button at the bottom that resets the tab's settings."
+  },
+  "internalMainAddress": "Main address",
+  "@internalMainAddress": {
+    "description": "Internal tab, connection: label (about 110 px wide) before the server address the app was set up with."
+  },
+  "internalInUseNow": "In use now",
+  "@internalInUseNow": {
+    "description": "Internal tab, connection: label (about 110 px wide) before the address answering right now, and its latency."
+  },
+  "internalFallbacks": "Fallback addresses",
+  "@internalFallbacks": {
+    "description": "Internal tab, connection: sub-heading of the list of fallback addresses."
+  },
+  "internalFallbacksHint": "Tried in this order when the main address can't be reached, then the LAN addresses below. This device's pairing works at all of them.",
+  "@internalFallbacksHint": {
+    "description": "Internal tab, connection: explains the fallback addresses."
+  },
+  "internalAddFallback": "Add a fallback address",
+  "@internalAddFallback": {
+    "description": "Internal tab, connection: button that adds a fallback address."
+  },
+  "internalTryLan": "Then try the server's LAN addresses",
+  "@internalTryLan": {
+    "description": "Internal tab, connection: switch that also tries the server's own LAN addresses."
+  },
+  "internalTryLanHint": "Asked from the server and refreshed at every launch: for when the main address is a public one and you are at home",
+  "@internalTryLanHint": {
+    "description": "Internal tab, connection: explains the LAN addresses switch."
+  },
+  "internalLanNoneYet": "None learned yet.",
+  "@internalLanNoneYet": {
+    "description": "Internal tab, connection: no LAN addresses have been learned from the server yet."
+  },
+  "internalAskAgain": "Ask the server again",
+  "@internalAskAgain": {
+    "description": "Internal tab, connection: button that asks the server for its LAN addresses again."
+  },
+  "internalTimeout": "Give up on a request after {seconds} s",
+  "@internalTimeout": {
+    "description": "Internal tab, connection: sub-heading over the request timeout slider. \"s\" is the unit, not translated.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "internalTimeoutSemantics": "{count, plural, one{{count} second} other{{count} seconds}}",
+  "@internalTimeoutSemantics": {
+    "description": "Internal tab, connection: the timeout slider's value as a screen reader says it.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "internalTimeoutHint": "Per address. With fallbacks, a short timeout reaches the next one sooner.",
+  "@internalTimeoutHint": {
+    "description": "Internal tab, connection: explains the timeout slider."
+  },
+  "internalLiveUpdates": "Live updates",
+  "@internalLiveUpdates": {
+    "description": "Internal tab, connection: switch for live updates pushed by the server."
+  },
+  "internalLiveUpdatesHint": "Changes pushed by the server as they happen. Off: ask every 5 seconds instead, as with a server older than {version}",
+  "@internalLiveUpdatesHint": {
+    "description": "Internal tab, connection: explains live updates. {version} is a Breeze Core version, e.g. 3.0.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "internalFallbackDialogTitle": "Fallback address",
+  "@internalFallbackDialogTitle": {
+    "description": "Title of the dialog that adds a fallback address."
+  },
+  "internalAddressLabel": "Address",
+  "@internalAddressLabel": {
+    "description": "Fallback address dialog: label of the address field."
+  },
+  "internalAddressHint": "https://breeze.example.com or 192.168.1.10:8420",
+  "@internalAddressHint": {
+    "description": "Fallback address dialog: example in the empty field. Keep both addresses exactly; translate only \"or\"."
+  },
+  "internalAlreadyMain": "That is the main address already.",
+  "@internalAlreadyMain": {
+    "description": "Snack bar: the fallback address typed is the main address."
+  },
+  "internalLanNeedsNewer": "This server can't say: it needs Breeze Core {version} or newer.",
+  "@internalLanNeedsNewer": {
+    "description": "Internal tab, connection: the server cannot list its LAN addresses because it is too old. {version} is a Breeze Core version.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "internalLanAskFailed": "Could not ask the server: {error}",
+  "@internalLanAskFailed": {
+    "description": "Internal tab, connection: asking the server for its LAN addresses failed. {error} is a technical message in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "internalOnlyV2": "This server only accepts v2 pairing.",
+  "@internalOnlyV2": {
+    "description": "Snack bar: pairing again with v1 was refused because the server only accepts v2."
+  },
+  "internalPairFailed": "Could not start pairing: {error}",
+  "@internalPairFailed": {
+    "description": "Snack bar: pairing again could not start. {error} is a technical message in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "internalFactsNone": "No facts of your own: the built-in ones it is",
+  "@internalFactsNone": {
+    "description": "Snack bar after saving an empty cat facts field: only the built-in facts will be shown."
+  },
+  "internalFactsSaved": "{count, plural, one{{count} fact saved} other{{count} facts saved}}",
+  "@internalFactsSaved": {
+    "description": "Snack bar after saving the cat facts field.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "internalResetTitle": "Reset these settings?",
+  "@internalResetTitle": {
+    "description": "Title of the dialog confirming the reset of the Internal tab's settings."
+  },
+  "internalResetBody": "Colours, display, vibration, timeout, live updates and cat facts go back to how the app ships. Fallback addresses and pairing are this server's, and stay.",
+  "@internalResetBody": {
+    "description": "Reset dialog: what is reset and what is kept."
+  },
+  "internalResetConfirm": "Reset",
+  "@internalResetConfirm": {
+    "description": "Reset dialog: the button that resets."
+  },
+  "internalFallbackEarlier": "Try {url} earlier",
+  "@internalFallbackEarlier": {
+    "description": "Tooltip and screen reader label of the up arrow beside a fallback address: try it sooner.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "internalFallbackLater": "Try {url} later",
+  "@internalFallbackLater": {
+    "description": "Tooltip and screen reader label of the down arrow beside a fallback address: try it later.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "internalFallbackRemove": "Remove {url}",
+  "@internalFallbackRemove": {
+    "description": "Tooltip and screen reader label of the cross beside a fallback address.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "internalPairAgainTitle": "Pair again",
+  "@internalPairAgainTitle": {
+    "description": "Title of the dialog that pairs this phone again."
+  },
+  "internalDeviceName": "Name for this device",
+  "@internalDeviceName": {
+    "description": "Pair again dialog: label of the field with the name this phone will have on the server."
+  },
+  "internalSegmentV2": "v2, signed",
+  "@internalSegmentV2": {
+    "description": "Pair again dialog: segment choosing auth v2 (signed requests). Very short."
+  },
+  "internalSegmentV1": "v1, token",
+  "@internalSegmentV1": {
+    "description": "Pair again dialog: segment choosing auth v1 (a bearer token). Very short."
+  },
+  "internalV2Hint": "Every request is signed with a key that never leaves this phone. What the app uses normally.",
+  "@internalV2Hint": {
+    "description": "Pair again dialog: explains auth v2."
+  },
+  "internalV1Hint": "A bearer token, as before {version}. For testing a server with v1; the app stays on v1 instead of upgrading itself.",
+  "@internalV1Hint": {
+    "description": "Pair again dialog: explains auth v1. {version} is a Breeze Core version, e.g. 3.0.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "internalPairAgainNote": "An admin approves the new code on the server's network. Until then this device works as it does now; its old entry stays in the server's device list until revoked there.",
+  "@internalPairAgainNote": {
+    "description": "Pair again dialog: what happens until the new code is approved."
+  },
+  "internalGetCode": "Get a code",
+  "@internalGetCode": {
+    "description": "Pair again dialog: the button that requests the new pairing code."
+  },
+  "diagTitle": "Diagnostics",
+  "@diagTitle": {
+    "description": "Diagnostics screen: title in the app bar."
+  },
+  "diagRun": "Run full diagnosis",
+  "@diagRun": {
+    "description": "Diagnostics: the button that runs every check."
+  },
+  "diagRunning": "Running…",
+  "@diagRunning": {
+    "description": "Diagnostics: the run button while the checks run."
+  },
+  "diagIntro": "Tap “{button}” to check connectivity, the server build, authentication and security posture, this device’s credential, input validation, the live stream, and every unit.",
+  "@diagIntro": {
+    "description": "Diagnostics: text shown before the first run. {button} is the run button's label.",
+    "placeholders": {
+      "button": {
+        "type": "String"
+      }
+    }
+  },
+  "diagLevelPassed": "passed",
+  "@diagLevelPassed": {
+    "description": "Diagnostics: what a screen reader says for a check's green tick."
+  },
+  "diagLevelWarning": "warning",
+  "@diagLevelWarning": {
+    "description": "Diagnostics: what a screen reader says for a check's warning sign."
+  },
+  "diagLevelFailed": "failed",
+  "@diagLevelFailed": {
+    "description": "Diagnostics: what a screen reader says for a check's error sign."
+  },
+  "diagLevelNote": "note",
+  "@diagLevelNote": {
+    "description": "Diagnostics: what a screen reader says for a check's information sign."
+  },
+  "diagSectionConnectivity": "Connectivity & build",
+  "@diagSectionConnectivity": {
+    "description": "Diagnostics: section heading."
+  },
+  "diagServerUnreachable": "Server unreachable",
+  "@diagServerUnreachable": {
+    "description": "Diagnostics: check name when the server cannot be reached at all. The line under it is a technical message in English."
+  },
+  "diagServerReachable": "Server reachable",
+  "@diagServerReachable": {
+    "description": "Diagnostics: check name."
+  },
+  "diagServerReachableDetail": "{count, plural, one{{count} unit} other{{count} units}} · {ms} ms",
+  "@diagServerReachableDetail": {
+    "description": "Diagnostics: under \"Server reachable\": how many air conditioners, and how long the listing took in milliseconds.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "diagHealthEndpoint": "Health endpoint",
+  "@diagHealthEndpoint": {
+    "description": "Diagnostics: check name: the server's health endpoint answers. The line under it may be \"status=ok\", not translated."
+  },
+  "diagNotPresentServer": "not present (server < {version})",
+  "@diagNotPresentServer": {
+    "description": "Diagnostics: an endpoint the server does not have, because it is older than {version} (a Breeze Core version).",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "diagNotPresentServerSkipping": "not present (server < {version}) — skipping",
+  "@diagNotPresentServerSkipping": {
+    "description": "Diagnostics: like \"not present (server < {version})\", and the check is skipped.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "diagEndpointMissing": "endpoint not present — skipping",
+  "@diagEndpointMissing": {
+    "description": "Diagnostics: the server has no such endpoint, so the check is skipped."
+  },
+  "diagServerVersion": "Server version",
+  "@diagServerVersion": {
+    "description": "Diagnostics: check name."
+  },
+  "diagServerVersionDetail": "Breeze Core {version} (commit {commit})",
+  "@diagServerVersionDetail": {
+    "description": "Diagnostics: under \"Server version\". {commit} is a git commit hash, or \"unknown\".",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "commit": {
+        "type": "String"
+      }
+    }
+  },
+  "diagUnknown": "unknown",
+  "@diagUnknown": {
+    "description": "Diagnostics: the server did not say which commit it was built from."
+  },
+  "diagAppVersion": "App version",
+  "@diagAppVersion": {
+    "description": "Diagnostics: check name; the line under it is \"Breeze\" and the version."
+  },
+  "diagFeatures": "Advertised features",
+  "@diagFeatures": {
+    "description": "Diagnostics: check name: the features the server says it has. The line under it lists their technical names."
+  },
+  "diagFeaturesNone": "none advertised",
+  "@diagFeaturesNone": {
+    "description": "Diagnostics: under \"Advertised features\" when the server lists none."
+  },
+  "diagUnitParity": "Unit-count parity",
+  "@diagUnitParity": {
+    "description": "Diagnostics: check name: the server's count of air conditioners matches its list."
+  },
+  "diagUnitParityAgree": "server and listing agree ({count})",
+  "@diagUnitParityAgree": {
+    "description": "Diagnostics: the counts agree; {count} is the number of air conditioners.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagUnitParityDiffer": "server reports {server}, listing has {listing}",
+  "@diagUnitParityDiffer": {
+    "description": "Diagnostics: the counts differ.",
+    "placeholders": {
+      "server": {
+        "type": "int"
+      },
+      "listing": {
+        "type": "int"
+      }
+    }
+  },
+  "diagVersionUnreadable": "could not read /api/version — {error}",
+  "@diagVersionUnreadable": {
+    "description": "Diagnostics: the version endpoint failed. {error} is a technical message in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "diagSectionAuth": "Authentication posture",
+  "@diagSectionAuth": {
+    "description": "Diagnostics: section heading: how well the server guards itself."
+  },
+  "diagNoKeyRejected": "No key rejected",
+  "@diagNoKeyRejected": {
+    "description": "Diagnostics: check name: a request without the API key is refused."
+  },
+  "diagWrongKeyRejected": "Wrong key rejected",
+  "@diagWrongKeyRejected": {
+    "description": "Diagnostics: check name: a request with a wrong API key is refused."
+  },
+  "diagCorrectlyReturns": "correctly returns {status}",
+  "@diagCorrectlyReturns": {
+    "description": "Diagnostics: the server answered with the expected HTTP status.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagReturnedExpected": "returned {status}, expected {expected}",
+  "@diagReturnedExpected": {
+    "description": "Diagnostics: the server answered with another HTTP status than expected.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      },
+      "expected": {
+        "type": "int"
+      }
+    }
+  },
+  "diagReturnedExpectedParen": "returned {status} (expected {expected})",
+  "@diagReturnedExpectedParen": {
+    "description": "Diagnostics: as \"returned {status}, expected {expected}\", worded with parentheses.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      },
+      "expected": {
+        "type": "int"
+      }
+    }
+  },
+  "diagTokenGated": "Control API is token-gated",
+  "@diagTokenGated": {
+    "description": "Diagnostics: check name: the control API also needs this device's own credential (good)."
+  },
+  "diagTokenGatedDetail": "key alone is refused ({status}) — a device credential is also required (hardened)",
+  "@diagTokenGatedDetail": {
+    "description": "Diagnostics: under \"Control API is token-gated\". {status} is an HTTP status.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagNotTokenGated": "Control API not token-gated",
+  "@diagNotTokenGated": {
+    "description": "Diagnostics: check name: the key alone is enough for the control API (a warning)."
+  },
+  "diagNotTokenGatedDetail": "key alone is accepted ({status}) — older or loosened build",
+  "@diagNotTokenGatedDetail": {
+    "description": "Diagnostics: under \"Control API not token-gated\". {status} is an HTTP status.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagTokenGating": "Token-gating",
+  "@diagTokenGating": {
+    "description": "Diagnostics: check name when the key-only probe gave an unexpected answer."
+  },
+  "diagTokenGatingDetail": "key alone returned {status} (expected {accepted} or {refused})",
+  "@diagTokenGatingDetail": {
+    "description": "Diagnostics: under \"Token-gating\". All three are HTTP statuses.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      },
+      "accepted": {
+        "type": "int"
+      },
+      "refused": {
+        "type": "int"
+      }
+    }
+  },
+  "diagSectionThisDevice": "This device",
+  "@diagSectionThisDevice": {
+    "description": "Diagnostics: section heading about this phone's own credential."
+  },
+  "diagDeviceClock": "Device clock",
+  "@diagDeviceClock": {
+    "description": "Diagnostics: check name: the phone's clock against the server's."
+  },
+  "diagClockInSync": "in sync with the server",
+  "@diagClockInSync": {
+    "description": "Diagnostics: under \"Device clock\"."
+  },
+  "diagClockBehind": "off by {seconds} s (behind the server) — corrected automatically; turn on automatic date & time",
+  "@diagClockBehind": {
+    "description": "Diagnostics: the phone's clock is behind the server's by {seconds} seconds (\"s\" is the unit).",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "diagClockAhead": "off by {seconds} s (ahead of the server) — corrected automatically; turn on automatic date & time",
+  "@diagClockAhead": {
+    "description": "Diagnostics: the phone's clock is ahead of the server's by {seconds} seconds (\"s\" is the unit).",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "diagAuthProfile": "Auth profile",
+  "@diagAuthProfile": {
+    "description": "Diagnostics: check name: which auth version this phone uses."
+  },
+  "diagAuthV2": "v2 — requests signed with a per-device Ed25519 key",
+  "@diagAuthV2": {
+    "description": "Diagnostics: under \"Auth profile\" for v2. Keep v2 and Ed25519."
+  },
+  "diagAuthV1": "v1 — legacy bearer token (upgrades to v2 automatically when the server supports it)",
+  "@diagAuthV1": {
+    "description": "Diagnostics: under \"Auth profile\" for v1. Keep v1 and v2."
+  },
+  "diagRecognised": "Server recognises this device",
+  "@diagRecognised": {
+    "description": "Diagnostics: check name: the server knows this phone."
+  },
+  "diagRecognisedDetail": "label \"{label}\" · auth v{version}",
+  "@diagRecognisedDetail": {
+    "description": "Diagnostics: under \"Server recognises this device\": the name the server has for it, and its auth version (\"auth v2\"; keep \"auth v\").",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "diagCredentialExpiry": "Credential expiry",
+  "@diagCredentialExpiry": {
+    "description": "Diagnostics: check name when this phone's credential has no expiry."
+  },
+  "diagNoExpiry": "no expiry set",
+  "@diagNoExpiry": {
+    "description": "Diagnostics: under \"Credential expiry\"."
+  },
+  "diagCredentialExpired": "Credential expired",
+  "@diagCredentialExpired": {
+    "description": "Diagnostics: check name: this phone's credential has expired."
+  },
+  "diagCredentialExpiredDetail": "re-pair this device (expired {date})",
+  "@diagCredentialExpiredDetail": {
+    "description": "Diagnostics: under \"Credential expired\". {date} is like 2026-11-15.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "diagCredentialExpiresSoon": "Credential expires soon",
+  "@diagCredentialExpiresSoon": {
+    "description": "Diagnostics: check name: the credential expires within a week."
+  },
+  "diagCredentialExpiresSoonDetail": "within 7 days (on {date})",
+  "@diagCredentialExpiresSoonDetail": {
+    "description": "Diagnostics: under \"Credential expires soon\". {date} is like 2026-11-15.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "diagCredentialValid": "Credential valid",
+  "@diagCredentialValid": {
+    "description": "Diagnostics: check name: the credential is valid."
+  },
+  "diagCredentialValidDetail": "expires {date}",
+  "@diagCredentialValidDetail": {
+    "description": "Diagnostics: under \"Credential valid\". {date} is like 2026-11-15.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "diagWhoamiMissing": "server predates {version} (no /whoami) — skipping",
+  "@diagWhoamiMissing": {
+    "description": "Diagnostics: the server has no /whoami because it is older than {version} (a Breeze Core version).",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "diagSectionPairedDevices": "Paired devices",
+  "@diagSectionPairedDevices": {
+    "description": "Diagnostics: section heading: the phones paired with the server."
+  },
+  "diagDeviceManagement": "Device management",
+  "@diagDeviceManagement": {
+    "description": "Diagnostics: check name: the admin list of paired devices."
+  },
+  "diagDeviceManagementSkipped": "skipped — admin endpoint, only checked when connected to the LAN",
+  "@diagDeviceManagementSkipped": {
+    "description": "Diagnostics: under \"Device management\" when the phone is not on the server's LAN."
+  },
+  "diagEnrolledDevices": "Enrolled devices",
+  "@diagEnrolledDevices": {
+    "description": "Diagnostics: check name: how many devices the server has enrolled."
+  },
+  "diagTokenCount": "{count, plural, one{{count} token} other{{count} tokens}}",
+  "@diagTokenCount": {
+    "description": "Diagnostics: under \"Enrolled devices\": the number of device tokens.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagTokenExpired": "token expired — revoke it",
+  "@diagTokenExpired": {
+    "description": "Diagnostics: under a paired device's name: its token has expired."
+  },
+  "diagTokenExpiresSoon": "expires within 7 days",
+  "@diagTokenExpiresSoon": {
+    "description": "Diagnostics: under a paired device's name: its token expires within a week."
+  },
+  "diagNeedsLanKey": "needs the key from the LAN — skipping (off-LAN?)",
+  "@diagNeedsLanKey": {
+    "description": "Diagnostics: the device list needs the key from the server's LAN, so the check is skipped."
+  },
+  "diagSectionConfig": "Config API (secret sanitisation)",
+  "@diagSectionConfig": {
+    "description": "Diagnostics: section heading: the config API must not reveal secrets."
+  },
+  "diagConfigApi": "Config API",
+  "@diagConfigApi": {
+    "description": "Diagnostics: check name for the config API when it cannot be checked."
+  },
+  "diagNoSecrets": "No secrets exposed",
+  "@diagNoSecrets": {
+    "description": "Diagnostics: check name: the config API reveals no secrets."
+  },
+  "diagConfigSanitised": "config response is sanitised",
+  "@diagConfigSanitised": {
+    "description": "Diagnostics: under \"No secrets exposed\" when all is well."
+  },
+  "diagSecretsExposed": "{count, plural, one{{count} secret-looking value exposed — possible leak} other{{count} secret-looking values exposed — possible leak}}",
+  "@diagSecretsExposed": {
+    "description": "Diagnostics: under \"No secrets exposed\" when values that look secret were found.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagKeyNotEchoed": "API key not echoed",
+  "@diagKeyNotEchoed": {
+    "description": "Diagnostics: check name: the config API does not send the API key back."
+  },
+  "diagKeyEchoed": "the API key appears verbatim in /api/config — leak",
+  "@diagKeyEchoed": {
+    "description": "Diagnostics: under \"API key not echoed\" when it is (a leak)."
+  },
+  "diagKeyAbsent": "the API key is absent from the response",
+  "@diagKeyAbsent": {
+    "description": "Diagnostics: under \"API key not echoed\" when all is well."
+  },
+  "diagNeedsLanKeyToken": "needs key+token from the LAN — skipping",
+  "@diagNeedsLanKeyToken": {
+    "description": "Diagnostics: the config API needs key and token from the server's LAN, so the check is skipped."
+  },
+  "diagSectionInput": "Input validation",
+  "@diagSectionInput": {
+    "description": "Diagnostics: section heading: the server refuses bad input."
+  },
+  "diagUnknownUnit": "Unknown unit → {status}",
+  "@diagUnknownUnit": {
+    "description": "Diagnostics: check name: asking for an air conditioner that does not exist gives HTTP {status}.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagBoundsCheck": "Bounds check",
+  "@diagBoundsCheck": {
+    "description": "Diagnostics: check name: an out-of-range temperature is refused."
+  },
+  "diagNoUnitsToTest": "no units to test against",
+  "@diagNoUnitsToTest": {
+    "description": "Diagnostics: under \"Bounds check\" when there is no air conditioner."
+  },
+  "diagOutOfRangeRejected": "Out-of-range rejected",
+  "@diagOutOfRangeRejected": {
+    "description": "Diagnostics: check name: an out-of-range value was refused (good)."
+  },
+  "diagOutOfRangeRejectedDetail": "{probe} refused with {status}",
+  "@diagOutOfRangeRejectedDetail": {
+    "description": "Diagnostics: under \"Out-of-range rejected\". {probe} is the request sent (target_temperature=99), {status} the HTTP status.",
+    "placeholders": {
+      "probe": {
+        "type": "String"
+      },
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagOutOfRangeAccepted": "Out-of-range ACCEPTED",
+  "@diagOutOfRangeAccepted": {
+    "description": "Diagnostics: check name: an out-of-range value was ACCEPTED (bad). The capitals are for emphasis."
+  },
+  "diagOutOfRangeAcceptedDetail": "server took {probe} ({status}) — bounds not enforced",
+  "@diagOutOfRangeAcceptedDetail": {
+    "description": "Diagnostics: under \"Out-of-range ACCEPTED\". {probe} is the request sent (target_temperature=99), {status} the HTTP status.",
+    "placeholders": {
+      "probe": {
+        "type": "String"
+      },
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "diagOutOfRangeOther": "out-of-range control returned {status} (expected {expected})",
+  "@diagOutOfRangeOther": {
+    "description": "Diagnostics: under \"Bounds check\" when the answer was neither a refusal nor an acceptance.",
+    "placeholders": {
+      "status": {
+        "type": "int"
+      },
+      "expected": {
+        "type": "int"
+      }
+    }
+  },
+  "diagBatchState": "Batch state",
+  "@diagBatchState": {
+    "description": "Diagnostics: section heading, and check name: reading every air conditioner's state in one request."
+  },
+  "diagOneShotBatch": "One-shot batch",
+  "@diagOneShotBatch": {
+    "description": "Diagnostics: check name: the one-request read of every state."
+  },
+  "diagBatchDetail": "{count, plural, one{{count} state} other{{count} states}} in {ms} ms",
+  "@diagBatchDetail": {
+    "description": "Diagnostics: under \"One-shot batch\": how many states came back, and how long it took in milliseconds.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "diagUnreachableInBatch": "Unreachable in batch",
+  "@diagUnreachableInBatch": {
+    "description": "Diagnostics: check name: air conditioners the batch read could not reach."
+  },
+  "diagUnreachableDetail": "{count, plural, one{{count} unit} other{{count} units}}: {names}",
+  "@diagUnreachableDetail": {
+    "description": "Diagnostics: under \"Unreachable in batch\": how many, then their names.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "diagBatchCoverage": "Batch coverage",
+  "@diagBatchCoverage": {
+    "description": "Diagnostics: check name: the batch read covers every air conditioner."
+  },
+  "diagCoversAll": "{count, plural, one{covers the {count} unit} other{covers all {count} units}}",
+  "@diagCoversAll": {
+    "description": "Diagnostics: under \"Batch coverage\" when every air conditioner was covered.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagCoveredOf": "covered {seen} of {total}",
+  "@diagCoveredOf": {
+    "description": "Diagnostics: under \"Batch coverage\" when some were missed: {seen} of {total} air conditioners.",
+    "placeholders": {
+      "seen": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "diagSectionLive": "Live stream (SSE)",
+  "@diagSectionLive": {
+    "description": "Diagnostics: section heading: the server's live update stream. Keep SSE."
+  },
+  "diagLiveUpdates": "Live updates",
+  "@diagLiveUpdates": {
+    "description": "Diagnostics: check name when the server does not offer live updates."
+  },
+  "diagNoLiveStreamFeature": "server doesn’t advertise {feature} — skipping",
+  "@diagNoLiveStreamFeature": {
+    "description": "Diagnostics: the server does not list the live stream feature ({feature} is its technical name, live_stream).",
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "diagStreamConnected": "Stream connected",
+  "@diagStreamConnected": {
+    "description": "Diagnostics: check name: the live stream connected."
+  },
+  "diagFirstUpdate": "first live update received ({name})",
+  "@diagFirstUpdate": {
+    "description": "Diagnostics: under \"Stream connected\": the first update arrived; {name} is the air conditioner it was about.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "diagNoUpdateWithin": "no update pushed within {seconds} s (idle is normal)",
+  "@diagNoUpdateWithin": {
+    "description": "Diagnostics: under \"Stream connected\": nothing arrived within {seconds} seconds (\"s\" is the unit), which is normal when nothing changes.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "diagLiveStream": "Live stream",
+  "@diagLiveStream": {
+    "description": "Diagnostics: check name when the live stream failed."
+  },
+  "diagStreamClosed": "closed without an update ({error})",
+  "@diagStreamClosed": {
+    "description": "Diagnostics: the live stream closed before any update. {error} is a technical message in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "diagSectionUnit": "Unit: {name}",
+  "@diagSectionUnit": {
+    "description": "Diagnostics: section heading for one air conditioner; {name} is its name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "diagStateFetched": "State fetched",
+  "@diagStateFetched": {
+    "description": "Diagnostics: check name: the air conditioner's state was read; the line under it is the time in ms."
+  },
+  "diagState": "State",
+  "@diagState": {
+    "description": "Diagnostics: check name when reading the state failed."
+  },
+  "diagOnline": "Online",
+  "@diagOnline": {
+    "description": "Diagnostics: check name: the air conditioner answers (the line under it is true or false)."
+  },
+  "diagTarget": "Target",
+  "@diagTarget": {
+    "description": "Diagnostics: check name: the target temperature is in range."
+  },
+  "diagTargetDetail": "{value}° (expected {min}–{max})",
+  "@diagTargetDetail": {
+    "description": "Diagnostics: under \"Target\": the value, then the allowed range. Numbers already formatted.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "diagIndoorSensor": "Indoor sensor",
+  "@diagIndoorSensor": {
+    "description": "Diagnostics: check name: the indoor temperature sensor gives a reading."
+  },
+  "diagNoReading": "no reading",
+  "@diagNoReading": {
+    "description": "Diagnostics: under \"Indoor sensor\" when there is no reading."
+  },
+  "diagReadouts": "Readouts",
+  "@diagReadouts": {
+    "description": "Diagnostics: check name over the raw state values (power=, fan=, ... stay as they are)."
+  },
+  "diagSwing": "Swing",
+  "@diagSwing": {
+    "description": "Diagnostics: check name: the flaps' setting is a known one (the line under it is the raw value)."
+  },
+  "diagCapabilities": "Capabilities",
+  "@diagCapabilities": {
+    "description": "Diagnostics: check name: what the air conditioner's hardware offers."
+  },
+  "diagModeCount": "{count, plural, one{{count} mode} other{{count} modes}}",
+  "@diagModeCount": {
+    "description": "Diagnostics: under \"Capabilities\": how many modes the air conditioner has.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagModeCountUnknown": "? modes",
+  "@diagModeCountUnknown": {
+    "description": "Diagnostics: under \"Capabilities\" when the number of modes is unknown."
+  },
+  "diagCapabilitiesDetail": "{modes}, range {range}",
+  "@diagCapabilitiesDetail": {
+    "description": "Diagnostics: under \"Capabilities\": {modes} is \"3 modes\", {range} the temperature range, like 16–30°.",
+    "placeholders": {
+      "modes": {
+        "type": "String"
+      },
+      "range": {
+        "type": "String"
+      }
+    }
+  },
+  "diagCapabilitiesDetailExtras": "{modes}, range {range}, {extras}",
+  "@diagCapabilitiesDetailExtras": {
+    "description": "Diagnostics: as \"{modes}, range {range}\", followed by the extras the unit has (eco/turbo/h-swing, not translated).",
+    "placeholders": {
+      "modes": {
+        "type": "String"
+      },
+      "range": {
+        "type": "String"
+      },
+      "extras": {
+        "type": "String"
+      }
+    }
+  },
+  "diagLatency": "Latency",
+  "@diagLatency": {
+    "description": "Diagnostics: check name: how fast the air conditioner answers."
+  },
+  "diagLatencyDetail": "avg {ms} ms over {count, plural, one{{count} call} other{{count} calls}}",
+  "@diagLatencyDetail": {
+    "description": "Diagnostics: under \"Latency\": the average time in ms over {count} requests.",
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagLatencySlow": "avg {ms} ms over {count, plural, one{{count} call} other{{count} calls}} — check Wi-Fi to this unit",
+  "@diagLatencySlow": {
+    "description": "Diagnostics: as the latency line, when it is slow: suggests checking the Wi-Fi to the air conditioner.",
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagNoSamples": "no samples succeeded",
+  "@diagNoSamples": {
+    "description": "Diagnostics: under \"Latency\" when every timing request failed."
+  },
+  "diagSectionPrograms": "Programs / scheduler",
+  "@diagSectionPrograms": {
+    "description": "Diagnostics: section heading: the server's programs and the scheduler that runs them."
+  },
+  "diagScheduler": "Scheduler",
+  "@diagScheduler": {
+    "description": "Diagnostics: check name: the scheduler is running (the line under it is raw values, not translated)."
+  },
+  "diagProgramsMissing": "programs feature not present — skipping",
+  "@diagProgramsMissing": {
+    "description": "Diagnostics: the server has no programs feature, so the check is skipped."
+  },
+  "diagPrograms": "Programs",
+  "@diagPrograms": {
+    "description": "Diagnostics: check name: the server's programs."
+  },
+  "diagProgramsDetail": "{total}: {favourites} favourite, {schedules} schedule, {curves} curve ({enabled} enabled)",
+  "@diagProgramsDetail": {
+    "description": "Diagnostics: under \"Programs\": the total, then how many favourites, schedules and curves, and how many are enabled. Written as \"label count\" where a plural would not agree.",
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "favourites": {
+        "type": "int"
+      },
+      "schedules": {
+        "type": "int"
+      },
+      "curves": {
+        "type": "int"
+      },
+      "enabled": {
+        "type": "int"
+      }
+    }
+  },
+  "diagSectionSummary": "Summary",
+  "@diagSectionSummary": {
+    "description": "Diagnostics: section heading of the verdict."
+  },
+  "diagProblemsFound": "Problems found",
+  "@diagProblemsFound": {
+    "description": "Diagnostics: verdict when a check failed."
+  },
+  "diagPassedWithWarnings": "Passed with warnings",
+  "@diagPassedWithWarnings": {
+    "description": "Diagnostics: verdict when nothing failed but something warned."
+  },
+  "diagAllPassed": "All checks passed",
+  "@diagAllPassed": {
+    "description": "Diagnostics: verdict when every check passed."
+  },
+  "diagProblemCount": "{count, plural, one{{count} problem} other{{count} problems}}",
+  "@diagProblemCount": {
+    "description": "Diagnostics: the number of failed checks, in the verdict.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagWarningCount": "{count, plural, one{{count} warning} other{{count} warnings}}",
+  "@diagWarningCount": {
+    "description": "Diagnostics: the number of warnings, in the verdict.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "diagProblemsAndWarnings": "{problems}, {warnings}",
+  "@diagProblemsAndWarnings": {
+    "description": "Diagnostics: the verdict's line when a check failed: \"3 problems, 1 warning\".",
+    "placeholders": {
+      "problems": {
+        "type": "String"
+      },
+      "warnings": {
+        "type": "String"
+      }
+    }
+  },
+  "diagNoIssues": "no issues",
+  "@diagNoIssues": {
+    "description": "Diagnostics: the verdict's line when every check passed."
   }
 }

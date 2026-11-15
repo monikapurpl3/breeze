@@ -90,7 +90,7 @@
             android:src="@drawable/ic_widget_power"
             android:scaleType="centerInside"
             android:padding="8dp"
-            android:contentDescription="Power" />
+            android:contentDescription="@string/widget_power" />
 
         <ImageButton
             android:id="@+id/widget_btn_minus"
@@ -102,7 +102,7 @@
             android:src="@drawable/ic_widget_minus"
             android:scaleType="centerInside"
             android:padding="8dp"
-            android:contentDescription="Lower temperature" />
+            android:contentDescription="@string/widget_lower_temp" />
 
         <ImageButton
             android:id="@+id/widget_btn_plus"
@@ -114,7 +114,7 @@
             android:src="@drawable/ic_widget_plus"
             android:scaleType="centerInside"
             android:padding="8dp"
-            android:contentDescription="Raise temperature" />
+            android:contentDescription="@string/widget_raise_temp" />
 
         <ImageButton
             android:id="@+id/widget_btn_refresh"
@@ -126,6 +126,6 @@
             android:src="@drawable/ic_widget_refresh"
             android:scaleType="centerInside"
             android:padding="8dp"
-            android:contentDescription="Refresh" />
+            android:contentDescription="@string/widget_refresh" />
     </LinearLayout>
 </LinearLayout>

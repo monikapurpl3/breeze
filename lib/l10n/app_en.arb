@@ -1,11 +1,159 @@
 {
   "@@locale": "en",
   "language": "Language",
-  "languageSystem": "System default",
   "@language": {
-    "description": "Settings: the title of the language picker, and of the list it opens."
+    "description": "Settings: the language picker, and the list it opens."
   },
+  "languageSystem": "System default",
   "@languageSystem": {
     "description": "Settings, language picker: follow the phone's own language."
+  },
+  "modeAuto": "auto",
+  "@modeAuto": {
+    "description": "An air conditioner mode, as a short label on a mode tile and in lists. Lower case in English."
+  },
+  "modeCool": "cool",
+  "@modeCool": {
+    "description": "Mode: cooling."
+  },
+  "modeDry": "dry",
+  "@modeDry": {
+    "description": "Mode: dehumidifying."
+  },
+  "modeHeat": "heat",
+  "@modeHeat": {
+    "description": "Mode: heating."
+  },
+  "modeFan": "fan",
+  "@modeFan": {
+    "description": "Mode: fan only, no cooling or heating."
+  },
+  "fanSpeedSilent": "silent",
+  "@fanSpeedSilent": {
+    "description": "A fan speed: the quietest step. Lower case."
+  },
+  "fanSpeedLow": "low",
+  "@fanSpeedLow": {
+    "description": "A fan speed."
+  },
+  "fanSpeedMedium": "medium",
+  "@fanSpeedMedium": {
+    "description": "A fan speed."
+  },
+  "fanSpeedHigh": "high",
+  "@fanSpeedHigh": {
+    "description": "A fan speed."
+  },
+  "fanSpeedMax": "max",
+  "@fanSpeedMax": {
+    "description": "A fan speed: the strongest step."
+  },
+  "fanSpeedAuto": "auto",
+  "@fanSpeedAuto": {
+    "description": "A fan speed: the unit chooses."
+  },
+  "swingOff": "off",
+  "@swingOff": {
+    "description": "Flaps: not swinging. Lower case."
+  },
+  "swingVertical": "vertical",
+  "@swingVertical": {
+    "description": "Flaps: swinging up and down."
+  },
+  "swingHorizontal": "horizontal",
+  "@swingHorizontal": {
+    "description": "Flaps: swinging left and right."
+  },
+  "swingBoth": "both",
+  "@swingBoth": {
+    "description": "Flaps: swinging both ways."
+  },
+  "actionCancel": "Cancel",
+  "@actionCancel": {
+    "description": "A button."
+  },
+  "actionSave": "Save",
+  "@actionSave": {
+    "description": "A button."
+  },
+  "actionOk": "OK",
+  "@actionOk": {
+    "description": "A button."
+  },
+  "actionDelete": "Delete",
+  "@actionDelete": {
+    "description": "A button."
+  },
+  "actionClose": "Close",
+  "@actionClose": {
+    "description": "A button."
+  },
+  "actionRetry": "Retry",
+  "@actionRetry": {
+    "description": "A button."
+  },
+  "actionRename": "Rename",
+  "@actionRename": {
+    "description": "A button or menu item."
+  },
+  "actionRemove": "Remove",
+  "@actionRemove": {
+    "description": "A button or menu item."
+  },
+  "actionApply": "Apply",
+  "@actionApply": {
+    "description": "A button: put a saved setting into effect now."
+  },
+  "actionAdd": "Add",
+  "@actionAdd": {
+    "description": "A button."
+  },
+  "actionEdit": "Edit",
+  "@actionEdit": {
+    "description": "A button."
+  },
+  "actionDone": "Done",
+  "@actionDone": {
+    "description": "A button."
+  },
+  "stateOn": "on",
+  "@stateOn": {
+    "description": "A switch or unit is on. Lower case."
+  },
+  "stateOff": "off",
+  "@stateOff": {
+    "description": "A switch or unit is off. Lower case."
+  },
+  "stateOffline": "offline",
+  "@stateOffline": {
+    "description": "A unit or the server cannot be reached. Lower case."
+  },
+  "labelPower": "Power",
+  "@labelPower": {
+    "description": "The unit's power switch, as a label."
+  },
+  "labelMode": "Mode",
+  "@labelMode": {
+    "description": "The unit's mode, as a heading or label."
+  },
+  "labelFan": "Fan",
+  "@labelFan": {
+    "description": "The unit's fan speed, as a heading or label."
+  },
+  "labelEco": "Eco",
+  "@labelEco": {
+    "description": "The eco setting. A name, usually not translated."
+  },
+  "labelTurbo": "Turbo",
+  "@labelTurbo": {
+    "description": "The turbo setting. A name, usually not translated."
+  },
+  "labelVerticalFlap": "Vertical flap",
+  "@labelVerticalFlap": {
+    "description": "The flap that swings up and down."
+  },
+  "labelHorizontalFlap": "Horizontal flap",
+  "@labelHorizontalFlap": {
+    "description": "The flap that swings left and right."
   }
 }

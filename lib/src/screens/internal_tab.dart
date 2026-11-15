@@ -10,6 +10,7 @@ import '../api_client.dart';
 import '../app_scope.dart';
 import '../haptics.dart';
 import '../internal_prefs.dart';
+import '../l10n.dart';
 import '../widgets/loading_cat.dart';
 import 'json_view_screen.dart';
 
@@ -75,24 +76,25 @@ class _InternalTabState extends State<InternalTab> {
     if (!_loaded) return const Center(child: CircularProgressIndicator());
     final c = AppScope.of(context);
     final i = c.internal;
+    final l = context.l10n;
     return ListView(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 40),
       children: [
         _Card(
-          title: 'Colours',
+          title: l.internalColours,
           icon: Icons.palette_outlined,
           children: [
             SegmentedButton<ColourSource>(
-              segments: const [
-                ButtonSegment(
+              segments: [
+                const ButtonSegment(
                   value: ColourSource.wallpaper,
                   label: Text('Material You'),
                   icon: Icon(Icons.wallpaper),
                 ),
                 ButtonSegment(
                   value: ColourSource.custom,
-                  label: Text('My colour'),
-                  icon: Icon(Icons.colorize),
+                  label: Text(l.internalColourSourceMine),
+                  icon: const Icon(Icons.colorize),
                 ),
               ],
               selected: {i.colourSource},
@@ -102,9 +104,8 @@ class _InternalTabState extends State<InternalTab> {
             const SizedBox(height: 6),
             Text(
               i.colourSource == ColourSource.wallpaper
-                  ? 'From the wallpaper, where the system offers it (Android 12 and '
-                      'newer); the built-in teal elsewhere.'
-                  : 'Your colour, everywhere, whatever the wallpaper.',
+                  ? l.internalColourWallpaperHint
+                  : l.internalColourMineHint,
               style: _hint(context),
             ),
             if (i.colourSource == ColourSource.custom) ...[
@@ -121,12 +122,12 @@ class _InternalTabState extends State<InternalTab> {
               const SizedBox(height: 12),
               DropdownButtonFormField<DynamicSchemeVariant>(
                 initialValue: i.schemeVariant,
-                decoration: const InputDecoration(
-                  labelText: 'Style',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l.internalColourStyle,
+                  border: const OutlineInputBorder(),
                 ),
                 items: [
-                  for (final v in _variants.entries)
+                  for (final v in _variants(l).entries)
                     DropdownMenuItem(value: v.key, child: Text(v.value)),
                 ],
                 onChanged: (v) {
@@ -139,75 +140,72 @@ class _InternalTabState extends State<InternalTab> {
           ],
         ),
         _Card(
-          title: 'Connection',
+          title: l.internalConnection,
           icon: Icons.lan_outlined,
           children: _connection(c),
         ),
         _Card(
-          title: 'Pairing',
+          title: l.internalPairing,
           icon: Icons.verified_user_outlined,
           children: [
-            _Fact('This device', _label),
+            _Fact(l.internalThisDevice, _label),
             _Fact(
-              'Signs in with',
+              l.internalSignsInWith,
               _authVersion == null
                   ? '?'
                   : _authVersion! >= 2
-                      ? 'v2 (Ed25519-signed requests)'
-                      : 'v1 (a bearer token)',
+                      ? l.internalAuthV2
+                      : l.internalAuthV1,
             ),
             const SizedBox(height: 8),
             OutlinedButton.icon(
               icon: const Icon(Icons.link),
-              label: const Text('Pair again…'),
+              label: Text(l.internalPairAgainButton),
               onPressed: _pairAgain,
             ),
             const SizedBox(height: 4),
             Text(
-              'Asks for a new pairing code, with a name and auth version you '
-              'choose. This device keeps working as it is until an admin '
-              'approves the new code.',
+              l.internalPairAgainHint,
               style: _hint(context),
             ),
           ],
         ),
         _Card(
-          title: 'Display and feel',
+          title: l.internalDisplay,
           icon: Icons.tune,
           children: [
             _Switch(
-              'Show each unit\'s IP address',
-              'Under its name on the control screen',
+              l.internalShowIp,
+              l.internalShowIpHint,
               i.showUnitIp,
               (v) => c.updateInternal((p) => p.showUnitIp = v),
             ),
             _Switch(
-              'Show latency at the top',
-              'Round-trip time to the server, measured every 15 seconds, and '
-                  'the address in use when a fallback is answering',
+              l.internalShowLatency,
+              l.internalShowLatencyHint,
               i.showLatency,
               (v) => c.updateInternal((p) => p.showLatency = v),
             ),
             _Switch(
-              'Vibration',
-              'The small taps and buzzes that confirm a control',
+              l.internalVibration,
+              l.internalVibrationHint,
               i.haptics,
               (v) => c.updateInternal((p) => p.haptics = v),
             ),
           ],
         ),
         _Card(
-          title: 'What the server holds',
+          title: l.internalServerData,
           icon: Icons.data_object,
           children: [
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.event_note_outlined),
-              title: const Text('Programs, as JSON'),
-              subtitle: const Text('Favourites, schedules and curves. Read-only'),
+              title: Text(l.internalProgramsJson),
+              subtitle: Text(l.internalProgramsJsonHint),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => _openJson(
-                'Programs',
+                l.internalProgramsTitle,
                 () => c.api!.programsRaw(),
                 kinds: const ['favourite', 'schedule', 'curve'],
               ),
@@ -215,21 +213,21 @@ class _InternalTabState extends State<InternalTab> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.hourglass_empty),
-              title: const Text('Timers, as JSON'),
-              subtitle: const Text('Sleep timers and scheduled starts. Read-only'),
+              title: Text(l.internalTimersJson),
+              subtitle: Text(l.internalTimersJsonHint),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => _openJson(
-                'Timers',
+                l.internalTimersTitle,
                 () => c.api!.timersRaw(withStarts: true),
               ),
             ),
           ],
         ),
         _Card(
-          title: 'Cat facts',
+          title: l.internalCatFacts,
           icon: Icons.pets,
           children: [
-            Text('Your own, one per line, shown while the app waits on the server.',
+            Text(l.internalCatFactsHint,
                 style: _hint(context)),
             const SizedBox(height: 8),
             TextField(
@@ -237,10 +235,10 @@ class _InternalTabState extends State<InternalTab> {
               minLines: 3,
               maxLines: 8,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Cat facts',
-                hintText: 'A cat\'s purr is around 25 to 150 hertz.',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l.internalCatFacts,
+                hintText: l.internalCatFactsExample,
+                border: const OutlineInputBorder(),
               ),
               onChanged: (_) => setState(() => _factsDirty = true),
             ),
@@ -248,24 +246,24 @@ class _InternalTabState extends State<InternalTab> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: _factsDirty ? _saveFacts : null,
-                child: const Text('Save facts'),
+                child: Text(l.internalSaveFacts),
               ),
             ),
             _Switch(
-              'Keep the built-in facts too',
-              '${CatFacts.all.length} of them, mixed in with yours',
+              l.internalKeepBuiltIn,
+              l.internalKeepBuiltInHint(CatFacts.all.length),
               i.builtInCatFacts,
               (v) => c.updateInternal((p) => p.builtInCatFacts = v),
             ),
             const SizedBox(height: 4),
-            Text('Next up: “${CatFacts.random()}”', style: _hint(context)),
+            Text(l.internalNextUp(CatFacts.random()), style: _hint(context)),
           ],
         ),
         const SizedBox(height: 8),
         Center(
           child: TextButton.icon(
             icon: const Icon(Icons.restart_alt),
-            label: const Text('Reset these settings'),
+            label: Text(l.internalReset),
             onPressed: _reset,
           ),
         ),
@@ -278,23 +276,23 @@ class _InternalTabState extends State<InternalTab> {
   List<Widget> _connection(dynamic c) {
     final api = c.api as ApiClient?;
     final i = c.internal as InternalPrefs;
+    final l = context.l10n;
     return [
-      _Fact('Main address', api?.baseUrl ?? '?'),
+      _Fact(l.internalMainAddress, api?.baseUrl ?? '?'),
       if (api != null)
         ListenableBuilder(
           listenable: Listenable.merge([api.currentUrl, api.latencyMs]),
           builder: (context, _) => _Fact(
-            'In use now',
+            l.internalInUseNow,
             '${api.currentUrl.value}'
                 '${api.latencyMs.value == null ? '' : ' · ${api.latencyMs.value} ms'}',
           ),
         ),
       const SizedBox(height: 10),
-      Text('Fallback addresses', style: Theme.of(context).textTheme.titleSmall),
+      Text(l.internalFallbacks, style: Theme.of(context).textTheme.titleSmall),
       const SizedBox(height: 2),
       Text(
-        'Tried in this order when the main address can\'t be reached, then the '
-        'LAN addresses below. This device\'s pairing works at all of them.',
+        l.internalFallbacksHint,
         style: _hint(context),
       ),
       const SizedBox(height: 6),
@@ -310,15 +308,14 @@ class _InternalTabState extends State<InternalTab> {
         alignment: Alignment.centerLeft,
         child: TextButton.icon(
           icon: const Icon(Icons.add),
-          label: const Text('Add a fallback address'),
+          label: Text(l.internalAddFallback),
           onPressed: _addFallback,
         ),
       ),
       const Divider(height: 20),
       _Switch(
-        'Then try the server\'s LAN addresses',
-        'Asked from the server and refreshed at every launch: for when the '
-            'main address is a public one and you are at home',
+        l.internalTryLan,
+        l.internalTryLanHint,
         _lan,
         (v) async {
           setState(() {
@@ -337,20 +334,20 @@ class _InternalTabState extends State<InternalTab> {
             child: LinearProgressIndicator(),
           )
         else if (_lanAddresses.isEmpty)
-          Text(_lanNote ?? 'None learned yet.', style: _hint(context))
+          Text(_lanNote ?? l.internalLanNoneYet, style: _hint(context))
         else
           for (final a in _lanAddresses) _Fact('LAN', a),
         Align(
           alignment: Alignment.centerLeft,
           child: TextButton.icon(
             icon: const Icon(Icons.refresh),
-            label: const Text('Ask the server again'),
+            label: Text(l.internalAskAgain),
             onPressed: _learning ? null : _learnLan,
           ),
         ),
       ],
       const Divider(height: 20),
-      Text('Give up on a request after ${i.timeoutSeconds} s',
+      Text(l.internalTimeout(i.timeoutSeconds),
           style: Theme.of(context).textTheme.titleSmall),
       Slider(
         min: InternalPrefs.minTimeoutSeconds.toDouble(),
@@ -358,18 +355,17 @@ class _InternalTabState extends State<InternalTab> {
         divisions: InternalPrefs.maxTimeoutSeconds - InternalPrefs.minTimeoutSeconds,
         value: i.timeoutSeconds.toDouble(),
         label: '${i.timeoutSeconds} s',
-        semanticFormatterCallback: (v) => '${v.round()} seconds',
+        semanticFormatterCallback: (v) => l.internalTimeoutSemantics(v.round()),
         onChanged: (v) => c.updateInternal((p) => p.timeoutSeconds = v.round()),
       ),
       Text(
-        'Per address. With fallbacks, a short timeout reaches the next one sooner.',
+        l.internalTimeoutHint,
         style: _hint(context),
       ),
       const SizedBox(height: 6),
       _Switch(
-        'Live updates',
-        'Changes pushed by the server as they happen. Off: ask every 5 seconds '
-            'instead, as with a server older than 3.0',
+        l.internalLiveUpdates,
+        l.internalLiveUpdatesHint('3.0'),
         i.liveUpdates,
         (v) => c.updateInternal((p) => p.liveUpdates = v),
       ),
@@ -392,26 +388,27 @@ class _InternalTabState extends State<InternalTab> {
   }
 
   Future<void> _addFallback() async {
+    final l = context.l10n;
     final ctrl = TextEditingController();
     final url = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Fallback address'),
+        title: Text(l.internalFallbackDialogTitle),
         content: TextField(
           controller: ctrl,
           autofocus: true,
           keyboardType: TextInputType.url,
-          decoration: const InputDecoration(
-            labelText: 'Address',
-            hintText: 'https://breeze.example.com or 192.168.1.10:8420',
+          decoration: InputDecoration(
+            labelText: l.internalAddressLabel,
+            hintText: l.internalAddressHint,
           ),
           onSubmitted: (v) => Navigator.pop(ctx, v),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.actionCancel)),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, ctrl.text),
-            child: const Text('Add'),
+            child: Text(l.actionAdd),
           ),
         ],
       ),
@@ -420,26 +417,27 @@ class _InternalTabState extends State<InternalTab> {
     if (url == null || url.trim().isEmpty || !mounted) return;
     final normal = ApiClient.normalizeUrl(url);
     if (normal == AppScope.of(context).api?.baseUrl) {
-      _snack('That is the main address already.');
+      _snack(l.internalAlreadyMain);
       return;
     }
     await _setFallbacks([..._fallbacks, normal]);
   }
 
   Future<void> _learnLan() async {
+    final l = context.l10n;
     setState(() {
       _learning = true;
       _lanNote = null;
     });
     String? note;
     try {
-      note = await AppScope.of(context).learnLanAddresses();
+      note = await AppScope.of(context).learnLanAddresses(l);
     } on ApiException catch (e) {
       note = e.status == 404
-          ? 'This server can\'t say: it needs Breeze Core 3.0.5 or newer.'
-          : 'Could not ask the server: ${e.message}';
+          ? l.internalLanNeedsNewer('3.0.5')
+          : l.internalLanAskFailed(e.message);
     } catch (e) {
-      note = 'Could not ask the server: $e';
+      note = l.internalLanAskFailed('$e');
     }
     _lanNote = note;
     await _refreshLan();
@@ -459,6 +457,7 @@ class _InternalTabState extends State<InternalTab> {
 
   Future<void> _pairAgain() async {
     final c = AppScope.of(context);
+    final l = context.l10n;
     final choice = await showDialog<(int, String)>(
       context: context,
       builder: (_) => _PairAgainDialog(label: _label, authVersion: _authVersion ?? 2),
@@ -473,16 +472,17 @@ class _InternalTabState extends State<InternalTab> {
       nav.popUntil((r) => r.isFirst);
     } on ApiException catch (e) {
       _snack(e.status == 426
-          ? 'This server only accepts v2 pairing.'
-          : 'Could not start pairing: ${e.message}');
+          ? l.internalOnlyV2
+          : l.internalPairFailed(e.message));
     } catch (e) {
-      _snack('Could not start pairing: $e');
+      _snack(l.internalPairFailed('$e'));
     }
   }
 
   // --- the rest --------------------------------------------------------------
 
   Future<void> _saveFacts() async {
+    final l = context.l10n;
     final facts = _facts.text
         .split('\n')
         .map((l) => l.trim())
@@ -492,23 +492,22 @@ class _InternalTabState extends State<InternalTab> {
     if (!mounted) return;
     setState(() => _factsDirty = false);
     _snack(facts.isEmpty
-        ? 'No facts of your own: the built-in ones it is'
-        : '${facts.length} ${facts.length == 1 ? 'fact' : 'facts'} saved');
+        ? l.internalFactsNone
+        : l.internalFactsSaved(facts.length));
   }
 
   Future<void> _reset() async {
+    final l = context.l10n;
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Reset these settings?'),
-        content: const Text(
-          'Colours, display, vibration, timeout, live updates and cat facts go '
-          'back to how the app ships. Fallback addresses and pairing are this '
-          'server\'s, and stay.',
+        title: Text(l.internalResetTitle),
+        content: Text(
+          l.internalResetBody,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Reset')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.actionCancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l.internalResetConfirm)),
         ],
       ),
     );
@@ -536,16 +535,16 @@ TextStyle? _hint(BuildContext context) => Theme.of(context)
     .bodySmall
     ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
 
-const _variants = {
-  DynamicSchemeVariant.tonalSpot: 'Calm (the default)',
-  DynamicSchemeVariant.vibrant: 'Vibrant',
-  DynamicSchemeVariant.expressive: 'Expressive',
-  DynamicSchemeVariant.content: 'Faithful to the colour',
-  DynamicSchemeVariant.fidelity: 'True to the colour',
-  DynamicSchemeVariant.rainbow: 'Rainbow',
-  DynamicSchemeVariant.fruitSalad: 'Fruit salad',
-  DynamicSchemeVariant.neutral: 'Muted',
-  DynamicSchemeVariant.monochrome: 'Monochrome',
+Map<DynamicSchemeVariant, String> _variants(AppLocalizations l) => {
+  DynamicSchemeVariant.tonalSpot: l.internalVariantTonalSpot,
+  DynamicSchemeVariant.vibrant: l.internalVariantVibrant,
+  DynamicSchemeVariant.expressive: l.internalVariantExpressive,
+  DynamicSchemeVariant.content: l.internalVariantContent,
+  DynamicSchemeVariant.fidelity: l.internalVariantFidelity,
+  DynamicSchemeVariant.rainbow: l.internalVariantRainbow,
+  DynamicSchemeVariant.fruitSalad: l.internalVariantFruitSalad,
+  DynamicSchemeVariant.neutral: l.internalVariantNeutral,
+  DynamicSchemeVariant.monochrome: l.internalVariantMonochrome,
 };
 
 // --- pieces -------------------------------------------------------------------
@@ -663,6 +662,7 @@ class _FallbackRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final l = context.l10n;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 3),
       padding: const EdgeInsets.only(left: 10),
@@ -681,17 +681,17 @@ class _FallbackRow extends StatelessWidget {
                 style: const TextStyle(fontSize: 13)),
           ),
           IconButton(
-            tooltip: 'Try $url earlier',
+            tooltip: l.internalFallbackEarlier(url),
             icon: const Icon(Icons.arrow_upward),
             onPressed: onUp,
           ),
           IconButton(
-            tooltip: 'Try $url later',
+            tooltip: l.internalFallbackLater(url),
             icon: const Icon(Icons.arrow_downward),
             onPressed: onDown,
           ),
           IconButton(
-            tooltip: 'Remove $url',
+            tooltip: l.internalFallbackRemove(url),
             icon: const Icon(Icons.close),
             onPressed: onRemove,
           ),
@@ -708,19 +708,19 @@ class _Swatches extends StatelessWidget {
   final int selected;
   final ValueChanged<int> onPick;
 
-  static const _colours = <int, String>{
-    0xFF4FD1C5: 'Teal',
-    0xFF4D97EA: 'Blue',
-    0xFF5C6BC0: 'Indigo',
-    0xFF9D7CD8: 'Lavender',
-    0xFFE0507C: 'Pink',
-    0xFFE2504A: 'Red',
-    0xFFF0954B: 'Orange',
-    0xFFE0B93A: 'Amber',
-    0xFF5FC768: 'Green',
-    0xFF7F9CB5: 'Slate',
-    0xFF8D6E63: 'Brown',
-    0xFF9E9E9E: 'Grey',
+  static Map<int, String> _colours(AppLocalizations l) => <int, String>{
+    0xFF4FD1C5: l.internalSwatchTeal,
+    0xFF4D97EA: l.internalSwatchBlue,
+    0xFF5C6BC0: l.internalSwatchIndigo,
+    0xFF9D7CD8: l.internalSwatchLavender,
+    0xFFE0507C: l.internalSwatchPink,
+    0xFFE2504A: l.internalSwatchRed,
+    0xFFF0954B: l.internalSwatchOrange,
+    0xFFE0B93A: l.internalSwatchAmber,
+    0xFF5FC768: l.internalSwatchGreen,
+    0xFF7F9CB5: l.internalSwatchSlate,
+    0xFF8D6E63: l.internalSwatchBrown,
+    0xFF9E9E9E: l.internalSwatchGrey,
   };
 
   @override
@@ -730,7 +730,7 @@ class _Swatches extends StatelessWidget {
       spacing: 6,
       runSpacing: 6,
       children: [
-        for (final e in _colours.entries)
+        for (final e in _colours(context.l10n).entries)
           Semantics(
             button: true,
             selected: e.key == selected,
@@ -798,7 +798,7 @@ class _HexFieldState extends State<_HexField> {
   void _submit(String raw) {
     final s = raw.trim().replaceFirst('#', '');
     final ok = RegExp(r'^[0-9a-fA-F]{6}$').hasMatch(s);
-    setState(() => _error = ok ? null : 'Six hex digits, like #4FD1C5');
+    setState(() => _error = ok ? null : context.l10n.internalHexError);
     if (ok) widget.onSubmit(0xFF000000 | int.parse(s, radix: 16));
   }
 
@@ -806,11 +806,11 @@ class _HexFieldState extends State<_HexField> {
   Widget build(BuildContext context) => TextField(
         controller: _c,
         decoration: InputDecoration(
-          labelText: 'Or any colour',
+          labelText: context.l10n.internalHexLabel,
           border: const OutlineInputBorder(),
           errorText: _error,
           suffixIcon: IconButton(
-            tooltip: 'Use this colour',
+            tooltip: context.l10n.internalHexUse,
             icon: const Icon(Icons.check),
             onPressed: () => _submit(_c.text),
           ),
@@ -830,13 +830,14 @@ class _SchemePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = Theme.of(context).colorScheme;
+    final l = context.l10n;
     final pairs = [
-      ('Primary', s.primary, s.onPrimary),
-      ('Secondary', s.secondary, s.onSecondary),
-      ('Tertiary', s.tertiary, s.onTertiary),
-      ('Container', s.primaryContainer, s.onPrimaryContainer),
-      ('Surface', s.surfaceContainerHighest, s.onSurface),
-      ('Error', s.error, s.onError),
+      (l.internalPreviewPrimary, s.primary, s.onPrimary),
+      (l.internalPreviewSecondary, s.secondary, s.onSecondary),
+      (l.internalPreviewTertiary, s.tertiary, s.onTertiary),
+      (l.internalPreviewContainer, s.primaryContainer, s.onPrimaryContainer),
+      (l.internalPreviewSurface, s.surfaceContainerHighest, s.onSurface),
+      (l.internalPreviewError, s.error, s.onError),
     ];
     return ExcludeSemantics(
       child: Wrap(
@@ -876,8 +877,9 @@ class _PairAgainDialogState extends State<_PairAgainDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return AlertDialog(
-      title: const Text('Pair again'),
+      title: Text(l.internalPairAgainTitle),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -885,16 +887,16 @@ class _PairAgainDialogState extends State<_PairAgainDialog> {
           children: [
             TextField(
               controller: _name,
-              decoration: const InputDecoration(
-                labelText: 'Name for this device',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l.internalDeviceName,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 14),
             SegmentedButton<int>(
-              segments: const [
-                ButtonSegment(value: 2, label: Text('v2, signed')),
-                ButtonSegment(value: 1, label: Text('v1, token')),
+              segments: [
+                ButtonSegment(value: 2, label: Text(l.internalSegmentV2)),
+                ButtonSegment(value: 1, label: Text(l.internalSegmentV1)),
               ],
               selected: {_version},
               onSelectionChanged: (s) => setState(() => _version = s.first),
@@ -902,27 +904,23 @@ class _PairAgainDialogState extends State<_PairAgainDialog> {
             const SizedBox(height: 8),
             Text(
               _version == 2
-                  ? 'Every request is signed with a key that never leaves this '
-                      'phone. What the app uses normally.'
-                  : 'A bearer token, as before 3.0. For testing a server with v1; '
-                      'the app stays on v1 instead of upgrading itself.',
+                  ? l.internalV2Hint
+                  : l.internalV1Hint('3.0'),
               style: _hint(context),
             ),
             const SizedBox(height: 8),
             Text(
-              'An admin approves the new code on the server\'s network. Until '
-              'then this device works as it does now; its old entry stays in the '
-              'server\'s device list until revoked there.',
+              l.internalPairAgainNote,
               style: _hint(context),
             ),
           ],
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.actionCancel)),
         FilledButton(
           onPressed: () => Navigator.pop(context, (_version, _name.text)),
-          child: const Text('Get a code'),
+          child: Text(l.internalGetCode),
         ),
       ],
     );

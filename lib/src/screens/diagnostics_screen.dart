@@ -7,6 +7,7 @@ import '../haptics.dart';
 import '../app_info.dart';
 import '../api_client.dart';
 import '../app_scope.dart';
+import '../l10n.dart';
 import '../models.dart';
 
 enum _Level { ok, warn, fail, info }
@@ -43,6 +44,10 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
   bool _running = false;
   Set<String> _features = const {};
 
+  /// The messages for the run in progress, taken when it starts: the checks
+  /// go on across many awaits, where the context is better left alone.
+  late AppLocalizations _l;
+
   ApiClient get _api => AppScope.of(context).api!;
 
   /// True when the configured server is a private/loopback address, i.e. we're
@@ -69,6 +74,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
   }
 
   Future<void> _run() async {
+    _l = context.l10n;
     setState(() {
       _running = true;
       _results.clear();
@@ -79,7 +85,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
     try {
       units = await _connectivity();
     } on ApiException catch (e) {
-      _add(_Level.fail, 'Server unreachable', e.message);
+      _add(_Level.fail, _l.diagServerUnreachable, e.message);
       _finish();
       return;
     }
@@ -106,38 +112,38 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
   // -- connectivity + build ------------------------------------------------
 
   Future<List<UnitSummary>> _connectivity() async {
-    _section('Connectivity & build');
+    _section(_l.diagSectionConnectivity);
     final sw = Stopwatch()..start();
     final units = await _api.listUnits(); // throws → caller reports unreachable
     sw.stop();
-    _add(_Level.ok, 'Server reachable', '${units.length} unit(s) · ${sw.elapsedMilliseconds} ms');
+    _add(_Level.ok, _l.diagServerReachable, _l.diagServerReachableDetail(units.length, sw.elapsedMilliseconds));
 
     try {
       final h = await _api.health();
-      _add(_Level.ok, 'Health endpoint', 'status=${h['status'] ?? '?'}');
+      _add(_Level.ok, _l.diagHealthEndpoint, 'status=${h['status'] ?? '?'}');
     } on ApiException catch (e) {
-      _add(e.status == 404 ? _Level.info : _Level.warn, 'Health endpoint',
-          e.status == 404 ? 'not present (server < 2.4.0)' : e.message);
+      _add(e.status == 404 ? _Level.info : _Level.warn, _l.diagHealthEndpoint,
+          e.status == 404 ? _l.diagNotPresentServer('2.4.0') : e.message);
     }
 
     try {
       final info = await _api.serverInfo();
       _features = ((info['features'] as List?)?.cast<String>() ?? const <String>[]).toSet();
       final ver = info['version'] ?? '?';
-      final commit = info['commit'] ?? 'unknown';
-      _add(_Level.ok, 'Server version', 'Breeze Core $ver (commit $commit)');
-      _add(_Level.info, 'App version', 'Breeze ${AppInfo.version}');
-      _add(_Level.info, 'Advertised features',
-          _features.isEmpty ? 'none advertised' : (_features.toList()..sort()).join(', '));
+      final commit = info['commit'] ?? _l.diagUnknown;
+      _add(_Level.ok, _l.diagServerVersion, _l.diagServerVersionDetail('$ver', '$commit'));
+      _add(_Level.info, _l.diagAppVersion, 'Breeze ${AppInfo.version}');
+      _add(_Level.info, _l.diagFeatures,
+          _features.isEmpty ? _l.diagFeaturesNone : (_features.toList()..sort()).join(', '));
       final serverUnits = (info['units'] as num?)?.toInt();
       if (serverUnits != null) {
-        _add(serverUnits == units.length ? _Level.ok : _Level.warn, 'Unit-count parity',
+        _add(serverUnits == units.length ? _Level.ok : _Level.warn, _l.diagUnitParity,
             serverUnits == units.length
-                ? 'server and listing agree ($serverUnits)'
-                : 'server reports $serverUnits, listing has ${units.length}');
+                ? _l.diagUnitParityAgree(serverUnits)
+                : _l.diagUnitParityDiffer(serverUnits, units.length));
       }
     } on ApiException catch (e) {
-      _add(_Level.warn, 'Server version', 'could not read /api/version — ${e.message}');
+      _add(_Level.warn, _l.diagServerVersion, _l.diagVersionUnreadable(e.message));
     }
     return units;
   }
@@ -145,114 +151,108 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
   // -- authentication posture (security) -----------------------------------
 
   Future<void> _authPosture() async {
-    _section('Authentication posture');
+    _section(_l.diagSectionAuth);
     // No key at all → must be rejected.
     final noKey = await _api.probe('GET', '/api/units', sendKey: false, sendToken: false);
-    _add(noKey == 401 ? _Level.ok : _Level.fail, 'No key rejected',
-        noKey == 401 ? 'correctly returns 401' : 'returned $noKey, expected 401');
+    _add(noKey == 401 ? _Level.ok : _Level.fail, _l.diagNoKeyRejected,
+        noKey == 401 ? _l.diagCorrectlyReturns(401) : _l.diagReturnedExpected(noKey, 401));
 
     // Wrong key → must be rejected.
     final wrong = await _api.probe('GET', '/api/units',
         keyOverride: 'definitely-not-the-real-key', sendToken: false);
-    _add(wrong == 401 ? _Level.ok : _Level.fail, 'Wrong key rejected',
-        wrong == 401 ? 'correctly returns 401' : 'returned $wrong, expected 401');
+    _add(wrong == 401 ? _Level.ok : _Level.fail, _l.diagWrongKeyRejected,
+        wrong == 401 ? _l.diagCorrectlyReturns(401) : _l.diagReturnedExpected(wrong, 401));
 
     // Correct key but no device credential → is the control API token-gated?
     final keyOnly = await _api.probe('GET', '/api/units', sendToken: false);
     if (keyOnly == 401) {
-      _add(_Level.ok, 'Control API is token-gated',
-          'key alone is refused (401) — a device credential is also required (hardened)');
+      _add(_Level.ok, _l.diagTokenGated, _l.diagTokenGatedDetail(401));
     } else if (keyOnly == 200) {
-      _add(_Level.warn, 'Control API not token-gated',
-          'key alone is accepted (200) — older or loosened build');
+      _add(_Level.warn, _l.diagNotTokenGated, _l.diagNotTokenGatedDetail(200));
     } else {
-      _add(_Level.warn, 'Token-gating', 'key alone returned $keyOnly (expected 200 or 401)');
+      _add(_Level.warn, _l.diagTokenGating, _l.diagTokenGatingDetail(keyOnly, 200, 401));
     }
   }
 
   // -- this device's own credential ----------------------------------------
 
   Future<void> _thisDevice() async {
-    _section('This device');
+    _section(_l.diagSectionThisDevice);
     // Device clock vs server clock. A drift past the server's window rejects
     // every signed request — the exact failure that looked like "the app lost
     // my login". The client corrects itself, but say so out loud.
     final skew = _api.clockOffsetSeconds;
     if (skew == 0) {
-      _add(_Level.ok, 'Device clock', 'in sync with the server');
+      _add(_Level.ok, _l.diagDeviceClock, _l.diagClockInSync);
     } else {
-      _add(_Level.warn, 'Device clock',
-          'off by ${skew.abs()} s (${skew > 0 ? 'behind' : 'ahead of'} the server) '
-          '— corrected automatically; turn on automatic date & time');
+      _add(_Level.warn, _l.diagDeviceClock,
+          skew > 0 ? _l.diagClockBehind(skew.abs()) : _l.diagClockAhead(skew.abs()));
     }
 
     final v = _api.authVersion;
-    _add(v >= 2 ? _Level.ok : _Level.warn, 'Auth profile',
-        v >= 2
-            ? 'v2 — requests signed with a per-device Ed25519 key'
-            : 'v1 — legacy bearer token (upgrades to v2 automatically when the server supports it)');
+    _add(v >= 2 ? _Level.ok : _Level.warn, _l.diagAuthProfile,
+        v >= 2 ? _l.diagAuthV2 : _l.diagAuthV1);
 
     try {
       final me = await _api.whoami();
       final label = me['label'] ?? '?';
       final av = (me['auth_version'] as num?)?.toInt() ?? v;
-      _add(_Level.ok, 'Server recognises this device', 'label "$label" · auth v$av');
+      _add(_Level.ok, _l.diagRecognised, _l.diagRecognisedDetail('$label', av));
 
       final exp = me['expires_at'];
       final now = DateTime.now().millisecondsSinceEpoch / 1000.0;
       if (exp == null) {
-        _add(_Level.info, 'Credential expiry', 'no expiry set');
+        _add(_Level.info, _l.diagCredentialExpiry, _l.diagNoExpiry);
       } else if (exp is num) {
         final when = DateTime.fromMillisecondsSinceEpoch((exp * 1000).round());
         final ymd = '${when.year}-${_pad2(when.month)}-${_pad2(when.day)}';
         if (exp < now) {
-          _add(_Level.fail, 'Credential expired', 're-pair this device (expired $ymd)');
+          _add(_Level.fail, _l.diagCredentialExpired, _l.diagCredentialExpiredDetail(ymd));
         } else if (exp < now + 7 * 86400) {
-          _add(_Level.warn, 'Credential expires soon', 'within 7 days (on $ymd)');
+          _add(_Level.warn, _l.diagCredentialExpiresSoon, _l.diagCredentialExpiresSoonDetail(ymd));
         } else {
-          _add(_Level.ok, 'Credential valid', 'expires $ymd');
+          _add(_Level.ok, _l.diagCredentialValid, _l.diagCredentialValidDetail(ymd));
         }
       }
     } on ApiException catch (e) {
       _add(e.status == 404 ? _Level.info : _Level.warn, 'whoami',
-          e.status == 404 ? 'server predates 3.0 (no /whoami) — skipping' : e.message);
+          e.status == 404 ? _l.diagWhoamiMissing('3.0') : e.message);
     }
   }
 
   // -- paired devices (admin, LAN-gated) -----------------------------------
 
   Future<void> _pairedDevices() async {
-    _section('Paired devices');
+    _section(_l.diagSectionPairedDevices);
     // `/api/auth/devices` is admin + LAN-only, so off-LAN it returns 403 — and
     // a server behind a fail2ban tripwire may treat a single 403 on an admin
     // endpoint as an intrusion attempt and ban the client's IP (which, behind
     // NAT, is shared with everyone else in the house). Never probe it unless
     // we're plainly talking to a private address.
     if (!_serverIsPrivate) {
-      _add(_Level.info, 'Device management',
-          'skipped — admin endpoint, only checked when connected to the LAN');
+      _add(_Level.info, _l.diagDeviceManagement, _l.diagDeviceManagementSkipped);
       return;
     }
     try {
       final devices = await _api.listDevices();
-      _add(_Level.ok, 'Enrolled devices', '${devices.length} token(s)');
+      _add(_Level.ok, _l.diagEnrolledDevices, _l.diagTokenCount(devices.length));
       final now = DateTime.now().millisecondsSinceEpoch / 1000.0;
       for (final d in devices.whereType<Map>()) {
         final label = d['label'] ?? '?';
         final exp = d['expires_at'];
         if (exp is num && exp < now) {
-          _add(_Level.warn, '  $label', 'token expired — revoke it');
+          _add(_Level.warn, '  $label', _l.diagTokenExpired);
         } else if (exp is num && exp < now + 7 * 86400) {
-          _add(_Level.warn, '  $label', 'expires within 7 days');
+          _add(_Level.warn, '  $label', _l.diagTokenExpiresSoon);
         }
       }
     } on ApiException catch (e) {
       if (e.status == 401 || e.status == 403) {
-        _add(_Level.info, 'Device management', 'needs the key from the LAN — skipping (off-LAN?)');
+        _add(_Level.info, _l.diagDeviceManagement, _l.diagNeedsLanKey);
       } else if (e.status == 404) {
-        _add(_Level.info, 'Device management', 'endpoint not present — skipping');
+        _add(_Level.info, _l.diagDeviceManagement, _l.diagEndpointMissing);
       } else {
-        _add(_Level.warn, 'Device management', e.message);
+        _add(_Level.warn, _l.diagDeviceManagement, e.message);
       }
     }
   }
@@ -261,22 +261,22 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
 
   Future<void> _configSanitisation() async {
     if (_features.isNotEmpty && !_features.contains('config_api')) return;
-    _section('Config API (secret sanitisation)');
+    _section(_l.diagSectionConfig);
     try {
       final body = await _api.fetchConfig();
       final n = _leaks(body);
-      _add(n == 0 ? _Level.ok : _Level.fail, 'No secrets exposed',
-          n == 0 ? 'config response is sanitised' : '$n secret-looking value(s) exposed — possible leak');
+      _add(n == 0 ? _Level.ok : _Level.fail, _l.diagNoSecrets,
+          n == 0 ? _l.diagConfigSanitised : _l.diagSecretsExposed(n));
       final appearsVerbatim = jsonEncode(body).contains(_api.apiKey);
-      _add(appearsVerbatim ? _Level.fail : _Level.ok, 'API key not echoed',
-          appearsVerbatim ? 'the API key appears verbatim in /api/config — leak' : 'the API key is absent from the response');
+      _add(appearsVerbatim ? _Level.fail : _Level.ok, _l.diagKeyNotEchoed,
+          appearsVerbatim ? _l.diagKeyEchoed : _l.diagKeyAbsent);
     } on ApiException catch (e) {
       if (e.status == 404) {
-        _add(_Level.info, 'Config API', 'not present (server < 2.2.0) — skipping');
+        _add(_Level.info, _l.diagConfigApi, _l.diagNotPresentServerSkipping('2.2.0'));
       } else if (e.status == 401 || e.status == 403) {
-        _add(_Level.info, 'Config API', 'needs key+token from the LAN — skipping');
+        _add(_Level.info, _l.diagConfigApi, _l.diagNeedsLanKeyToken);
       } else {
-        _add(_Level.warn, 'Config API', e.message);
+        _add(_Level.warn, _l.diagConfigApi, e.message);
       }
     }
   }
@@ -301,13 +301,13 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
   // -- input validation ----------------------------------------------------
 
   Future<void> _inputValidation(List<UnitSummary> units) async {
-    _section('Input validation');
+    _section(_l.diagSectionInput);
     final unknown = await _api.probe('GET', '/api/units/nonexistent-unit-id/state');
-    _add(unknown == 404 ? _Level.ok : _Level.warn, 'Unknown unit → 404',
-        unknown == 404 ? 'correctly returns 404' : 'returned $unknown (expected 404)');
+    _add(unknown == 404 ? _Level.ok : _Level.warn, _l.diagUnknownUnit(404),
+        unknown == 404 ? _l.diagCorrectlyReturns(404) : _l.diagReturnedExpectedParen(unknown, 404));
 
     if (units.isEmpty) {
-      _add(_Level.info, 'Bounds check', 'no units to test against');
+      _add(_Level.info, _l.diagBoundsCheck, _l.diagNoUnitsToTest);
       return;
     }
     // An out-of-range target is rejected before the unit is ever touched, so
@@ -315,11 +315,11 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
     final bad = await _api.probe('POST', '/api/units/${units.first.id}/control',
         body: {'target_temperature': 99});
     if (bad == 422 || bad == 400) {
-      _add(_Level.ok, 'Out-of-range rejected', 'target_temperature=99 refused with $bad');
+      _add(_Level.ok, _l.diagOutOfRangeRejected, _l.diagOutOfRangeRejectedDetail('target_temperature=99', bad));
     } else if (bad >= 200 && bad < 300) {
-      _add(_Level.fail, 'Out-of-range ACCEPTED', 'server took target_temperature=99 ($bad) — bounds not enforced');
+      _add(_Level.fail, _l.diagOutOfRangeAccepted, _l.diagOutOfRangeAcceptedDetail('target_temperature=99', bad));
     } else {
-      _add(_Level.warn, 'Bounds check', 'out-of-range control returned $bad (expected 422)');
+      _add(_Level.warn, _l.diagBoundsCheck, _l.diagOutOfRangeOther(bad, 422));
     }
   }
 
@@ -327,90 +327,93 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
 
   Future<void> _batchState(List<UnitSummary> units) async {
     if (_features.isNotEmpty && !_features.contains('batch_state')) return;
-    _section('Batch state');
+    _section(_l.diagBatchState);
     try {
       final sw = Stopwatch()..start();
       final b = await _api.listStates();
       sw.stop();
-      _add(_Level.ok, 'One-shot batch', '${b.states.length} state(s) in ${sw.elapsedMilliseconds} ms');
+      _add(_Level.ok, _l.diagOneShotBatch, _l.diagBatchDetail(b.states.length, sw.elapsedMilliseconds));
       if (b.errors.isNotEmpty) {
-        _add(_Level.warn, 'Unreachable in batch',
-            '${b.errors.length} unit(s): ${b.errors.map((e) => e['name'] ?? e['id']).join(', ')}');
+        _add(_Level.warn, _l.diagUnreachableInBatch,
+            _l.diagUnreachableDetail(b.errors.length, b.errors.map((e) => e['name'] ?? e['id']).join(', ')));
       }
       final seen = b.states.length + b.errors.length;
-      _add(seen == units.length ? _Level.ok : _Level.warn, 'Batch coverage',
-          seen == units.length ? 'covers all ${units.length} unit(s)' : 'covered $seen of ${units.length}');
+      _add(seen == units.length ? _Level.ok : _Level.warn, _l.diagBatchCoverage,
+          seen == units.length ? _l.diagCoversAll(units.length) : _l.diagCoveredOf(seen, units.length));
     } on ApiException catch (e) {
-      _add(e.status == 404 ? _Level.info : _Level.warn, 'Batch state',
-          e.status == 404 ? 'not present (server < 2.4.0) — skipping' : e.message);
+      _add(e.status == 404 ? _Level.info : _Level.warn, _l.diagBatchState,
+          e.status == 404 ? _l.diagNotPresentServerSkipping('2.4.0') : e.message);
     }
   }
 
   // -- live stream (SSE) ---------------------------------------------------
 
   Future<void> _liveStream() async {
-    _section('Live stream (SSE)');
+    _section(_l.diagSectionLive);
     if (_features.isNotEmpty && !_features.contains('live_stream')) {
-      _add(_Level.info, 'Live updates', 'server doesn’t advertise live_stream — skipping');
+      _add(_Level.info, _l.diagLiveUpdates, _l.diagNoLiveStreamFeature('live_stream'));
       return;
     }
     try {
       final first = await _api.streamStates().first.timeout(const Duration(seconds: 6));
-      _add(_Level.ok, 'Stream connected', 'first live update received (${first.name})');
+      _add(_Level.ok, _l.diagStreamConnected, _l.diagFirstUpdate(first.name));
     } on TimeoutException {
-      _add(_Level.warn, 'Stream connected', 'no update pushed within 6 s (idle is normal)');
+      _add(_Level.warn, _l.diagStreamConnected, _l.diagNoUpdateWithin(6));
     } on ApiException catch (e) {
-      _add(e.status == 404 ? _Level.info : _Level.warn, 'Live stream',
-          e.status == 404 ? 'endpoint not present — skipping' : e.message);
+      _add(e.status == 404 ? _Level.info : _Level.warn, _l.diagLiveStream,
+          e.status == 404 ? _l.diagEndpointMissing : e.message);
     } catch (e) {
-      _add(_Level.warn, 'Live stream', 'closed without an update ($e)');
+      _add(_Level.warn, _l.diagLiveStream, _l.diagStreamClosed('$e'));
     }
   }
 
   // -- per unit ------------------------------------------------------------
 
   Future<void> _diagnoseUnit(UnitSummary u) async {
-    _section('Unit: ${u.name}');
+    _section(_l.diagSectionUnit(u.name));
     UnitState state;
     try {
       final sw = Stopwatch()..start();
       state = await _api.getState(u.id);
       sw.stop();
-      _add(_Level.ok, 'State fetched', '${sw.elapsedMilliseconds} ms');
+      _add(_Level.ok, _l.diagStateFetched, '${sw.elapsedMilliseconds} ms');
     } on ApiException catch (e) {
-      _add(_Level.fail, 'State', e.message);
+      _add(_Level.fail, _l.diagState, e.message);
       return;
     }
 
-    _add(state.online ? _Level.ok : _Level.warn, 'Online', '${state.online}');
+    _add(state.online ? _Level.ok : _Level.warn, _l.diagOnline, '${state.online}');
     final t = state.targetTemperature;
-    _add(t >= kMinTemp && t <= kMaxTemp ? _Level.ok : _Level.warn, 'Target',
-        '$t° (expected $kMinTemp–$kMaxTemp)');
-    _add(state.indoorTemperature != null ? _Level.ok : _Level.warn, 'Indoor sensor',
-        state.indoorTemperature != null ? '${state.indoorTemperature}°' : 'no reading');
-    _add(_Level.info, 'Readouts',
+    _add(t >= kMinTemp && t <= kMaxTemp ? _Level.ok : _Level.warn, _l.diagTarget,
+        _l.diagTargetDetail(_dec(t), _dec(kMinTemp), _dec(kMaxTemp)));
+    _add(state.indoorTemperature != null ? _Level.ok : _Level.warn, _l.diagIndoorSensor,
+        state.indoorTemperature != null ? '${_dec(state.indoorTemperature)}°' : _l.diagNoReading);
+    _add(_Level.info, _l.diagReadouts,
         'power=${state.powerState} outdoor=${state.outdoorTemperature ?? '—'}° '
         'fan=${state.fanSpeed} eco=${state.eco} turbo=${state.turbo}');
-    _add(kModes.contains(state.operationalMode) ? _Level.ok : _Level.warn, 'Mode',
+    _add(kModes.contains(state.operationalMode) ? _Level.ok : _Level.warn, _l.labelMode,
         state.operationalMode);
-    _add(kSwingModes.contains(state.swingMode) ? _Level.ok : _Level.warn, 'Swing',
+    _add(kSwingModes.contains(state.swingMode) ? _Level.ok : _Level.warn, _l.diagSwing,
         state.swingMode);
 
     // capabilities (Breeze Core >= 3.0.0) — what the hardware actually offers
     try {
       final caps = await _api.capabilities(u.id);
       final modes = (caps['operational_modes'] as List?)?.length;
-      final range = '${caps['min_target_temperature']}–${caps['max_target_temperature']}°';
+      final range = '${_dec(caps['min_target_temperature'])}–${_dec(caps['max_target_temperature'])}°';
       final extras = <String>[
         if (caps['supports_eco'] == true) 'eco',
         if (caps['supports_turbo'] == true) 'turbo',
         if (caps['supports_horizontal_swing'] == true) 'h-swing',
       ];
-      _add(_Level.ok, 'Capabilities',
-          '${modes ?? '?'} mode(s), range $range${extras.isEmpty ? '' : ', ${extras.join('/')}'}');
+      final modeCount = modes == null ? _l.diagModeCountUnknown : _l.diagModeCount(modes);
+      _add(_Level.ok, _l.diagCapabilities,
+          extras.isEmpty
+              ? _l.diagCapabilitiesDetail(modeCount, range)
+              : _l.diagCapabilitiesDetailExtras(modeCount, range, extras.join('/')));
     } on ApiException catch (e) {
-      _add(e.status == 404 ? _Level.info : _Level.warn, 'Capabilities',
-          e.status == 404 ? 'endpoint not present — skipping' : e.message);
+      _add(e.status == 404 ? _Level.info : _Level.warn, _l.diagCapabilities,
+          e.status == 404 ? _l.diagEndpointMissing : e.message);
     }
 
     // latency: 5 samples
@@ -425,10 +428,10 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
     }
     if (samples.isNotEmpty) {
       final avg = samples.reduce((a, b) => a + b) ~/ samples.length;
-      _add(avg < 800 ? _Level.ok : _Level.warn, 'Latency',
-          'avg $avg ms over ${samples.length} calls${avg >= 800 ? ' — check Wi-Fi to this unit' : ''}');
+      _add(avg < 800 ? _Level.ok : _Level.warn, _l.diagLatency,
+          avg >= 800 ? _l.diagLatencySlow(avg, samples.length) : _l.diagLatencyDetail(avg, samples.length));
     } else {
-      _add(_Level.fail, 'Latency', 'no samples succeeded');
+      _add(_Level.fail, _l.diagLatency, _l.diagNoSamples);
     }
   }
 
@@ -436,15 +439,15 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
 
   Future<void> _programs() async {
     if (_features.isNotEmpty && !_features.contains('programs')) return;
-    _section('Programs / scheduler');
+    _section(_l.diagSectionPrograms);
     try {
       final st = await _api.schedulerStatus();
       final running = st['running'] == true;
-      _add(running ? _Level.ok : _Level.warn, 'Scheduler',
+      _add(running ? _Level.ok : _Level.warn, _l.diagScheduler,
           'running=${st['running']} · runs=${st['runs']} · last=${st['last_run'] ?? '—'}');
     } on ApiException catch (e) {
-      _add(e.status == 404 ? _Level.info : _Level.warn, 'Scheduler',
-          e.status == 404 ? 'programs feature not present — skipping' : e.message);
+      _add(e.status == 404 ? _Level.info : _Level.warn, _l.diagScheduler,
+          e.status == 404 ? _l.diagProgramsMissing : e.message);
       return;
     }
     try {
@@ -454,20 +457,22 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
         kinds[p.kind] = (kinds[p.kind] ?? 0) + 1;
       }
       final enabled = programs.where((p) => p.enabled).length;
-      _add(_Level.ok, 'Programs',
-          '${programs.length}: ${kinds['favourite']} favourite, ${kinds['schedule']} schedule, '
-          '${kinds['curve']} curve ($enabled enabled)');
+      _add(_Level.ok, _l.diagPrograms,
+          _l.diagProgramsDetail(programs.length, kinds['favourite']!, kinds['schedule']!,
+              kinds['curve']!, enabled));
     } on ApiException catch (_) {/* status already reported */}
   }
 
   void _summary() {
-    _section('Summary');
+    _section(_l.diagSectionSummary);
     final fails = _results.where((r) => !r.isSection && r.level == _Level.fail).length;
     final warns = _results.where((r) => !r.isSection && r.level == _Level.warn).length;
     _add(
       fails > 0 ? _Level.fail : (warns > 0 ? _Level.warn : _Level.ok),
-      fails > 0 ? 'Problems found' : (warns > 0 ? 'Passed with warnings' : 'All checks passed'),
-      fails > 0 ? '$fails problem(s), $warns warning(s)' : (warns > 0 ? '$warns warning(s)' : 'no issues'),
+      fails > 0 ? _l.diagProblemsFound : (warns > 0 ? _l.diagPassedWithWarnings : _l.diagAllPassed),
+      fails > 0
+          ? _l.diagProblemsAndWarnings(_l.diagProblemCount(fails), _l.diagWarningCount(warns))
+          : (warns > 0 ? _l.diagWarningCount(warns) : _l.diagNoIssues),
     );
     if (fails > 0) {
       Haptics.failure();
@@ -478,8 +483,12 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
 
   static String _pad2(int n) => n.toString().padLeft(2, '0');
 
+  /// A reading as the server gave it, with the language's decimal separator.
+  static String _dec(Object? v) => '$v'.replaceAll('.', decimalSeparator);
+
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final scheme = Theme.of(context).colorScheme;
     Color colorFor(_Level l) => switch (l) {
           _Level.ok => Colors.green,
@@ -495,14 +504,14 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
         };
     // Said, not only drawn: "passed", "warning", "failed".
     String wordFor(_Level l) => switch (l) {
-          _Level.ok => 'passed',
-          _Level.warn => 'warning',
-          _Level.fail => 'failed',
-          _Level.info => 'note',
+          _Level.ok => l10n.diagLevelPassed,
+          _Level.warn => l10n.diagLevelWarning,
+          _Level.fail => l10n.diagLevelFailed,
+          _Level.info => l10n.diagLevelNote,
         };
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Diagnostics')),
+      appBar: AppBar(title: Text(l10n.diagTitle)),
       body: Column(
         children: [
           Padding(
@@ -512,7 +521,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
               icon: _running
                   ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.play_arrow),
-              label: Text(_running ? 'Running…' : 'Run full diagnosis'),
+              label: Text(_running ? l10n.diagRunning : l10n.diagRun),
               style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
             ),
           ),
@@ -522,9 +531,7 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32),
                       child: Text(
-                        'Tap “Run full diagnosis” to check connectivity, the server build, '
-                        'authentication and security posture, this device’s credential, '
-                        'input validation, the live stream, and every unit.',
+                        l10n.diagIntro(l10n.diagRun),
                         textAlign: TextAlign.center,
                         style: TextStyle(color: scheme.onSurfaceVariant),
                       ),

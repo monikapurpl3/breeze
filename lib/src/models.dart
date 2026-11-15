@@ -3,18 +3,10 @@
 import 'l10n.dart' show AppLocalizations;
 
 const List<String> kModes = ['AUTO', 'COOL', 'DRY', 'HEAT', 'FAN_ONLY'];
-const Map<String, String> kModeLabels = {
-  'AUTO': 'auto',
-  'COOL': 'cool',
-  'DRY': 'dry',
-  'HEAT': 'heat',
-  'FAN_ONLY': 'fan',
-};
 const List<String> kSwingModes = ['OFF', 'VERTICAL', 'HORIZONTAL', 'BOTH'];
 
 // The fan speeds the UI exposes (server also accepts 40/80).
 const List<int> kFanSpeeds = [20, 60, 100, 102];
-const Map<int, String> kFanLabels = {20: 'low', 60: 'med', 100: 'high', 102: 'auto'};
 
 const double kMinTemp = 16.0;
 const double kMaxTemp = 30.0;

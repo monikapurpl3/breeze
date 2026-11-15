@@ -80,8 +80,11 @@ class BreezeApp extends StatelessWidget {
                 supportedLocales: appSupportedLocales,
                 onGenerateTitle: (context) {
                   // Runs whenever the resolved language changes: the moment
-                  // to switch the decimal separator for every number shown.
+                  // to switch the decimal separator for every number shown,
+                  // and the cat facts' language, which the Internal tab's
+                  // preview reads without a loading screen to set it.
                   applyDecimalSeparator(Localizations.localeOf(context));
+                  CatFacts.language = AppLocalizations.of(context);
                   return 'Breeze';
                 },
               );

@@ -41,6 +41,8 @@
             android:paddingBottom="3dp"
             android:textStyle="bold"
             android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:letterSpacing="0.08"
             android:textColor="@color/widget_status_off_text"
             android:text="@string/widget_state_off" />

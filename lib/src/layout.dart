@@ -7,7 +7,7 @@
 
 import 'dart:ui' show DisplayFeatureState, DisplayFeatureType;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Wide and tall enough for the units list beside a unit: a tablet either way
 /// up, an open foldable, a big phone's landscape is not (too short).

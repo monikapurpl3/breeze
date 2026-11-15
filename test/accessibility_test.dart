@@ -7,7 +7,7 @@
 // unlabelled; and accent-coloured text fell to 1.6:1 contrast in the light
 // theme. Each of those is a test here, in both themes.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 

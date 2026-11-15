@@ -6,7 +6,7 @@
 // to approve a code — fine once, miserable every time you move between a home
 // and an office.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../app_controller.dart';
 import '../app_scope.dart';

@@ -2,7 +2,7 @@
 // someone with large text meet them. Companion to accessibility_test.dart,
 // which covers the controls one by one.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:breeze/src/a11y.dart';

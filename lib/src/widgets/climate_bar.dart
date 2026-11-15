@@ -24,7 +24,7 @@
 // The geometry is computed in Celsius regardless of the display unit; only the
 // labels are converted, so a °F user gets identical proportions.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../util.dart';
 

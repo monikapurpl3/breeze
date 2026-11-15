@@ -84,6 +84,6 @@ dependencies {
     // Both are needed explicitly: app-projected declares NO transitive
     // dependency on app, so listing only the former compiles to a wall of
     // "unresolved reference androidx.car.app.*".
-    implementation("androidx.car.app:app:1.4.0")
-    implementation("androidx.car.app:app-projected:1.4.0")
+    implementation("androidx.car.app:app:1.7.0")
+    implementation("androidx.car.app:app-projected:1.7.0")
 }

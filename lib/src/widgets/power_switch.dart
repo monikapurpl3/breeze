@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../haptics.dart';
 
 /// Power control: a large Material 3 switch instead of a round icon button, so

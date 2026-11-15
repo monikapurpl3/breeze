@@ -54,6 +54,14 @@ android {
         }
     }
 
+    // Only the languages Breeze itself speaks (lib/l10n, res/values-*,
+    // locales_config.xml). AndroidX and the car library bring resources in
+    // some 90 more, which made a German phone's Android Auto screens half
+    // German, half English.
+    androidResources {
+        localeFilters += setOf("en", "hr", "sr", "sl", "fr", "it", "zh")
+    }
+
     buildTypes {
         release {
             // Real release signing when key.properties is present; otherwise

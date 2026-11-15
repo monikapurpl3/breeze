@@ -560,8 +560,8 @@
   "settingsLicences": "Licence",
   "settingsLicencesHint": "Licence otvorenog koda za ovu aplikaciju",
   "settingsLegalese": "AGPL-3.0-or-later. Klijent za vlastiti Breeze Core poslužitelj; svaki uređaj potpisuje zahtjeve svojim Ed25519 ključem koji nikad ne napušta ovaj telefon.",
-  "settingsNerdOneMoreTap": "Još jedan dodir i postaješ nerd…",
-  "settingsNerdTapsLeft": "{count, plural, one{Još {count} dodir do nerda} few{Još {count} dodira do nerda} other{Još {count} dodira do nerda}}",
+  "settingsNerdOneMoreTap": "Još jedan pritisak i ti si štreber…",
+  "settingsNerdTapsLeft": "{count, plural, one{Još {count} pritisak i ti si štreber} few{Još {count} pritiska i ti si štreber} other{Još {count} pritisaka i ti si štreber}}",
   "serversTitle": "Poslužitelji",
   "serversEmpty": "Još nema spremljenih poslužitelja.",
   "serversAdd": "Dodaj poslužitelj",
@@ -624,7 +624,7 @@
   "nerdTabInternal": "Interno",
   "nerdWompWomp": "womp womp, ažuriraj poslužitelj",
   "nerdNeedsNewer": "Ovaj zaslon traži Breeze Core 3.0.5 ili noviji.",
-  "nerdServerTooOld": "Ovaj poslužitelj ima verziju {version}. Nerd zaslon traži Breeze Core 3.0.5 ili noviji.",
+  "nerdServerTooOld": "Ovaj poslužitelj ima verziju {version}. Štreberski zaslon traži Breeze Core 3.0.5 ili noviji.",
   "nerdSectionApp": "Ova aplikacija",
   "nerdSectionConnection": "Veza",
   "nerdSectionServer": "Poslužitelj",
@@ -727,5 +727,6 @@
   "jsonFilterFavourites": "Omiljeno ({count})",
   "jsonFilterSchedules": "Rasporedi ({count})",
   "jsonFilterCurves": "Krivulje ({count})",
-  "jsonEmpty": "Ovdje nema ničega: []"
+  "jsonEmpty": "Ovdje nema ničega: []",
+  "nerdTitle": "Štreber"
 }

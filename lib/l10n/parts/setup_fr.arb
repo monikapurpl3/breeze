@@ -28,8 +28,8 @@
   "settingsLicences": "Licences",
   "settingsLicencesHint": "Licences open source de cette application",
   "settingsLegalese": "AGPL-3.0-or-later. Un client pour un serveur Breeze Core auto-hébergé ; chaque appareil signe ses requêtes avec une clé Ed25519 qui ne quitte jamais ce téléphone.",
-  "settingsNerdOneMoreTap": "Encore un appui, et vous voilà nerd…",
-  "settingsNerdTapsLeft": "{count, plural, one{Plus que {count} appui pour devenir nerd} other{Plus que {count} appuis pour devenir nerd}}",
+  "settingsNerdOneMoreTap": "Encore un appui et vous êtes un geek…",
+  "settingsNerdTapsLeft": "{count, plural, one{Encore {count} appui et vous êtes un geek} other{Encore {count} appuis et vous êtes un geek}}",
   "serversTitle": "Serveurs",
   "serversEmpty": "Aucun serveur enregistré.",
   "serversAdd": "Ajouter un serveur",
@@ -92,7 +92,7 @@
   "nerdTabInternal": "Interne",
   "nerdWompWomp": "womp womp, mettez à jour votre serveur",
   "nerdNeedsNewer": "Cet écran nécessite Breeze Core 3.0.5 ou plus récent.",
-  "nerdServerTooOld": "Ce serveur est en version {version}. L'écran Nerd nécessite Breeze Core 3.0.5 ou plus récent.",
+  "nerdServerTooOld": "Ce serveur est en version {version}. L'écran Geek nécessite Breeze Core 3.0.5 ou plus récent.",
   "nerdSectionApp": "Cette application",
   "nerdSectionConnection": "Connexion",
   "nerdSectionServer": "Serveur",
@@ -195,5 +195,6 @@
   "jsonFilterFavourites": "Favoris ({count})",
   "jsonFilterSchedules": "Plannings ({count})",
   "jsonFilterCurves": "Courbes ({count})",
-  "jsonEmpty": "Rien ici : []"
+  "jsonEmpty": "Rien ici : []",
+  "nerdTitle": "Geek"
 }

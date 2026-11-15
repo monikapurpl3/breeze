@@ -28,8 +28,8 @@
   "settingsLicences": "Лиценце",
   "settingsLicencesHint": "Лиценце отвореног кода за ову апликацију",
   "settingsLegalese": "AGPL-3.0-or-later. Клијент за сопствени Breeze Core сервер; сваки уређај потписује захтеве својим Ed25519 кључем који никад не напушта овај телефон.",
-  "settingsNerdOneMoreTap": "Још један додир и постајеш нерд…",
-  "settingsNerdTapsLeft": "{count, plural, one{Још {count} додир до нерда} few{Још {count} додира до нерда} other{Још {count} додира до нерда}}",
+  "settingsNerdOneMoreTap": "Још један притисак и ти си штребер…",
+  "settingsNerdTapsLeft": "{count, plural, one{Још {count} притисак и ти си штребер} few{Још {count} притиска и ти си штребер} other{Још {count} притисака и ти си штребер}}",
   "serversTitle": "Сервери",
   "serversEmpty": "Још нема сачуваних сервера.",
   "serversAdd": "Додај сервер",
@@ -92,7 +92,7 @@
   "nerdTabInternal": "Интерно",
   "nerdWompWomp": "вомп вомп, ажурирај сервер",
   "nerdNeedsNewer": "Овај екран захтева Breeze Core 3.0.5 или новији.",
-  "nerdServerTooOld": "Овај сервер има верзију {version}. Nerd екран захтева Breeze Core 3.0.5 или новији.",
+  "nerdServerTooOld": "Овај сервер има верзију {version}. Штреберски екран захтева Breeze Core 3.0.5 или новији.",
   "nerdSectionApp": "Ова апликација",
   "nerdSectionConnection": "Веза",
   "nerdSectionServer": "Сервер",
@@ -195,5 +195,6 @@
   "jsonFilterFavourites": "Омиљено ({count})",
   "jsonFilterSchedules": "Распореди ({count})",
   "jsonFilterCurves": "Криве ({count})",
-  "jsonEmpty": "Овде нема ничега: []"
+  "jsonEmpty": "Овде нема ничега: []",
+  "nerdTitle": "Штребер"
 }

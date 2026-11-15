@@ -37,8 +37,7 @@ parentheses are fine).
 
 ## Never translated
 
-**Breeze**, **Breeze Core**, **Nerd** (the screen's name; "Nerd screen" →
-"Nerd zaslon", "écran Nerd", "Nerd 页面"), **Midea**, **NetHome Plus**,
+**Breeze**, **Breeze Core**, **Midea**, **NetHome Plus**,
 **MSmartHome**, **Android Auto**, **TalkBack**, **SSE**, **API**, **JSON**,
 **IP**, **LAN**, **Wi-Fi**, **Ed25519**, **v1/v2**, error codes, units (°C, °F,
 ms, KiB), and anything a person types or reads off another screen
@@ -73,6 +72,19 @@ ms, KiB), and anything a person types or reads off another screen
 | live updates | ažuriranja uživo | ажурирања уживо | sprotne posodobitve | mises à jour en direct | aggiornamenti in tempo reale | 实时更新 |
 | fallback address | rezervna adresa | резервна адреса | nadomestni naslov | adresse de secours | indirizzo di riserva | 备用地址 |
 | home-screen widget | widget na početnom zaslonu | виџет на почетном екрану | pripomoček na začetnem zaslonu | widget d'écran d'accueil | widget della schermata Home | 桌面小部件 |
+
+## "Nerd"
+
+The screen and the teaser on the way to it are translated, playfully, with
+one word each (the maintainer's call, November 2026):
+
+| | hr | sr | sl | fr | it | zh |
+|---|---|---|---|---|---|---|
+| Nerd | Štreber | Штребер | Štreber | Geek | Secchione | 极客 |
+| the Nerd screen | Štreberski zaslon | Штреберски екран | Štreberski zaslon | l'écran Geek | la schermata Secchione | 极客页面 |
+
+The teaser in Settings keeps one shape, "N more taps and you're a …":
+"Još 2 pritiska i ti si štreber", not "postat ćeš štreber".
 
 ## Messages with numbers
 

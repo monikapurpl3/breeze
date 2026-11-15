@@ -28,8 +28,8 @@
   "settingsLicences": "Licenze",
   "settingsLicencesHint": "Licenze open source di questa app",
   "settingsLegalese": "AGPL-3.0-or-later. Un client per un server Breeze Core self-hosted; ogni dispositivo firma le richieste con una chiave Ed25519 che non lascia mai questo telefono.",
-  "settingsNerdOneMoreTap": "Ancora un tocco e sei un nerd…",
-  "settingsNerdTapsLeft": "{count, plural, one{Ancora {count} tocco per diventare nerd} other{Ancora {count} tocchi per diventare nerd}}",
+  "settingsNerdOneMoreTap": "Ancora un tocco e sei un secchione…",
+  "settingsNerdTapsLeft": "{count, plural, one{Ancora {count} tocco e sei un secchione} other{Ancora {count} tocchi e sei un secchione}}",
   "serversTitle": "Server",
   "serversEmpty": "Nessun server salvato.",
   "serversAdd": "Aggiungi un server",
@@ -92,7 +92,7 @@
   "nerdTabInternal": "Interno",
   "nerdWompWomp": "womp womp, aggiorna il tuo server",
   "nerdNeedsNewer": "Questa schermata richiede Breeze Core 3.0.5 o successivo.",
-  "nerdServerTooOld": "Questo server ha la versione {version}. La schermata Nerd richiede Breeze Core 3.0.5 o successivo.",
+  "nerdServerTooOld": "Questo server ha la versione {version}. La schermata Secchione richiede Breeze Core 3.0.5 o successivo.",
   "nerdSectionApp": "Questa app",
   "nerdSectionConnection": "Connessione",
   "nerdSectionServer": "Server",
@@ -195,5 +195,6 @@
   "jsonFilterFavourites": "Preferiti ({count})",
   "jsonFilterSchedules": "Programmazioni ({count})",
   "jsonFilterCurves": "Curve ({count})",
-  "jsonEmpty": "Qui non c'è niente: []"
+  "jsonEmpty": "Qui non c'è niente: []",
+  "nerdTitle": "Secchione"
 }

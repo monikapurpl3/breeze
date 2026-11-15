@@ -560,8 +560,8 @@
   "settingsLicences": "Licence",
   "settingsLicencesHint": "Odprtokodne licence za to aplikacijo",
   "settingsLegalese": "AGPL-3.0-or-later. Odjemalec za lastni strežnik Breeze Core; vsaka naprava podpisuje zahteve s svojim ključem Ed25519, ki nikoli ne zapusti tega telefona.",
-  "settingsNerdOneMoreTap": "Še en dotik in si nerd…",
-  "settingsNerdTapsLeft": "{count, plural, one{Še {count} dotik do nerda} two{Še {count} dotika do nerda} few{Še {count} dotiki do nerda} other{Še {count} dotikov do nerda}}",
+  "settingsNerdOneMoreTap": "Še en pritisk in si štreber…",
+  "settingsNerdTapsLeft": "{count, plural, one{Še {count} pritisk in si štreber} two{Še {count} pritiska in si štreber} few{Še {count} pritiski in si štreber} other{Še {count} pritiskov in si štreber}}",
   "serversTitle": "Strežniki",
   "serversEmpty": "Shranjenih strežnikov še ni.",
   "serversAdd": "Dodaj strežnik",
@@ -624,7 +624,7 @@
   "nerdTabInternal": "Notranje",
   "nerdWompWomp": "womp womp, posodobi strežnik",
   "nerdNeedsNewer": "Ta zaslon potrebuje Breeze Core 3.0.5 ali novejši.",
-  "nerdServerTooOld": "Ta strežnik ima različico {version}. Nerd zaslon potrebuje Breeze Core 3.0.5 ali novejši.",
+  "nerdServerTooOld": "Ta strežnik ima različico {version}. Štreberski zaslon potrebuje Breeze Core 3.0.5 ali novejši.",
   "nerdSectionApp": "Ta aplikacija",
   "nerdSectionConnection": "Povezava",
   "nerdSectionServer": "Strežnik",
@@ -727,5 +727,6 @@
   "jsonFilterFavourites": "Priljubljeno ({count})",
   "jsonFilterSchedules": "Urniki ({count})",
   "jsonFilterCurves": "Krivulje ({count})",
-  "jsonEmpty": "Tukaj ni ničesar: []"
+  "jsonEmpty": "Tukaj ni ničesar: []",
+  "nerdTitle": "Štreber"
 }

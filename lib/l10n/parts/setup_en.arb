@@ -957,5 +957,9 @@
   "jsonEmpty": "Nothing here: []",
   "@jsonEmpty": {
     "description": "JSON view: nothing to show; \"[]\" is an empty JSON list, keep it."
+  },
+  "nerdTitle": "Nerd",
+  "@nerdTitle": {
+    "description": "The Nerd screen's title: diagnostics for technical users, opened by tapping the version in Settings seven times. Translated playfully (štreber, geek, secchione, 极客), as the settings teaser calls the reader one."
   }
 }

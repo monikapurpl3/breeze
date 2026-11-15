@@ -136,7 +136,7 @@ class _NerdScreenState extends State<NerdScreen> {
           listenable: tabs,
           builder: (context, _) => Scaffold(
             appBar: AppBar(
-              title: const Text('Nerd'),
+              title: Text(context.l10n.nerdTitle),
               actions: [
                 if (tabs.index == 0) ...[
                   IconButton(

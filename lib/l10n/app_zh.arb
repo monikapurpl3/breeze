@@ -624,7 +624,7 @@
   "nerdTabInternal": "内部",
   "nerdWompWomp": "呜呜，快去更新服务器吧",
   "nerdNeedsNewer": "此页面需要 Breeze Core 3.0.5 或更高版本。",
-  "nerdServerTooOld": "此服务器的版本为 {version}。Nerd 页面需要 Breeze Core 3.0.5 或更高版本。",
+  "nerdServerTooOld": "此服务器的版本为 {version}。极客页面需要 Breeze Core 3.0.5 或更高版本。",
   "nerdSectionApp": "本应用",
   "nerdSectionConnection": "连接",
   "nerdSectionServer": "服务器",
@@ -727,5 +727,6 @@
   "jsonFilterFavourites": "收藏（{count}）",
   "jsonFilterSchedules": "定时计划（{count}）",
   "jsonFilterCurves": "曲线（{count}）",
-  "jsonEmpty": "这里什么都没有：[]"
+  "jsonEmpty": "这里什么都没有：[]",
+  "nerdTitle": "极客"
 }

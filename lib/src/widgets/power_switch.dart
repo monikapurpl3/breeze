@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import '../haptics.dart';
+import '../l10n.dart';
 
 /// Power control: a large Material 3 switch instead of a round icon button, so
 /// the on/off state is unmistakable at a glance and matches the mental model of
@@ -34,7 +35,7 @@ class PowerSwitch extends StatelessWidget {
     // the dead one.
     return MergeSemantics(
       child: Semantics(
-        label: 'Power',
+        label: context.l10n.labelPower,
         child: Transform.scale(
           scale: 1.2, // "big" without breaking the header row's height
           child: Switch(

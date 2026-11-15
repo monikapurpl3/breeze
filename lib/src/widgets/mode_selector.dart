@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../l10n.dart';
 import '../models.dart';
 import '../theme.dart';
 import '../haptics.dart';
@@ -40,13 +41,14 @@ class ModeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final scheme = Theme.of(context).colorScheme;
     // A named group, so TalkBack says "Mode" on the way in, and each segment
     // says whether it is the selected one -- before this the colour was the
     // only sign, and a blind user could not find out which mode was on.
     return Semantics(
       container: true,
-      label: 'Mode',
+      label: l.labelMode,
       child: Container(
         decoration: BoxDecoration(
           color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
@@ -54,13 +56,13 @@ class ModeSelector extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(4),
         child: rows < 2
-            ? _row(kModes, scheme)
+            ? _row(kModes, scheme, l)
             : Column(
                 mainAxisSize: fill ? MainAxisSize.max : MainAxisSize.min,
                 children: [
-                  _grow(_row(kModes.sublist(0, 3), scheme)),
+                  _grow(_row(kModes.sublist(0, 3), scheme, l)),
                   const SizedBox(height: 4),
-                  _grow(_row(kModes.sublist(3), scheme)),
+                  _grow(_row(kModes.sublist(3), scheme, l)),
                 ],
               ),
       ),
@@ -69,7 +71,7 @@ class ModeSelector extends StatelessWidget {
 
   Widget _grow(Widget row) => fill ? Expanded(child: row) : row;
 
-  Widget _row(List<String> modes, ColorScheme scheme) => Row(
+  Widget _row(List<String> modes, ColorScheme scheme, AppLocalizations l) => Row(
         crossAxisAlignment: fill ? CrossAxisAlignment.stretch : CrossAxisAlignment.center,
         children: [
           for (final m in modes)
@@ -78,7 +80,7 @@ class ModeSelector extends StatelessWidget {
                 selected: m == value,
                 accent: accentForMode(m, scheme),
                 icon: kModeIcons[m] ?? Icons.tune,
-                label: kModeLabels[m] ?? m.toLowerCase(),
+                label: modeLabel(l, m),
                 fill: fill,
                 onTap: enabled
                     ? () {
@@ -143,14 +145,16 @@ class _Segment extends StatelessWidget {
                 children: [
                   Icon(icon, size: fill ? 30 : 22, color: fg),
                   SizedBox(height: fill ? 6 : 3),
-                  Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: fill ? 14 : 11,
-                      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                      color: fg,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: fill ? 14 : 11,
+                        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                        color: fg,
+                      ),
                     ),
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import '../haptics.dart';
+import '../l10n.dart';
 import '../theme.dart';
 
 /// Fan speed: a Low→High slider over the five manual steps (20/40/60/80/100),
@@ -30,8 +31,7 @@ class FanControl extends StatefulWidget {
 class _FanControlState extends State<FanControl> {
   static const _steps = [20, 40, 60, 80, 100];
   // What each step is called aloud -- the slider otherwise reads "50 percent".
-  // The same words as `breeze-core control`.
-  static const _names = ['silent', 'low', 'medium', 'high', 'max'];
+  // The same words as `breeze-core control` (fanSpeedLabel).
   int? _dragIdx;
 
   bool get _isAuto => widget.value == 102;
@@ -45,6 +45,7 @@ class _FanControlState extends State<FanControl> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final scheme = Theme.of(context).colorScheme;
     final accent = widget.accent;
     final auto = _isAuto;
@@ -61,15 +62,24 @@ class _FanControlState extends State<FanControl> {
           children: [
             Icon(Icons.air, size: fill ? 26 : 20, color: scheme.onSurfaceVariant),
             const SizedBox(width: 8),
-            Text(
-              'Fan',
-              style: TextStyle(
-                fontSize: fill ? 18 : null,
-                fontWeight: FontWeight.w600,
-                color: scheme.onSurface,
+            // Takes what the pill leaves, as the Spacer did, and shrinks to
+            // fit when a language's word for "Fan" is long and the text large.
+            Expanded(
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l.labelFan,
+                    style: TextStyle(
+                      fontSize: fill ? 18 : null,
+                      fontWeight: FontWeight.w600,
+                      color: scheme.onSurface,
+                    ),
+                  ),
+                ),
               ),
             ),
-            const Spacer(),
             _AutoPill(
               active: auto,
               accent: accent,
@@ -100,14 +110,14 @@ class _FanControlState extends State<FanControl> {
                 ),
                 child: Slider(
                   // Named, and read in words (it said "50 percent").
-                  label: 'Fan speed',
+                  label: l.fanSliderLabel,
                   min: 0,
                   max: 4,
                   divisions: 4,
                   value: _shownIdx.toDouble(),
                   semanticFormatterCallback: (v) => auto
-                      ? 'auto; move to set a speed'
-                      : _names[v.round().clamp(0, _names.length - 1)],
+                      ? l.fanSliderAuto
+                      : fanSpeedLabel(l, _steps[v.round().clamp(0, _steps.length - 1)]),
                   onChanged: widget.enabled
                       ? (v) => setState(() => _dragIdx = v.round())
                       : null,
@@ -128,11 +138,11 @@ class _FanControlState extends State<FanControl> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Low',
+                l.fanLow,
                 style: TextStyle(fontSize: fill ? 14 : 12, color: scheme.onSurfaceVariant),
               ),
               Text(
-                'High',
+                l.fanHigh,
                 style: TextStyle(fontSize: fill ? 14 : 12, color: scheme.onSurfaceVariant),
               ),
             ],
@@ -174,7 +184,7 @@ class _AutoPill extends StatelessWidget {
       child: Semantics(
         button: true,
         selected: active,
-        label: 'Fan',
+        label: context.l10n.labelFan,
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
           child: Material(
@@ -201,7 +211,7 @@ class _AutoPill extends StatelessWidget {
                     Icon(Icons.auto_mode, size: 16, color: fg),
                     const SizedBox(width: 6),
                     Text(
-                      'Auto',
+                      context.l10n.fanAutoPill,
                       style: TextStyle(fontWeight: FontWeight.w600, color: fg),
                     ),
                   ],

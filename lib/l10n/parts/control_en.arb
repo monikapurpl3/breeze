@@ -1,0 +1,891 @@
+{
+  "homeErrorDetail": "{detail}",
+  "@homeErrorDetail": {
+    "description": "Home screen, snack bar: something the user did failed. {detail} is the error's own text from the server or the connection, always in English. English shows it bare; other languages put a short lead-in before it (\"Didn't work:\") so the English after it makes sense.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "homeLoadFailed": "Could not load your units.",
+  "@homeLoadFailed": {
+    "description": "Home screen, in the middle of an empty screen: the list of air conditioners could not be fetched from the server. A Retry button is under it."
+  },
+  "homeTimerCancelled": "Timer cancelled",
+  "@homeTimerCancelled": {
+    "description": "Snack bar: the unit's sleep timer (turn off after a while) was cancelled."
+  },
+  "homeStartCancelled": "Scheduled start cancelled",
+  "@homeStartCancelled": {
+    "description": "Snack bar: the unit's scheduled start (turn on at a set time) was cancelled."
+  },
+  "homeSwitchingOffAt": "Switching off at {time}",
+  "@homeSwitchingOffAt": {
+    "description": "Snack bar after setting a sleep timer: the unit will switch off at {time}, a 24-hour clock time like 23:15.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "23:15"
+      }
+    }
+  },
+  "homeSwitchingOn": "Switching on {moment}",
+  "@homeSwitchingOn": {
+    "description": "Snack bar after setting a scheduled start. {moment} is one of timerWhenToday, timerWhenTomorrow or timerWhenDate, e.g. \"tomorrow at 07:30\".",
+    "placeholders": {
+      "moment": {
+        "type": "String",
+        "example": "tomorrow at 07:30"
+      }
+    }
+  },
+  "homeRenameTitle": "Rename unit",
+  "@homeRenameTitle": {
+    "description": "Title of the dialog that renames an air conditioner."
+  },
+  "homeNameField": "Name",
+  "@homeNameField": {
+    "description": "Rename dialog: the label of the text field for the unit's new name."
+  },
+  "homeRemoveTitle": "Remove unit",
+  "@homeRemoveTitle": {
+    "description": "Title of the dialog that removes an air conditioner from the server."
+  },
+  "homeRemoveBody": "Remove \"{name}\" from the server? You can add it back later.",
+  "@homeRemoveBody": {
+    "description": "Remove dialog: the question. {name} is the unit's name, which the user gave it.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "homeAddScanTitle": "Scan the network",
+  "@homeAddScanTitle": {
+    "description": "Add-unit sheet, first choice: look for air conditioners on the local network."
+  },
+  "homeAddScanSubtitle": "Find units by looking for open AC ports",
+  "@homeAddScanSubtitle": {
+    "description": "Add-unit sheet: explains the scan choice. AC = air conditioner."
+  },
+  "homeAddIpTitle": "Enter IP address",
+  "@homeAddIpTitle": {
+    "description": "Add-unit sheet, second choice: type the unit's IP address."
+  },
+  "homeAddIpSubtitle": "Add a unit manually by its LAN IP",
+  "@homeAddIpSubtitle": {
+    "description": "Add-unit sheet: explains the IP choice."
+  },
+  "homeAddByIpTitle": "Add unit by IP",
+  "@homeAddByIpTitle": {
+    "description": "Title of the dialog where the user types a unit's IP address."
+  },
+  "homeUnitIpField": "Unit IP address",
+  "@homeUnitIpField": {
+    "description": "Add-by-IP dialog: label of the IP address field."
+  },
+  "homeNameOptionalField": "Name (optional)",
+  "@homeNameOptionalField": {
+    "description": "Add-by-IP dialog: label of the field for the unit's name, which may be left empty."
+  },
+  "homeDiscovering": "Discovering unit…",
+  "@homeDiscovering": {
+    "description": "Snack bar while the server talks to a newly added unit for the first time."
+  },
+  "homeAdded": "Added \"{name}\"",
+  "@homeAdded": {
+    "description": "Snack bar: the unit was added. {name} is its name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "homeTooltipAddUnit": "Add unit",
+  "@homeTooltipAddUnit": {
+    "description": "Tooltip and screen-reader name of the + button in the home screen's top bar."
+  },
+  "homeTooltipPrograms": "Programs",
+  "@homeTooltipPrograms": {
+    "description": "Tooltip of the top-bar button that opens the programs screen (favourites, schedules, curves)."
+  },
+  "homeTooltipDiagnostics": "Diagnostics",
+  "@homeTooltipDiagnostics": {
+    "description": "Tooltip of the top-bar button that opens the diagnostics screen."
+  },
+  "homeTooltipSettings": "Settings",
+  "@homeTooltipSettings": {
+    "description": "Tooltip of the top-bar button that opens the settings screen."
+  },
+  "homeOfflineBanner": "Can’t reach the server — retrying…",
+  "@homeOfflineBanner": {
+    "description": "Red banner at the top of the home screen while the server cannot be reached; the app keeps trying. A Retry button is beside it."
+  },
+  "homeReachingServer": "Reaching your Breeze Core server…",
+  "@homeReachingServer": {
+    "description": "Shown, and spoken, under the loading animation while the app first connects to the server."
+  },
+  "homeNoUnits": "No units yet.",
+  "@homeNoUnits": {
+    "description": "Home screen when the server has no air conditioners. An 'Add a unit' button is under it."
+  },
+  "homeAddAUnit": "Add a unit",
+  "@homeAddAUnit": {
+    "description": "Button on the empty home screen."
+  },
+  "homeConnectingTo": "Connecting to {name}…",
+  "@homeConnectingTo": {
+    "description": "Under the loading animation on a unit's page before its state has arrived. {name} is the unit's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "homePreviousUnit": "Previous unit",
+  "@homePreviousUnit": {
+    "description": "Tooltip of the left arrow beside the page dots: go to the previous air conditioner."
+  },
+  "homeNextUnit": "Next unit",
+  "@homeNextUnit": {
+    "description": "Tooltip of the right arrow beside the page dots: go to the next air conditioner."
+  },
+  "homeUnitPosition": "Unit {index} of {count}, {name}",
+  "@homeUnitPosition": {
+    "description": "Spoken by screen readers for the page dots: which unit is shown, out of how many, and its name.",
+    "placeholders": {
+      "index": {
+        "type": "int",
+        "example": "2"
+      },
+      "count": {
+        "type": "int",
+        "example": "3"
+      },
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "homeTileConnecting": "connecting…",
+  "@homeTileConnecting": {
+    "description": "Units list (tablets): the second line of a unit whose state has not arrived yet. Lower case."
+  },
+  "homeTileOn": "{mode}, {temperature}",
+  "@homeTileOn": {
+    "description": "Units list (tablets): the second line of a unit that is on: its mode (modeCool etc.) and target temperature.",
+    "placeholders": {
+      "mode": {
+        "type": "String",
+        "example": "cool"
+      },
+      "temperature": {
+        "type": "String",
+        "example": "23.5°C"
+      }
+    }
+  },
+  "homeTileRoom": "room {temperature}",
+  "@homeTileRoom": {
+    "description": "Units list (tablets), spoken only: the temperature in the unit's room.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "21.0°C"
+      }
+    }
+  },
+  "homeLatencyUnmeasured": "Latency not measured yet",
+  "@homeLatencyUnmeasured": {
+    "description": "Spoken for the latency badge beside the app's title (switched on from the Nerd screen) before the first measurement."
+  },
+  "homeLatency": "{ms, plural, one{Latency {ms} millisecond} other{Latency {ms} milliseconds}}",
+  "@homeLatency": {
+    "description": "Spoken for the latency badge beside the app's title: the server's round-trip time.",
+    "placeholders": {
+      "ms": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  },
+  "homeLatencyFallback": "{ms, plural, one{Latency {ms} millisecond, through a fallback address} other{Latency {ms} milliseconds, through a fallback address}}",
+  "@homeLatencyFallback": {
+    "description": "As homeLatency, while the app is reaching the server through its fallback address instead of the main one.",
+    "placeholders": {
+      "ms": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  },
+  "homeScanTitle": "Scan for units",
+  "@homeScanTitle": {
+    "description": "Title of the dialog that scans the local network for air conditioners."
+  },
+  "homeScanEnterIp": "Enter IP instead",
+  "@homeScanEnterIp": {
+    "description": "Scan dialog button: give up scanning and type an IP address. One of three buttons in a row, keep it short."
+  },
+  "homeScanRescan": "Rescan",
+  "@homeScanRescan": {
+    "description": "Scan dialog button: scan again."
+  },
+  "homeScanning": "Scanning the network…",
+  "@homeScanning": {
+    "description": "Scan dialog, under a spinner."
+  },
+  "homeScanTooOld": "This server is older than 3.0 and can’t scan. Add the unit by its IP instead.",
+  "@homeScanTooOld": {
+    "description": "Scan dialog: the Breeze Core server is a version older than 3.0, which has no scan. 3.0 is a version number."
+  },
+  "homeScanFailed": "Scan failed: {error}",
+  "@homeScanFailed": {
+    "description": "Scan dialog: the scan failed. {error} is the error's text, in English.",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "timed out reaching the server"
+      }
+    }
+  },
+  "homeScanNoneFound": "No units found. Make sure they’re powered on and on this network, or add one by its IP.",
+  "@homeScanNoneFound": {
+    "description": "Scan dialog: the scan found nothing."
+  },
+  "homeScanAlreadyAdded": "already added",
+  "@homeScanAlreadyAdded": {
+    "description": "Scan dialog, under an IP address found: that unit is already on the server. Lower case."
+  },
+  "homeScanPortOpen": "port {port} open",
+  "@homeScanPortOpen": {
+    "description": "Scan dialog, under an IP address found: the network port the unit answered on. Lower case.",
+    "placeholders": {
+      "port": {
+        "type": "String",
+        "example": "6444"
+      }
+    }
+  },
+  "unitMoreOptions": "More options for {name}",
+  "@unitMoreOptions": {
+    "description": "Tooltip and screen-reader name of the ⋮ menu (rename, remove) in a unit page's header. {name} is the unit's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "unitOfflineNote": "offline — last known settings",
+  "@unitOfflineNote": {
+    "description": "Red line under a unit's name when the unit cannot be reached: the controls show what it was last known to be set to. Lower case."
+  },
+  "unitTurnsOffAt": "Turns off at {time}",
+  "@unitTurnsOffAt": {
+    "description": "Tooltip of the timer button while a sleep timer runs. {time} is a 24-hour clock time.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "23:30"
+      }
+    }
+  },
+  "unitTurnsOn": "Turns on {moment}",
+  "@unitTurnsOn": {
+    "description": "Tooltip of the timer button while a scheduled start waits. {moment} is one of timerWhenToday, timerWhenTomorrow or timerWhenDate.",
+    "placeholders": {
+      "moment": {
+        "type": "String",
+        "example": "tomorrow at 07:30"
+      }
+    }
+  },
+  "unitTimerIdle": "Turn off or on later",
+  "@unitTimerIdle": {
+    "description": "Tooltip of the timer button (an hourglass beside the power switch) when nothing is pending: it opens a sheet to switch the unit off after a while or on at a set time."
+  },
+  "unitTimerIdleSleepOnly": "Turn off after a while",
+  "@unitTimerIdleSleepOnly": {
+    "description": "As unitTimerIdle, on an older server that can only switch the unit off later."
+  },
+  "unitTimer": "Timer",
+  "@unitTimer": {
+    "description": "Screen-reader name of the timer button while something is pending (what is pending is read after it)."
+  },
+  "unitTimerWithAction": "Timer, {action}",
+  "@unitTimerWithAction": {
+    "description": "Screen-reader name of the timer button when nothing is pending. {action} is unitTimerIdle or unitTimerIdleSleepOnly in lower case.",
+    "placeholders": {
+      "action": {
+        "type": "String",
+        "example": "turn off or on later"
+      }
+    }
+  },
+  "tempTarget": "Target temperature",
+  "@tempTarget": {
+    "description": "Screen-reader name of the big temperature readout and of the temperature slider."
+  },
+  "tempTargetCaption": "target",
+  "@tempTargetCaption": {
+    "description": "Small caption under the big temperature number, when the unit reports no indoor or outdoor reading. Lower case."
+  },
+  "tempLower": "Lower the target temperature",
+  "@tempLower": {
+    "description": "Screen-reader name of the − button beside the temperature slider."
+  },
+  "tempRaise": "Raise the target temperature",
+  "@tempRaise": {
+    "description": "Screen-reader name of the + button beside the temperature slider."
+  },
+  "tempIndoorShort": "I: {temperature}",
+  "@tempIndoorShort": {
+    "description": "Under the big temperature number: the indoor reading, abbreviated (I = indoor). Shown as \"I: 27.0°C  /  O: 33.0°C\"; keep it short.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "27.0°C"
+      }
+    }
+  },
+  "tempOutdoorShort": "O: {temperature}",
+  "@tempOutdoorShort": {
+    "description": "Under the big temperature number: the outdoor reading, abbreviated (O = outdoor). Keep it short.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "33.0°C"
+      }
+    }
+  },
+  "tempIndoorSpoken": "indoor {temperature}",
+  "@tempIndoorSpoken": {
+    "description": "Spoken for the indoor / outdoor bar: the indoor reading.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "27.0°C"
+      }
+    }
+  },
+  "tempOutdoorSpoken": "outdoor {temperature}",
+  "@tempOutdoorSpoken": {
+    "description": "Spoken for the indoor / outdoor bar: the outdoor reading.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "33.0°C"
+      }
+    }
+  },
+  "tempTargetValue": "target {temperature}",
+  "@tempTargetValue": {
+    "description": "The target temperature: spoken for the indoor / outdoor bar, and shown under the round gauge. Lower case.",
+    "placeholders": {
+      "temperature": {
+        "type": "String",
+        "example": "24.0°C"
+      }
+    }
+  },
+  "tempIndoorCaption": "indoor",
+  "@tempIndoorCaption": {
+    "description": "Small caption under the indoor reading in the round temperature gauge. Lower case."
+  },
+  "fanSliderLabel": "Fan speed",
+  "@fanSliderLabel": {
+    "description": "Screen-reader name of the fan speed slider."
+  },
+  "fanSliderAuto": "auto; move to set a speed",
+  "@fanSliderAuto": {
+    "description": "Spoken value of the fan speed slider while the fan is on auto: moving the slider picks a fixed speed."
+  },
+  "fanLow": "Low",
+  "@fanLow": {
+    "description": "Caption under the left end of the fan speed slider."
+  },
+  "fanHigh": "High",
+  "@fanHigh": {
+    "description": "Caption under the right end of the fan speed slider."
+  },
+  "fanAutoPill": "Auto",
+  "@fanAutoPill": {
+    "description": "The button beside the fan heading that sets the fan speed to automatic. Short."
+  },
+  "controlNotApplied": "The air conditioner didn't accept {what} — the unit refused it, not Breeze Core. {reasons}",
+  "@controlNotApplied": {
+    "description": "Snack bar after a control the unit refused. {what} is one or more of the controlName… messages, joined; {reasons} is one or more controlReason… sentences. It must be clear the air conditioner refused, not the app or the server.",
+    "placeholders": {
+      "what": {
+        "type": "String",
+        "example": "the flap change and eco"
+      },
+      "reasons": {
+        "type": "String",
+        "example": "Units only move their flaps while they are running."
+      }
+    }
+  },
+  "controlNameSwing": "the flap change",
+  "@controlNameSwing": {
+    "description": "What the unit refused, as the object of controlNotApplied (\"didn't accept …\"): a change to the flaps' swing."
+  },
+  "controlNameEco": "eco",
+  "@controlNameEco": {
+    "description": "What the unit refused, as the object of controlNotApplied: switching eco on or off."
+  },
+  "controlNameTurbo": "turbo",
+  "@controlNameTurbo": {
+    "description": "What the unit refused, as the object of controlNotApplied: switching turbo on or off."
+  },
+  "controlNameFanSpeed": "the fan speed",
+  "@controlNameFanSpeed": {
+    "description": "What the unit refused, as the object of controlNotApplied."
+  },
+  "controlNameTemperature": "the temperature",
+  "@controlNameTemperature": {
+    "description": "What the unit refused, as the object of controlNotApplied: the target temperature."
+  },
+  "controlNameMode": "the mode",
+  "@controlNameMode": {
+    "description": "What the unit refused, as the object of controlNotApplied."
+  },
+  "controlNamePower": "the power change",
+  "@controlNamePower": {
+    "description": "What the unit refused, as the object of controlNotApplied: switching on or off."
+  },
+  "controlNameChange": "the change",
+  "@controlNameChange": {
+    "description": "What the unit refused, as the object of controlNotApplied, when the server did not say what."
+  },
+  "controlNamesList": "{list}, {item}",
+  "@controlNamesList": {
+    "description": "Joins the refused things in controlNotApplied, all but the last: \"the fan speed, the mode\".",
+    "placeholders": {
+      "list": {
+        "type": "String",
+        "example": "the fan speed"
+      },
+      "item": {
+        "type": "String",
+        "example": "the mode"
+      }
+    }
+  },
+  "controlNamesAnd": "{list} and {last}",
+  "@controlNamesAnd": {
+    "description": "Joins the last refused thing in controlNotApplied: \"the flap change and eco\".",
+    "placeholders": {
+      "list": {
+        "type": "String",
+        "example": "the flap change"
+      },
+      "last": {
+        "type": "String",
+        "example": "eco"
+      }
+    }
+  },
+  "controlReasonSwingOff": "Units only move their flaps while they are running.",
+  "@controlReasonSwingOff": {
+    "description": "Why a flap change was refused: the unit is switched off."
+  },
+  "controlReasonSwingHeating": "While heating, it holds its flaps still until warm air is coming out, which can take a few minutes after switching on or into heating. Try again shortly.",
+  "@controlReasonSwingHeating": {
+    "description": "Why a flap change was refused while heating. \"it\" is the air conditioner."
+  },
+  "controlReasonSwingWait": "It may need a moment before it will take this. Try again shortly.",
+  "@controlReasonSwingWait": {
+    "description": "Why a flap change was refused in another mode. \"It\" is the air conditioner."
+  },
+  "controlReasonEcoHeating": "Many units offer eco only while cooling, not while heating.",
+  "@controlReasonEcoHeating": {
+    "description": "Why eco was refused while heating."
+  },
+  "controlReasonEcoModes": "Many units offer eco only in some modes.",
+  "@controlReasonEcoModes": {
+    "description": "Why eco was refused in a mode other than heating."
+  },
+  "controlReasonTurboModes": "Many units offer turbo only in some modes.",
+  "@controlReasonTurboModes": {
+    "description": "Why turbo was refused."
+  },
+  "controlReasonOther": "It does not take this in its current mode.",
+  "@controlReasonOther": {
+    "description": "Why anything else was refused. \"It\" is the air conditioner."
+  },
+  "timerToday": "Today",
+  "@timerToday": {
+    "description": "Timer sheet, the Day drop-down of a scheduled start: today, on the server's calendar."
+  },
+  "timerTomorrow": "Tomorrow",
+  "@timerTomorrow": {
+    "description": "Timer sheet, the Day drop-down."
+  },
+  "timerInDays": "{days, plural, one{In {days} day} other{In {days} days}}",
+  "@timerInDays": {
+    "description": "Timer sheet, the Day drop-down: a day further ahead (2 to 30).",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "timerTurningOffIn": "Turning off in {duration}",
+  "@timerTurningOffIn": {
+    "description": "Timer sheet heading while a sleep timer runs. {duration} is timerShortMinutes etc., e.g. \"1h 20m\".",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "1h 20m"
+      }
+    }
+  },
+  "timerTurnOffLater": "Turn off later",
+  "@timerTurnOffLater": {
+    "description": "Timer sheet heading of the sleep-timer half when none is set."
+  },
+  "timerSleepActiveBlurb": "{name} switches off at {time}. The server does it, so this works with the phone off.",
+  "@timerSleepActiveBlurb": {
+    "description": "Timer sheet, under the heading while a sleep timer runs. {name} is the unit's name; {time} a 24-hour clock time.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      },
+      "time": {
+        "type": "String",
+        "example": "23:30"
+      }
+    }
+  },
+  "timerSleepIdleBlurb": "Leave {name} running for a while, then let the server switch it off — no need for the phone to be here.",
+  "@timerSleepIdleBlurb": {
+    "description": "Timer sheet, under the heading when no sleep timer is set. {name} is the unit's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "timerCustom": "Custom",
+  "@timerCustom": {
+    "description": "Timer sheet: the chip after the preset durations, which asks for any number of minutes."
+  },
+  "timerCancelSleep": "Cancel the timer",
+  "@timerCancelSleep": {
+    "description": "Timer sheet button: cancel the running sleep timer."
+  },
+  "timerPresetMinutes": "{minutes} min",
+  "@timerPresetMinutes": {
+    "description": "Timer sheet: a preset duration chip under an hour.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "45"
+      }
+    }
+  },
+  "timerPresetHours": "{hours} h",
+  "@timerPresetHours": {
+    "description": "Timer sheet: a preset duration chip of whole hours.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "timerPresetHoursMinutes": "{hours} h {minutes}",
+  "@timerPresetHoursMinutes": {
+    "description": "Timer sheet: a preset duration chip of hours and minutes (1 h 30).",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "1"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  },
+  "timerCustomTitle": "Turn off after",
+  "@timerCustomTitle": {
+    "description": "Title of the dialog asking for a sleep timer's length in minutes."
+  },
+  "timerCustomSuffix": "minutes",
+  "@timerCustomSuffix": {
+    "description": "Custom timer dialog: the unit written after the number field."
+  },
+  "timerCustomHelper": "1 to 1440 (24 h)",
+  "@timerCustomHelper": {
+    "description": "Custom timer dialog, under the field: the allowed range in minutes."
+  },
+  "timerCustomSet": "Set",
+  "@timerCustomSet": {
+    "description": "Custom timer dialog button: set the timer."
+  },
+  "timerTurningOn": "Turning on {moment}",
+  "@timerTurningOn": {
+    "description": "Timer sheet heading while a scheduled start waits. {moment} is one of timerWhenToday, timerWhenTomorrow or timerWhenDate.",
+    "placeholders": {
+      "moment": {
+        "type": "String",
+        "example": "tomorrow at 07:30"
+      }
+    }
+  },
+  "timerTurnOnLater": "Turn on later",
+  "@timerTurnOnLater": {
+    "description": "Timer sheet heading of the scheduled-start half when none is set."
+  },
+  "timerStartPendingBlurb": "{name} switches on with the mode and temperature it last had. Pick another day or time to move it.",
+  "@timerStartPendingBlurb": {
+    "description": "Timer sheet, under the heading while a scheduled start waits. {name} is the unit's name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      }
+    }
+  },
+  "timerStartIdleBlurb": "Switch {name} on at a set time, up to {days, plural, one{{days} day} other{{days} days}} ahead, with the mode and temperature it last had. The time is the server's clock, the same one schedules use.",
+  "@timerStartIdleBlurb": {
+    "description": "Timer sheet, under the heading when no scheduled start is set. {name} is the unit's name; {days} the furthest ahead a start can be (30).",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Living room"
+      },
+      "days": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  },
+  "timerDayField": "Day",
+  "@timerDayField": {
+    "description": "Timer sheet: label of the drop-down choosing the day of a scheduled start."
+  },
+  "timerPickerHelp": "Turn on at (server time)",
+  "@timerPickerHelp": {
+    "description": "Heading of the time picker for a scheduled start: the time is on the server's clock."
+  },
+  "timerMoveIt": "Move it",
+  "@timerMoveIt": {
+    "description": "Timer sheet button: move the waiting scheduled start to the day and time chosen."
+  },
+  "timerTurnOnThen": "Turn on then",
+  "@timerTurnOnThen": {
+    "description": "Timer sheet button: set a scheduled start at the day and time chosen."
+  },
+  "timerCancelStart": "Cancel the start",
+  "@timerCancelStart": {
+    "description": "Timer sheet button: cancel the waiting scheduled start."
+  },
+  "timerShortSeconds": "{seconds}s",
+  "@timerShortSeconds": {
+    "description": "Countdown beside the hourglass in a unit page's header, under a minute left. As short as possible: it squeezes the unit's name.",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "40"
+      }
+    }
+  },
+  "timerShortMinutes": "{minutes}m",
+  "@timerShortMinutes": {
+    "description": "Countdown beside the hourglass in a unit page's header, under an hour left; also in timerTurningOffIn. As short as possible.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "45"
+      }
+    }
+  },
+  "timerShortHours": "{hours}h",
+  "@timerShortHours": {
+    "description": "Countdown beside the hourglass, whole hours left. As short as possible.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "timerShortHoursMinutes": "{hours}h {minutes}m",
+  "@timerShortHoursMinutes": {
+    "description": "Countdown beside the hourglass, hours and minutes left. As short as possible.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "1"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "20"
+      }
+    }
+  },
+  "timerWhenToday": "today at {time}",
+  "@timerWhenToday": {
+    "description": "When a scheduled start fires, put after \"Turning on\", \"Turns on\" or \"Switching on\". {time} is a 24-hour clock time on the server's clock.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "07:30"
+      }
+    }
+  },
+  "timerWhenTomorrow": "tomorrow at {time}",
+  "@timerWhenTomorrow": {
+    "description": "As timerWhenToday, for tomorrow.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "07:30"
+      }
+    }
+  },
+  "timerWhenDate": "{date} at {time}",
+  "@timerWhenDate": {
+    "description": "As timerWhenToday, for a later day. {date} is timerDate.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Tue 29 Sep"
+      },
+      "time": {
+        "type": "String",
+        "example": "07:30"
+      }
+    }
+  },
+  "timerWhenUnknown": "at {time}",
+  "@timerWhenUnknown": {
+    "description": "As timerWhenToday, when the server's time could not be read; {time} is then whatever the server sent.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "2026-09-29T07:30:00"
+      }
+    }
+  },
+  "timerDate": "{weekday} {day} {month}",
+  "@timerDate": {
+    "description": "A date within the next month: {weekday} is timerWeekdayMon etc., {day} the day of the month, {month} timerMonthJan etc. Order and punctuation as the language writes a short date.",
+    "placeholders": {
+      "weekday": {
+        "type": "String",
+        "example": "Tue"
+      },
+      "day": {
+        "type": "int",
+        "example": "29"
+      },
+      "month": {
+        "type": "String",
+        "example": "Sep"
+      }
+    }
+  },
+  "timerDayMonth": "{day} {month}",
+  "@timerDayMonth": {
+    "description": "A scheduled start more than a week ahead, beside the alarm clock in a unit page's header: the day of the month and timerMonthJan etc. As short as possible.",
+    "placeholders": {
+      "day": {
+        "type": "int",
+        "example": "20"
+      },
+      "month": {
+        "type": "String",
+        "example": "Oct"
+      }
+    }
+  },
+  "timerWeekdayMon": "Mon",
+  "@timerWeekdayMon": {
+    "description": "Monday, abbreviated: in timerDate, and alone beside the alarm clock in a unit page's header. As the language abbreviates weekdays in a short date."
+  },
+  "timerWeekdayTue": "Tue",
+  "@timerWeekdayTue": {
+    "description": "Tuesday, abbreviated, as timerWeekdayMon."
+  },
+  "timerWeekdayWed": "Wed",
+  "@timerWeekdayWed": {
+    "description": "Wednesday, abbreviated, as timerWeekdayMon."
+  },
+  "timerWeekdayThu": "Thu",
+  "@timerWeekdayThu": {
+    "description": "Thursday, abbreviated, as timerWeekdayMon."
+  },
+  "timerWeekdayFri": "Fri",
+  "@timerWeekdayFri": {
+    "description": "Friday, abbreviated, as timerWeekdayMon."
+  },
+  "timerWeekdaySat": "Sat",
+  "@timerWeekdaySat": {
+    "description": "Saturday, abbreviated, as timerWeekdayMon."
+  },
+  "timerWeekdaySun": "Sun",
+  "@timerWeekdaySun": {
+    "description": "Sunday, abbreviated, as timerWeekdayMon."
+  },
+  "timerMonthJan": "Jan",
+  "@timerMonthJan": {
+    "description": "January, abbreviated, in timerDate and timerDayMonth: in the form the language uses after a day number."
+  },
+  "timerMonthFeb": "Feb",
+  "@timerMonthFeb": {
+    "description": "February, abbreviated, as timerMonthJan."
+  },
+  "timerMonthMar": "Mar",
+  "@timerMonthMar": {
+    "description": "March, abbreviated, as timerMonthJan."
+  },
+  "timerMonthApr": "Apr",
+  "@timerMonthApr": {
+    "description": "April, abbreviated, as timerMonthJan."
+  },
+  "timerMonthMay": "May",
+  "@timerMonthMay": {
+    "description": "May, abbreviated, as timerMonthJan."
+  },
+  "timerMonthJun": "Jun",
+  "@timerMonthJun": {
+    "description": "June, abbreviated, as timerMonthJan."
+  },
+  "timerMonthJul": "Jul",
+  "@timerMonthJul": {
+    "description": "July, abbreviated, as timerMonthJan."
+  },
+  "timerMonthAug": "Aug",
+  "@timerMonthAug": {
+    "description": "August, abbreviated, as timerMonthJan."
+  },
+  "timerMonthSep": "Sep",
+  "@timerMonthSep": {
+    "description": "September, abbreviated, as timerMonthJan."
+  },
+  "timerMonthOct": "Oct",
+  "@timerMonthOct": {
+    "description": "October, abbreviated, as timerMonthJan."
+  },
+  "timerMonthNov": "Nov",
+  "@timerMonthNov": {
+    "description": "November, abbreviated, as timerMonthJan."
+  },
+  "timerMonthDec": "Dec",
+  "@timerMonthDec": {
+    "description": "December, abbreviated, as timerMonthJan."
+  }
+}

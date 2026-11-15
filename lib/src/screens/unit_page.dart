@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../app_scope.dart';
 import '../haptics.dart';
+import '../l10n.dart';
 import '../models.dart';
 import '../theme.dart';
 import '../layout.dart';
@@ -312,16 +313,16 @@ class UnitPage extends StatelessWidget {
         ),
         if (onRename != null || onRemove != null)
           PopupMenuButton<String>(
-            tooltip: 'More options for ${state.name}',
+            tooltip: context.l10n.unitMoreOptions(state.name),
             onSelected: (v) {
               if (v == 'rename') onRename?.call();
               if (v == 'remove') onRemove?.call();
             },
             itemBuilder: (_) => [
               if (onRename != null)
-                const PopupMenuItem(value: 'rename', child: Text('Rename')),
+                PopupMenuItem(value: 'rename', child: Text(context.l10n.actionRename)),
               if (onRemove != null)
-                const PopupMenuItem(value: 'remove', child: Text('Remove')),
+                PopupMenuItem(value: 'remove', child: Text(context.l10n.actionRemove)),
             ],
           ),
       ],
@@ -335,7 +336,7 @@ class UnitPage extends StatelessWidget {
       // Said when the unit drops off, not only shown in red.
       child: Semantics(
         liveRegion: true,
-        child: Text('offline — last known settings',
+        child: Text(context.l10n.unitOfflineNote,
             style: TextStyle(color: scheme.error, fontSize: 13)),
       ),
     );
@@ -388,12 +389,13 @@ class UnitPage extends StatelessWidget {
   /// Eco and turbo, side by side.
   Widget _ecoTurbo(_Parts p, {bool fill = false}) {
     final live = p.live;
+    final l = p.l10n;
     return Row(
       crossAxisAlignment: fill ? CrossAxisAlignment.stretch : CrossAxisAlignment.center,
       children: [
         Expanded(
           child: BigToggle(
-            label: 'Eco',
+            label: l.labelEco,
             icon: Icons.eco,
             value: state.eco,
             accent: const Color(0xFF4CAF50),
@@ -405,7 +407,7 @@ class UnitPage extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: BigToggle(
-            label: 'Turbo',
+            label: l.labelTurbo,
             icon: Icons.bolt,
             value: state.turbo,
             accent: const Color(0xFFFF7043),
@@ -421,7 +423,7 @@ class UnitPage extends StatelessWidget {
 
 /// What every part of the page reads, worked out once per build.
 class _Parts {
-  _Parts._(this.scheme, this.accent, this.unit, this.online);
+  _Parts._(this.scheme, this.accent, this.unit, this.online, this.l10n);
 
   factory _Parts.of(BuildContext context, UnitPage page) {
     final scheme = Theme.of(context).colorScheme;
@@ -430,6 +432,7 @@ class _Parts {
       accentForMode(page.state.operationalMode, scheme),
       AppScope.of(context).tempUnit,
       page.state.online,
+      context.l10n,
     );
   }
 
@@ -437,6 +440,7 @@ class _Parts {
   final Color accent;
   final String unit;
   final bool online;
+  final AppLocalizations l10n;
 
   // Controls are live when the unit is reachable. (You can still retarget a
   // powered-off unit; only an unreachable one locks everything out.)
@@ -535,13 +539,14 @@ class _TimerButtonState extends State<_TimerButton> {
         ? scheme.onSurfaceVariant.withValues(alpha: 0.4)
         : (active ? widget.accent : scheme.onSurfaceVariant);
     final label = Theme.of(context).textTheme.labelSmall;
+    final l = context.l10n;
 
     final tips = [
-      if (sleeping) 'Turns off at ${sleep!.firesAtClock}',
-      if (starting) 'Turns on ${start!.whenLabel}',
+      if (sleeping) l.unitTurnsOffAt(sleep!.firesAtClock),
+      if (starting) l.unitTurnsOn(start!.whenLabel(l)),
     ];
 
-    final idle = widget.startsSupported ? 'Turn off or on later' : 'Turn off after a while';
+    final idle = widget.startsSupported ? l.unitTimerIdle : l.unitTimerIdleSleepOnly;
     final button = Tooltip(
       message: tips.isEmpty ? idle : tips.join('\n'),
       child: InkWell(
@@ -563,7 +568,7 @@ class _TimerButtonState extends State<_TimerButton> {
               if (sleeping) ...[
                 const SizedBox(width: 3),
                 Text(
-                  sleep!.shortLabel,
+                  sleep!.shortLabel(l),
                   style: label?.copyWith(color: colour(true), fontWeight: FontWeight.w600),
                 ),
               ],
@@ -575,7 +580,7 @@ class _TimerButtonState extends State<_TimerButton> {
                 if (!sleeping) ...[
                   const SizedBox(width: 3),
                   Text(
-                    start!.shortWhen,
+                    start!.shortWhen(l),
                     style: label?.copyWith(color: colour(true), fontWeight: FontWeight.w600),
                   ),
                 ],
@@ -591,7 +596,7 @@ class _TimerButtonState extends State<_TimerButton> {
     return Semantics(
       button: true,
       enabled: widget.enabled,
-      label: tips.isEmpty ? 'Timer, ${idle.toLowerCase()}' : 'Timer',
+      label: tips.isEmpty ? l.unitTimerWithAction(idle.toLowerCase()) : l.unitTimer,
       value: tips.join(', '),
       onTap: widget.enabled ? _open : null,
       excludeSemantics: true,

@@ -2354,6 +2354,571 @@
   "@diagNoIssues": {
     "description": "Diagnostics: the verdict's line when every check passed."
   },
+  "programsTitle": "Programs",
+  "@programsTitle": {
+    "description": "Programs list: the screen title."
+  },
+  "programsNew": "New",
+  "@programsNew": {
+    "description": "Programs list: the floating button that starts a new program. One short word."
+  },
+  "programsUnsupported": "This server doesn’t have the programs feature yet.\n\nUpdate the server, then favourites, schedules and temperature curves will appear here.",
+  "@programsUnsupported": {
+    "description": "Programs list, when the server is too old to have programs. Two paragraphs."
+  },
+  "programsGroupFavourites": "Favourites",
+  "@programsGroupFavourites": {
+    "description": "Programs list: heading over the favourites (saved scenes). Shown in capitals."
+  },
+  "programsGroupSchedules": "Schedules",
+  "@programsGroupSchedules": {
+    "description": "Programs list: heading over the schedules. Shown in capitals."
+  },
+  "programsGroupCurves": "Curves",
+  "@programsGroupCurves": {
+    "description": "Programs list: heading over the temperature curves. Shown in capitals."
+  },
+  "programsApplied": "Applied “{name}”",
+  "@programsApplied": {
+    "description": "Snack bar after a favourite was applied. {name} is the program's name, as the user typed it.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "programsDeleteTitle": "Delete “{name}”?",
+  "@programsDeleteTitle": {
+    "description": "Title of the dialog that confirms deleting a program.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "programsDeleteBody": "It is removed from the server, for every phone.",
+  "@programsDeleteBody": {
+    "description": "Body of the delete dialog: programs live on the server, so every paired phone loses it."
+  },
+  "programsEmptyScene": "Empty scene",
+  "@programsEmptyScene": {
+    "description": "Programs list: the one-line summary of a favourite with no settings."
+  },
+  "programsNoTimes": "No times",
+  "@programsNoTimes": {
+    "description": "Programs list: the summary of a schedule with no times in it."
+  },
+  "programsNoPoints": "No points",
+  "@programsNoPoints": {
+    "description": "Programs list: the summary of a curve with no points."
+  },
+  "programsCurveRange": "{low} to {high}",
+  "@programsCurveRange": {
+    "description": "Programs list: a curve's summary, after its mode: the lowest and highest temperature, already formatted (\"21.0°\").",
+    "placeholders": {
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      }
+    }
+  },
+  "programsApplyNowTooltip": "Apply {name} now",
+  "@programsApplyNowTooltip": {
+    "description": "Tooltip (and screen-reader label) of the play button on a favourite.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "programsRunningLabel": "Running, {name}",
+  "@programsRunningLabel": {
+    "description": "Screen-reader label of the on/off switch on a schedule or curve: whether the server runs it. The switch adds \"on\" or \"off\".",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "programsMoreOptions": "More options for {name}",
+  "@programsMoreOptions": {
+    "description": "Tooltip of a program's ⋮ menu button.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "programsApplyNow": "Apply now",
+  "@programsApplyNow": {
+    "description": "Menu item on a curve: set the curve's current temperature on the units now."
+  },
+  "programsEmptyTitle": "No programs yet",
+  "@programsEmptyTitle": {
+    "description": "Programs list with nothing in it: the heading."
+  },
+  "programsEmptyFavourite": "A favourite: a scene you apply with one tap.",
+  "@programsEmptyFavourite": {
+    "description": "Programs list with nothing in it: what a favourite is."
+  },
+  "programsEmptySchedule": "A schedule: scenes at times of the week, run by the server.",
+  "@programsEmptySchedule": {
+    "description": "Programs list with nothing in it: what a schedule is."
+  },
+  "programsEmptyCurve": "A curve: a temperature that follows the day.",
+  "@programsEmptyCurve": {
+    "description": "Programs list with nothing in it: what a curve is."
+  },
+  "programNew": "New program",
+  "@programNew": {
+    "description": "The button that starts a new program, and the editor's title while creating one."
+  },
+  "programEditTitle": "Edit program",
+  "@programEditTitle": {
+    "description": "The program editor's title for an existing program."
+  },
+  "programAllUnits": "All units",
+  "@programAllUnits": {
+    "description": "A program that applies to every air conditioner: the chip in the editor and the line on its card."
+  },
+  "programKindFavourite": "Favourite",
+  "@programKindFavourite": {
+    "description": "One of the three kinds of program, on a tile under an icon: a saved scene applied on demand. One short word; it shrinks to fit rather than wrap."
+  },
+  "programKindSchedule": "Schedule",
+  "@programKindSchedule": {
+    "description": "Kind of program: scenes at times of the week. One short word on a tile."
+  },
+  "programKindCurve": "Curve",
+  "@programKindCurve": {
+    "description": "Kind of program: a temperature that follows the day. One short word on a tile."
+  },
+  "programKindLabel": "Kind of program",
+  "@programKindLabel": {
+    "description": "Screen-reader label of the group of three kind tiles."
+  },
+  "programBlurbFavourite": "A scene saved for one tap: apply it from Programs whenever you want it.",
+  "@programBlurbFavourite": {
+    "description": "Program editor: what a favourite does, under the kind tiles. \"Programs\" is the programs screen."
+  },
+  "programBlurbSchedule": "Scenes at set times on the days you pick. The server runs them, so they happen with the phone off. Times are the server's.",
+  "@programBlurbSchedule": {
+    "description": "Program editor: what a schedule does. The times are in the server's clock and time zone."
+  },
+  "programBlurbCurve": "A target temperature that follows the day, adjusted by the server as the hours pass, through midnight and round again.",
+  "@programBlurbCurve": {
+    "description": "Program editor: what a curve does. It wraps round midnight into the next day."
+  },
+  "programName": "Name",
+  "@programName": {
+    "description": "Program editor: label of the name field."
+  },
+  "programNameHintFavourite": "Cosy evening",
+  "@programNameHintFavourite": {
+    "description": "Program editor: an example name for a favourite, shown in the empty name field."
+  },
+  "programNameHintSchedule": "Weekday mornings",
+  "@programNameHintSchedule": {
+    "description": "Program editor: an example name for a schedule."
+  },
+  "programNameHintCurve": "Summer nights",
+  "@programNameHintCurve": {
+    "description": "Program editor: an example name for a curve."
+  },
+  "programUnits": "Units",
+  "@programUnits": {
+    "description": "Program editor: heading of the section that picks the air conditioners. Shown in capitals."
+  },
+  "programRunning": "Running",
+  "@programRunning": {
+    "description": "Program editor: heading of the section with the switch that turns a schedule or curve on or off. Shown in capitals."
+  },
+  "programOn": "On",
+  "@programOn": {
+    "description": "Program editor: the title of the running switch while the program is on (the server runs it)."
+  },
+  "programOff": "Off",
+  "@programOff": {
+    "description": "Program editor: the title of the running switch while the program is off."
+  },
+  "programOffKeepsTimes": "Off keeps the times, but nothing happens at them",
+  "@programOffKeepsTimes": {
+    "description": "Program editor, under the running switch of a schedule."
+  },
+  "programOffKeepsCurve": "Off keeps the curve, but the server stops following it",
+  "@programOffKeepsCurve": {
+    "description": "Program editor, under the running switch of a curve."
+  },
+  "programScene": "Scene",
+  "@programScene": {
+    "description": "Program editor: heading of a favourite's settings, and the button on a schedule time that edits its settings."
+  },
+  "programNeedsName": "Give the program a name.",
+  "@programNeedsName": {
+    "description": "Snack bar: saving without a name."
+  },
+  "programNeedsTime": "Add at least one time.",
+  "@programNeedsTime": {
+    "description": "Snack bar: saving a schedule with no times."
+  },
+  "programNeedsTwoPoints": "A curve needs at least two points.",
+  "@programNeedsTwoPoints": {
+    "description": "Snack bar: saving a curve with fewer than two points."
+  },
+  "programTimes": "Times",
+  "@programTimes": {
+    "description": "Schedule editor: heading over the list of times. Shown in capitals."
+  },
+  "programTimesCount": "{count, plural, one{{count} time} other{{count} times}}",
+  "@programTimesCount": {
+    "description": "Schedule editor: how many times the schedule has, at the end of the heading.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "programNoTimesYet": "No times yet.",
+  "@programNoTimesYet": {
+    "description": "Schedule editor with no times."
+  },
+  "programAddTime": "Add a time",
+  "@programAddTime": {
+    "description": "Schedule editor: button that adds a time."
+  },
+  "programAddTimeHelp": "When should it happen?",
+  "@programAddTimeHelp": {
+    "description": "Title of the time picker opened by \"Add a time\"."
+  },
+  "programSceneAt": "At {time}, {days}",
+  "@programSceneAt": {
+    "description": "Title of the sheet that edits one time's scene. {time} is like 07:00; {days} is \"every day\", \"weekdays\", \"weekends\" or a list of days, in lower case.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "programTimeChange": "Time {time}, change",
+  "@programTimeChange": {
+    "description": "Screen-reader label of a schedule time, which opens the time picker.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "programDeleteTime": "Delete the {time} time",
+  "@programDeleteTime": {
+    "description": "Tooltip of the delete button on a schedule time.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "programDaysEveryDay": "Every day",
+  "@programDaysEveryDay": {
+    "description": "Which days a schedule time runs: all seven (or none picked)."
+  },
+  "programDaysWeekdays": "Weekdays",
+  "@programDaysWeekdays": {
+    "description": "Which days a schedule time runs: Monday to Friday."
+  },
+  "programDaysWeekends": "Weekends",
+  "@programDaysWeekends": {
+    "description": "Which days a schedule time runs: Saturday and Sunday."
+  },
+  "programDaysSeparator": ", ",
+  "@programDaysSeparator": {
+    "description": "Between the short day names in a list such as \"Mon, Wed, Fri\" (the names come from the system). Keep the space where the language has one."
+  },
+  "curveThroughTheDay": "Through the day",
+  "@curveThroughTheDay": {
+    "description": "Curve editor: heading over the chart of the day. Shown in capitals."
+  },
+  "curveModeAndFan": "Mode and fan",
+  "@curveModeAndFan": {
+    "description": "Curve editor: heading over the mode and fan speed controls. Shown in capitals."
+  },
+  "curvePoints": "Points",
+  "@curvePoints": {
+    "description": "Curve editor: heading over the list of points (a time and a temperature each). Shown in capitals."
+  },
+  "curveAddPoint": "Add a point",
+  "@curveAddPoint": {
+    "description": "Curve editor: button that adds a point."
+  },
+  "curveAddPointHelp": "A point at what time?",
+  "@curveAddPointHelp": {
+    "description": "Title of the time picker opened by \"Add a point\"."
+  },
+  "curvePointChangeTime": "Point at {time}, change the time",
+  "@curvePointChangeTime": {
+    "description": "Screen-reader label of a point's time, which opens the time picker.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "curvePointLower": "Lower the {time} point",
+  "@curvePointLower": {
+    "description": "Tooltip of the − button on a point: half a degree cooler.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "curvePointRaise": "Raise the {time} point",
+  "@curvePointRaise": {
+    "description": "Tooltip of the + button on a point: half a degree warmer.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "curvePointDelete": "Delete the {time} point",
+  "@curvePointDelete": {
+    "description": "Tooltip of the delete button on a point.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "curveNeedsTwoPoints": "A curve needs two points",
+  "@curveNeedsTwoPoints": {
+    "description": "Tooltip of the delete button on a point when only two are left, so it is disabled."
+  },
+  "curveChartEmpty": "Temperature curve, no points",
+  "@curveChartEmpty": {
+    "description": "Screen-reader description of the curve chart with no points."
+  },
+  "curveChartSummary": "{count, plural, one{Temperature curve, {count} point, from {low} to {high} degrees} other{Temperature curve, {count} points, from {low} to {high} degrees}}",
+  "@curveChartSummary": {
+    "description": "Screen-reader description of the curve chart: how many points, and the lowest and highest temperature ({low} and {high} are numbers like 21.5, already formatted).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      }
+    }
+  },
+  "sceneSwitchesOn": "Switches the unit on",
+  "@sceneSwitchesOn": {
+    "description": "Scene editor, beside the power switch, while it is on: applying the scene turns the air conditioner on."
+  },
+  "sceneSwitchesOff": "Switches the unit off",
+  "@sceneSwitchesOff": {
+    "description": "Scene editor, beside the power switch, while it is off."
+  },
+  "sceneWithEverythingBelow": "With everything below",
+  "@sceneWithEverythingBelow": {
+    "description": "Scene editor, under \"Switches the unit on\": the settings below are applied too."
+  },
+  "sceneSettingsStillSent": "The settings below are still sent, for next time",
+  "@sceneSettingsStillSent": {
+    "description": "Scene editor, under \"Switches the unit off\"."
+  },
+  "sceneOff": "Off",
+  "@sceneOff": {
+    "description": "A scene in one line of small pills: the only pill when the scene switches the unit off."
+  },
+  "sceneFan": "fan {speed}",
+  "@sceneFan": {
+    "description": "A scene in a line: the fan speed pill, and in the spoken summary. {speed} is a fan speed word such as \"auto\" or \"low\". Lower case.",
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "sceneFlaps": "flaps {swing}",
+  "@sceneFlaps": {
+    "description": "A scene in a line, spoken summary: the flaps' swing. {swing} is \"vertical\", \"horizontal\" or \"both\". Lower case.",
+    "placeholders": {
+      "swing": {
+        "type": "String"
+      }
+    }
+  },
+  "catWhileYouWait": "while you wait",
+  "@catWhileYouWait": {
+    "description": "Small lower-case label, with a paw icon, over a cat fact shown while the app waits for the server."
+  },
+  "catFact1": "A cat has 32 muscles in each ear.",
+  "@catFact1": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact2": "Cats sleep 12 to 16 hours a day, which is most of a working week.",
+  "@catFact2": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word. The English joke is loose: a version that stays true (16 hours is two 8-hour working days) is fine."
+  },
+  "catFact3": "A group of cats is called a clowder.",
+  "@catFact3": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word. \"Clowder\" is an English word; say that it is, if the language has no word of its own."
+  },
+  "catFact4": "Cats have a third eyelid, the haw, which sweeps across the eye.",
+  "@catFact4": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word. \"The haw\" is the English name for the third eyelid; the language's own term, or none, is fine."
+  },
+  "catFact5": "A cat's nose print is as unique as a human fingerprint.",
+  "@catFact5": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact6": "Cats cannot taste sweetness — the receptor gene is broken in all felids.",
+  "@catFact6": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact7": "A domestic cat can sprint at roughly 48 km/h.",
+  "@catFact7": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact8": "Cats walk like camels and giraffes: both right legs, then both left.",
+  "@catFact8": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact9": "The oldest known pet cat was buried with a human in Cyprus 9,500 years ago.",
+  "@catFact9": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact10": "Cats have 24 more bones than humans do.",
+  "@catFact10": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact11": "A cat can rotate its ears 180 degrees.",
+  "@catFact11": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact12": "Purring happens between 25 and 150 Hz, which may help bones heal.",
+  "@catFact12": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact13": "Cats sweat only through their paw pads.",
+  "@catFact13": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact14": "A cat can jump about six times its own length.",
+  "@catFact14": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact15": "Whiskers are roughly as wide as the cat, and are used to judge gaps.",
+  "@catFact15": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact16": "Cats have no collarbone, which is why they fit through narrow spaces.",
+  "@catFact16": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word. Strictly, a cat has a small collarbone attached to no other bone; saying it that way keeps it true."
+  },
+  "catFact17": "Adult cats meow at humans far more than at other cats.",
+  "@catFact17": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact18": "A cat’s heart beats about twice as fast as a human’s.",
+  "@catFact18": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact19": "Cats see well at a sixth of the light a human needs.",
+  "@catFact19": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact20": "The record for the loudest purr is about 67 decibels — a conversation.",
+  "@catFact20": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact21": "Cats have around 200 million scent receptors; humans have about 5 million.",
+  "@catFact21": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact22": "A cat’s tail carries about 10% of its bones.",
+  "@catFact22": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact23": "Kittens are born with blue eyes; the adult colour arrives later.",
+  "@catFact23": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact24": "Cats knead with their paws — a behaviour kept from nursing.",
+  "@catFact24": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact25": "A cat’s brain is more similar to a human’s than a dog’s is.",
+  "@catFact25": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact26": "Cats can make over 100 distinct vocal sounds.",
+  "@catFact26": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact27": "The hairless Sphynx still needs regular bathing, for oil rather than hair.",
+  "@catFact27": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact28": "A cat’s field of view is about 200 degrees, against a human’s 180.",
+  "@catFact28": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact29": "Cats prefer water that is moving, which is why taps beat bowls.",
+  "@catFact29": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact30": "A cat spends up to half its waking hours grooming.",
+  "@catFact30": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact31": "Cats have a righting reflex from about three weeks old.",
+  "@catFact31": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact32": "Black cats can be any of 22 breeds recognised for the colour.",
+  "@catFact32": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact33": "A cat’s normal body temperature is around 38.6 °C — warmer than yours.",
+  "@catFact33": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact34": "Cats mark by rubbing: cheeks and flanks carry scent glands.",
+  "@catFact34": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact35": "The heaviest recorded domestic cat weighed over 21 kg. Please do not.",
+  "@catFact35": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact36": "Cats dream, and show the same REM sleep phase humans do.",
+  "@catFact36": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact37": "A cat’s claws retract to keep them sharp for climbing.",
+  "@catFact37": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact38": "Cats respond to their own name; they simply reserve the right not to.",
+  "@catFact38": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact39": "Ancient Egyptians shaved their eyebrows in mourning when a cat died.",
+  "@catFact39": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
+  "catFact40": "A cat can be either right- or left-pawed, and most females are right-pawed.",
+  "@catFact40": {
+    "description": "A cat fact, shown under the spinner while the app waits for the server. Translate it so it stays true -- keep the numbers right, write them the language's way -- and fun; a joke may be retold rather than translated word for word."
+  },
   "settingsTitle": "Settings",
   "@settingsTitle": {
     "description": "Settings screen: the app bar title."

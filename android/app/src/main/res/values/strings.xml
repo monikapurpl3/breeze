@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- The home-screen widget's and Android Auto's words, which never see the
+     Dart translations: English here, the app's other six languages in
+     values-hr, -sr (Cyrillic), -sl, -fr, -it and -zh (Simplified). The terms
+     follow lib/l10n/GLOSSARY.md. -->
 <resources>
     <string name="widget_label">Breeze AC</string>
     <string name="widget_description">Control one air-conditioner from your home screen.</string>
@@ -6,14 +10,27 @@
     <string name="widget_configure_empty">Open Breeze first so it can load your units, then add the widget again.</string>
     <string name="widget_not_configured">Tap to choose a unit</string>
     <string name="widget_open_app">Open Breeze to sign in</string>
-    <string name="widget_dash">—</string>
+    <string name="widget_dash" translatable="false">—</string>
     <!-- Status badge — short and shouty on purpose; it's what users look for. -->
     <string name="widget_state_on">ON</string>
     <string name="widget_state_off">OFF</string>
     <string name="widget_state_offline">OFFLINE</string>
+    <!-- The unit's mode, on the widget's mode line. Lower case, as in the app. -->
+    <string name="widget_mode_auto">auto</string>
+    <string name="widget_mode_cool">cool</string>
+    <string name="widget_mode_dry">dry</string>
+    <string name="widget_mode_heat">heat</string>
+    <string name="widget_mode_fan">fan</string>
+    <!-- The widget's buttons, as a screen reader names them. -->
+    <string name="widget_power">Power</string>
+    <string name="widget_lower_temp">Lower temperature</string>
+    <string name="widget_raise_temp">Raise temperature</string>
+    <string name="widget_refresh">Refresh</string>
+    <!-- In the target temperature, "22.5°": a comma where the app shows one. -->
+    <string name="widget_decimal_separator">.</string>
 
     <!-- Android Auto. Kept to a handful of words: it's read at a glance, if at all. -->
-    <string name="car_title">Breeze</string>
+    <string name="car_title" translatable="false">Breeze</string>
     <string name="car_state_on">ON</string>
     <string name="car_state_off">OFF</string>
     <string name="car_offline">Not reachable</string>

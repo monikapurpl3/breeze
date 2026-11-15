@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../l10n.dart';
 import '../models.dart';
 import '../util.dart';
 
@@ -62,9 +63,8 @@ class CurveChart extends StatelessWidget {
       // The points are listed (and editable) below the chart; this is the
       // picture's one-line gist.
       label: points.isEmpty
-          ? 'Temperature curve, no points'
-          : 'Temperature curve, ${points.length} points, from '
-              '${lo.toStringAsFixed(1)} to ${hi.toStringAsFixed(1)} degrees',
+          ? context.l10n.curveChartEmpty
+          : context.l10n.curveChartSummary(points.length, fmtDecimal(lo, 1), fmtDecimal(hi, 1)),
       excludeSemantics: true,
       child: SizedBox(
         height: height,
@@ -140,7 +140,7 @@ class _CurvePainter extends CustomPainter {
       // Temperatures: bottom, middle, top.
       for (final t in [lo, (lo + hi) / 2, hi]) {
         canvas.drawLine(Offset(_left, y(t)), Offset(size.width, y(t)), gridPaint);
-        _text(canvas, '${t.toStringAsFixed(0)}°', Offset(0, y(t) - 7));
+        _text(canvas, '${fmtDecimal(t, 0)}°', Offset(0, y(t) - 7));
       }
       // Hours: every six, with the day's ends.
       for (final hour in [0, 6, 12, 18, 24]) {

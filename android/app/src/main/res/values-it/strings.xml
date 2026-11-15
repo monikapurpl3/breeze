@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Italian: see values/strings.xml. -->
+<resources>
+    <string name="widget_label">Breeze Clima</string>
+    <string name="widget_description">Controlla un condizionatore dalla schermata Home.</string>
+    <string name="widget_configure_title">Scegli un condizionatore per questo widget</string>
+    <string name="widget_configure_empty">Apri prima Breeze per caricare i tuoi condizionatori, poi aggiungi di nuovo il widget.</string>
+    <string name="widget_not_configured">Tocca per scegliere un condizionatore</string>
+    <string name="widget_open_app">Apri Breeze per accedere</string>
+    <string name="widget_state_on">ACCESO</string>
+    <string name="widget_state_off">SPENTO</string>
+    <string name="widget_state_offline">OFFLINE</string>
+    <string name="widget_mode_auto">auto</string>
+    <string name="widget_mode_cool">freddo</string>
+    <string name="widget_mode_dry">deumidifica</string>
+    <string name="widget_mode_heat">caldo</string>
+    <string name="widget_mode_fan">ventilazione</string>
+    <string name="widget_power">Accensione</string>
+    <string name="widget_lower_temp">Abbassa la temperatura</string>
+    <string name="widget_raise_temp">Alza la temperatura</string>
+    <string name="widget_refresh">Aggiorna</string>
+    <string name="widget_decimal_separator">,</string>
+    <string name="car_state_on">ACCESO</string>
+    <string name="car_state_off">SPENTO</string>
+    <string name="car_offline">Non raggiungibile</string>
+    <string name="car_tap_to_turn_on">Tocca per accendere</string>
+    <string name="car_tap_to_turn_off">Tocca per spegnere</string>
+    <string name="car_not_paired">Apri Breeze sul telefono per accedere.</string>
+    <string name="car_no_units">Ancora nessun condizionatore. Aggiungine uno nell\'app Breeze.</string>
+</resources>

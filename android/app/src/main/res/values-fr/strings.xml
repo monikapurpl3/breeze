@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- French: see values/strings.xml. -->
+<resources>
+    <string name="widget_label">Breeze Clim</string>
+    <string name="widget_description">Contrôlez un climatiseur depuis votre écran d\'accueil.</string>
+    <string name="widget_configure_title">Choisissez un climatiseur pour ce widget</string>
+    <string name="widget_configure_empty">Ouvrez d\'abord Breeze pour qu\'il charge vos climatiseurs, puis ajoutez à nouveau le widget.</string>
+    <string name="widget_not_configured">Touchez pour choisir un climatiseur</string>
+    <string name="widget_open_app">Ouvrez Breeze pour vous connecter</string>
+    <string name="widget_state_on">ALLUMÉ</string>
+    <string name="widget_state_off">ÉTEINT</string>
+    <string name="widget_state_offline">HORS LIGNE</string>
+    <string name="widget_mode_auto">auto</string>
+    <string name="widget_mode_cool">froid</string>
+    <string name="widget_mode_dry">sec</string>
+    <string name="widget_mode_heat">chaud</string>
+    <string name="widget_mode_fan">ventilation</string>
+    <string name="widget_power">Marche</string>
+    <string name="widget_lower_temp">Baisser la température</string>
+    <string name="widget_raise_temp">Augmenter la température</string>
+    <string name="widget_refresh">Actualiser</string>
+    <string name="widget_decimal_separator">,</string>
+    <string name="car_state_on">ALLUMÉ</string>
+    <string name="car_state_off">ÉTEINT</string>
+    <string name="car_offline">Injoignable</string>
+    <string name="car_tap_to_turn_on">Touchez pour allumer</string>
+    <string name="car_tap_to_turn_off">Touchez pour éteindre</string>
+    <string name="car_not_paired">Ouvrez Breeze sur votre téléphone pour vous connecter.</string>
+    <string name="car_no_units">Aucun climatiseur pour l\'instant. Ajoutez-en un dans l\'app Breeze.</string>
+</resources>

@@ -1,0 +1,86 @@
+name: iOS forensic build
+
+# The forensic build of the iOS app, from the ios-debug branch: the same app
+# built with BREEZE_FORENSICS on (lib/src/forensics/): every session logged to
+# a file the Files app shows, every HTTP exchange recorded (credentials
+# redacted), network probes, a snapshot of what the app holds, the keychain
+# and provisioning profile as iOS sees them, MetricKit's crash reports, and a
+# bug button on every screen to reach it all. Named "Breeze Debug" on the home
+# screen, with the normal bundle id, so it installs over Breeze and looks at
+# the real data; installing the normal IPA again puts Breeze back, data kept.
+#
+# Unsigned, like the normal build: Sideloadly or AltStore signs it with a free
+# Apple ID on the way onto the phone. Never attached to a release: it is a
+# 30-day artifact of this run.
+on:
+  workflow_dispatch:
+  push:
+    branches: [ios-debug]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-debug-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    needs: check
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.50.0
+          channel: stable
+          cache: true
+      - name: Toolchain
+        run: |
+          xcodebuild -version
+          flutter --version
+      - run: flutter pub get
+      - name: Build
+        # Release mode: a Flutter debug build only starts from Xcode on iOS 14
+        # and later. The forensics are compiled in by the define instead.
+        run: flutter build ios --release --no-codesign --dart-define=BREEZE_FORENSICS=true
+      - name: Check the build is the forensic one
+        run: |
+          plutil -extract CFBundleDisplayName raw build/ios/iphoneos/Runner.app/Info.plist
+          plutil -extract UIFileSharingEnabled raw build/ios/iphoneos/Runner.app/Info.plist
+          # The Dart side: the forensic code is only compiled in with the
+          # define. A hint, not a gate: how AOT stores strings may change.
+          strings build/ios/iphoneos/Runner.app/Frameworks/App.framework/App | grep -c "Breeze forensic build starting" \
+            || echo "::warning::the forensic boot line was not found in App.framework by strings"
+      - name: Package
+        run: |
+          version=$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml)
+          ipa="breeze-${version}-forensic-$(git rev-parse --short HEAD)-unsigned.ipa"
+          mkdir Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          zip -qry "$ipa" Payload
+          shasum -a 256 "$ipa" > "$ipa.sha256"
+          echo "IPA=$ipa" >> "$GITHUB_ENV"
+          {
+            echo "### $ipa"
+            echo
+            echo "$(du -h "$ipa" | cut -f1), SHA-256 \`$(cut -d' ' -f1 "$ipa.sha256")\`"
+            echo
+            echo "The forensic build (\"Breeze Debug\"). Unsigned: sign it while sideloading."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v7
+        with:
+          path: ${{ env.IPA }}
+          archive: false
+          retention-days: 30
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          path: ${{ env.IPA }}.sha256
+          archive: false
+          retention-days: 30
+          if-no-files-found: error

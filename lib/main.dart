@@ -4,6 +4,9 @@ import 'package:material_ui/material_ui.dart';
 import 'src/app_controller.dart';
 import 'src/app_info.dart';
 import 'src/app_scope.dart';
+import 'src/forensics/forensics.dart';
+import 'src/forensics/hooks.dart';
+import 'src/forensics/screen.dart';
 import 'src/internal_prefs.dart';
 import 'src/l10n.dart';
 import 'src/home_widget_service.dart';
@@ -17,6 +20,9 @@ import 'src/widgets/loading_cat.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // The forensic build (ios-debug): the log, the error handlers and the
+  // watchers first, so that everything after is written down.
+  if (kForensics) await forensicsBoot();
   // The native dependencies' licences, which LicenseRegistry cannot find on
   // its own -- see native_licenses.dart. After ensureInitialized because the
   // callback reads an asset (it is lazy, but the ordering should not depend
@@ -32,6 +38,7 @@ void main() async {
   HomeWidgetService.init();
   HomeWidgetService.registerBackgroundRefresh();
   final controller = AppController(SecureStore());
+  if (kForensics) watchController(controller);
   controller.init();
   runApp(BreezeApp(controller: controller));
 }
@@ -74,6 +81,12 @@ class BreezeApp extends StatelessWidget {
                 theme: ThemeData(colorScheme: light, useMaterial3: true),
                 darkTheme: ThemeData(colorScheme: dark, useMaterial3: true),
                 home: const _Gate(),
+                // The forensic build's bug button over every screen, its
+                // record of every screen opened, and the navigator it opens
+                // its own screen with.
+                navigatorKey: kForensics ? forensicNavigator : null,
+                navigatorObservers: [if (kForensics) ForensicObserver()],
+                builder: kForensics ? (context, child) => ForensicsOverlay(child: child!) : null,
                 // Settings' language, or the phone's while none is chosen.
                 locale: controller.locale,
                 localizationsDelegates: appLocalizationsDelegates,

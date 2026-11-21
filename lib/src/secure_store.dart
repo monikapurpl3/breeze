@@ -29,6 +29,8 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'forensics/secure_log.dart';
+
 /// One saved server: where it is, how we authenticate to it, what to call it.
 class ServerProfile {
   const ServerProfile({
@@ -59,11 +61,17 @@ class ServerProfile {
 }
 
 class SecureStore {
-  final FlutterSecureStorage _s = const FlutterSecureStorage(
+  // In the forensic build every keychain call is written down (key, length,
+  // timing, errors; never a value); otherwise the wrapper only passes through.
+  final LoggedSecureStorage _s = LoggedSecureStorage(const FlutterSecureStorage(
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
     ),
-  );
+  ));
+
+  /// The forensic snapshot's view of the keychain: each key with its value's
+  /// length and fingerprint, never the value.
+  Future<List<String>> forensicInventory() => _s.inventory();
 
   static const _kActive = 'active_profile';
   static const _kIndex = 'profile_index';   // JSON list of ids

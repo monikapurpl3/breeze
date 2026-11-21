@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'device_signer.dart';
+import 'forensics/http_log.dart';
 import 'models.dart';
 import 'secure_store.dart';
 
@@ -159,7 +160,7 @@ class ApiClient {
     http.Client? client,
     this.timeout = const Duration(seconds: 15),
     List<String> alternates = const [],
-  })  : _http = client ?? http.Client(),
+  })  : _http = client ?? newHttpClient(),
         _alternates = [...alternates];
 
   /// Build a client from stored credentials, or null if server+key are

@@ -45,6 +45,8 @@ dependencies:
   cryptography: ^2.7.0
   pointycastle: ^4.0.0
   package_info_plus: ^10.2.1
+  # The forensic build's log folder (Documents); already in the lock, through other plugins.
+  path_provider: ^2.1.6
   material_ui: ^1.11.0
   flutter_localizations:
     sdk: flutter

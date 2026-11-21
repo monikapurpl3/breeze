@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import 'forensics/forensics.dart';
+
 /// Haptic feedback, named by *meaning* rather than by intensity.
 ///
 /// The app previously called [HapticFeedback.selectionClick] in exactly one
@@ -31,6 +33,7 @@ class Haptics {
   /// The vibrator on Android; [elsewhere] (Flutter's haptics) everywhere
   /// else, and on Android too if the channel is somehow missing.
   static Future<void> _buzz(String kind, Future<void> Function() elsewhere) async {
+    flog('haptics', enabled ? kind : '$kind (off in the Internal tab)', level: Level.debug);
     if (!enabled) return;
     if (defaultTargetPlatform == TargetPlatform.android) {
       try {

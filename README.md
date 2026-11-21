@@ -16,7 +16,11 @@ self-hosted control for Midea air conditioners, over your own LAN.
 </div>
 
 <p align="center">
-  <img src="https://imlink.salataputarica.hr.eu.org/u/V5MMHi.png" alt="Breeze — the control screen, network scan-to-add, and the Programs editor" width="900">
+  <img src="https://imlink.salataputarica.hr.eu.org/h/8avU8kcP8FXRYAVwdw8Y6RMj7JW7bwcZzRXwQRZB.png" alt="The control screen in the dark theme: the living room cooling to 23.5°, fan high, vertical flap, turbo on" width="170">
+  <img src="https://imlink.salataputarica.hr.eu.org/h/Hc7QtbbgHYFiYRehd9ldenU3L3LgSBLRS5y8A8r0.png" alt="The control screen in the light theme: the bedroom heating to 22°, fan low, both flaps, eco on" width="170">
+  <img src="https://imlink.salataputarica.hr.eu.org/h/8rRuAZOUbIoGxxZFC6PmIalKld8Nsncw2wSSyjzn.png" alt="The control screen in AMOLED Black: the back room drying at 24°, fan on auto, horizontal flap, a sleep timer with 1 h 30 min left" width="170">
+  <img src="https://imlink.salataputarica.hr.eu.org/h/yCUmaKqTJvi8Scsl9DPegu3BY8tpcdotPu4Dzldg.png" alt="The timer sheet: turn the unit off later, or on at a set day and time" width="170">
+  <img src="https://imlink.salataputarica.hr.eu.org/h/Ym3mzlCZ8IZUHPYIbuySu4ENszsEslCL4Hp9kunk.png" alt="Settings: server, this device, language, theme, AMOLED Black, temperature unit, beep" width="170">
 </p>
 
 ## Why
@@ -37,6 +41,26 @@ the same room as you. Breeze asks a server on your own network instead.
 - **It's quiet.** Beep is off unless you turn it on.
 - **Material You**, light/dark, °C/°F, and a real diagnostics screen when something
   misbehaves.
+
+## Bigger screens
+
+On a tablet or an open foldable the rooms are listed beside the one you are
+controlling, and its controls grow into the space. A foldable bent like a book
+keeps the list and the room either side of the fold, and a phone on its side
+shows two columns. More in
+[the wiki](https://github.com/monikapurpl3/breeze/wiki/The-control-screen#bigger-screens).
+
+<p align="center">
+  <img src="https://imlink.salataputarica.hr.eu.org/h/8jxBCqF9lC1nXzfG7n3Llv1pZ37lQMMP2XbFvjtb.png" alt="A tablet on its side, dark theme: the rooms listed beside the living room, its controls large" width="440">
+  <img src="https://imlink.salataputarica.hr.eu.org/h/Mm6c8MgwN0wlLN5lh6dKmoSs2xLH4sV5zxh1MH9C.png" alt="An open foldable in AMOLED Black: the rooms beside the back room" width="330">
+</p>
+<p align="center">
+  <img src="https://imlink.salataputarica.hr.eu.org/h/xrtcgf5ZB4pl7JSCEphQZkJWLiSLoTjlXjhjz8yl.png" alt="A tablet upright, light theme: the rooms beside the bedroom" width="220">
+  <img src="https://imlink.salataputarica.hr.eu.org/h/GZPKv4QiO4OViM6mTVnhBVZPvdz38WI8l9tziSsy.png" alt="A foldable bent like a book: the rooms on one side of the fold, the bedroom on the other" width="422">
+</p>
+<p align="center">
+  <img src="https://imlink.salataputarica.hr.eu.org/h/JWElgxIExmnthXzArvvhIRF2UU1dSm3wDUogGEhs.png" alt="A phone on its side: the temperature on the left, the controls beside it" width="640">
+</p>
 
 ## Install
 
@@ -92,7 +116,7 @@ flutter pub get
 flutter build apk --release     # → build/app/outputs/flutter-apk/app-release.apk
 ```
 
-Flutter 3.44+, Android SDK (API 36), JDK 17/21. Release signing, icons and CI:
+Flutter 3.50+, Android SDK (API 36), JDK 17/21. Release signing, icons and CI:
 [Building and releasing](https://github.com/monikapurpl3/breeze/wiki/Building-and-releasing).
 
 ## License

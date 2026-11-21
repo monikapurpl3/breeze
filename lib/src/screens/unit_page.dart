@@ -70,19 +70,28 @@ class UnitPage extends StatelessWidget {
         // Sideways, the controls column scrolls on its own beside the
         // temperature; upright, the whole page does, as it always has.
         if (pageIsLandscape(size)) return _landscape(context);
-        return SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: box.maxHeight),
-            child: IntrinsicHeight(child: _portrait(context)),
-          ),
-        );
+        return _upright(context, box);
       }
       if (box.hasBoundedWidth && box.hasBoundedHeight && pageIsRoomy(size)) {
         return SizedBox.fromSize(size: size, child: _roomy(context, size));
       }
-      return pageIsLandscape(size) ? _landscape(context) : _portrait(context);
+      return pageIsLandscape(size) ? _landscape(context) : _upright(context, box);
     });
   }
+
+  /// Upright, as a phone shows it, scrolling when the window is shorter than
+  /// the page: not only with large text. Upright, the page needs about 620
+  /// tall, and with the system bars taken out many windows are shorter: a
+  /// 360 x 740 phone with three-button navigation (its page 360 x 562), a
+  /// 411 x 731 one, split screen. Fixed, the bottom controls were cut off
+  /// there. When it fits, this is the same page as before: at least the
+  /// window tall, the temperature taking the slack.
+  Widget _upright(BuildContext context, BoxConstraints box) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: box.hasBoundedHeight ? box.maxHeight : 0),
+          child: IntrinsicHeight(child: _portrait(context)),
+        ),
+      );
 
   /// A tablet, an open foldable: every part bigger, all of them together.
   /// The header keeps its size, so a long name still fits beside the

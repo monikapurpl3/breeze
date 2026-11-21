@@ -21,7 +21,11 @@ bool pageIsLandscape(Size page) => page.width >= 560 && page.width > page.height
 
 /// A unit's page with room to spare both ways -- a tablet's, an open
 /// foldable's: everything on it is drawn bigger, to fill the whole of it.
-bool pageIsRoomy(Size page) => page.shortestSide >= 480 && page.longestSide >= 640;
+/// 560 rather than 640: an open Pixel Fold's page is 560 x 645 without the
+/// system bars, but about 560 x 570-595 with them, as on the real thing, and
+/// it then fell back to the upright phone page, which overflowed. No phone's
+/// page is 480 across both ways.
+bool pageIsRoomy(Size page) => page.shortestSide >= 480 && page.longestSide >= 560;
 
 /// A tablet's window: big both ways, and no fold or hinge through it. Its
 /// unit page's parts grow thicker into the height they have spare; an open

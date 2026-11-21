@@ -9,6 +9,7 @@ import 'package:breeze/src/l10n.dart';
 import 'package:breeze/src/a11y.dart';
 import 'package:breeze/src/app_controller.dart';
 import 'package:breeze/src/app_scope.dart';
+import 'package:breeze/src/layout.dart';
 import 'package:breeze/src/models.dart';
 import 'package:breeze/src/screens/unit_page.dart';
 import 'package:breeze/src/secure_store.dart';
@@ -55,6 +56,13 @@ Widget _unitPage(double textScale, {bool online = true}) => AppScope(
     );
 
 void main() {
+  test('an open foldable with its system bars is still roomy; no phone is', () {
+    expect(pageIsRoomy(const Size(560, 593)), isTrue); // Pixel Fold, gesture bar
+    expect(pageIsRoomy(const Size(560, 569)), isTrue); // the same, taskbar
+    expect(pageIsRoomy(const Size(430, 900)), isFalse); // a big phone, upright
+    expect(pageIsRoomy(const Size(900, 400)), isFalse); // and on its side
+  });
+
   test('a pairing code is spelled out, character by character', () {
     expect(spelled('JH7S-XT2P'), 'J H 7 S, X T 2 P');
     expect(spelled('ABCD'), 'A B C D');
@@ -75,7 +83,21 @@ void main() {
     testWidgets('at normal text size it fits, without scrolling', (tester) async {
       await tester.pumpWidget(_unitPage(1.0));
       expect(tester.takeException(), isNull);
-      expect(find.byType(SingleChildScrollView), findsNothing);
+      // Upright, the page is always ready to scroll (a short window needs
+      // it, below), but here there is nothing to scroll: it fits.
+      final scroll = tester.state<ScrollableState>(find.byType(Scrollable));
+      expect(scroll.position.maxScrollExtent, 0);
+    });
+
+    // With the system bars taken out, many phones are shorter than the
+    // page: 360 x 740 with three-button navigation leaves it 360 x 562 below
+    // the app bar. Fixed in height, the bottom controls were cut off there.
+    testWidgets('at normal text on a short window it scrolls instead of cutting off the bottom', (tester) async {
+      tester.view.physicalSize = const Size(360, 562);
+      await tester.pumpWidget(_unitPage(1.0));
+      expect(tester.takeException(), isNull);
+      await tester.scrollUntilVisible(find.text('Turbo'), 200);
+      expect(find.text('Turbo').hitTestable(), findsOneWidget);
     });
 
     // Android's font sizes from "Large" up, on a small phone as well.
